@@ -6,6 +6,7 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,9 +14,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
@@ -60,582 +65,666 @@ import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
  * @since 0.7.0
  */
 public class NavigationView extends CoordinatorLayout implements LifecycleObserver, OnMapReadyCallback,
-  NavigationContract.View {
+        NavigationContract.View {
 
-  private static final String MAP_INSTANCE_STATE_KEY = "navgation_mapbox_map_instance_state";
-  private static final int INVALID_STATE = 0;
-  private MapView mapView;
-  private InstructionView instructionView;
-  private SummaryBottomSheet summaryBottomSheet;
-  private BottomSheetBehavior summaryBehavior;
-  private ImageButton cancelBtn;
-  private RecenterButton recenterBtn;
-  private ImageButton routeOverviewBtn;
+    private static final String MAP_INSTANCE_STATE_KEY = "navgation_mapbox_map_instance_state";
+    private static final int INVALID_STATE = 0;
+    private MapView mapView;
+    private InstructionView instructionView;
+    private SummaryBottomSheet summaryBottomSheet;
+    private BottomSheetBehavior summaryBehavior;
+    private RecenterButton recenterBtn;
+    private ImageButton routeOverviewBtn;
 
-  private NavigationPresenter navigationPresenter;
-  private NavigationViewEventDispatcher navigationViewEventDispatcher;
-  private NavigationViewModel navigationViewModel;
-  private NavigationMapboxMap navigationMap;
-  private OnNavigationReadyCallback onNavigationReadyCallback;
-  private MapboxMap.OnMoveListener onMoveListener;
-  private NavigationMapboxMapInstanceState mapInstanceState;
-  private boolean isMapInitialized;
-  private boolean isSubscribed;
+    private LinearLayout btnCancel;
+    private ImageButton btnBottomSheetStateChanger;
+    private LinearLayout btnBottomSheetExample1;
+    private LinearLayout btnBottomSheetExample2;
+    private LinearLayout btnBottomSheetExample3;
 
-  public NavigationView(Context context) {
-    this(context, null);
-  }
 
-  public NavigationView(Context context, @Nullable AttributeSet attrs) {
-    this(context, attrs, -1);
-  }
+    private NavigationPresenter navigationPresenter;
+    private NavigationViewEventDispatcher navigationViewEventDispatcher;
+    private NavigationViewModel navigationViewModel;
+    private NavigationMapboxMap navigationMap;
+    private OnNavigationReadyCallback onNavigationReadyCallback;
+    private MapboxMap.OnMoveListener onMoveListener;
+    private NavigationMapboxMapInstanceState mapInstanceState;
+    private boolean isMapInitialized;
+    private boolean isSubscribed;
+    private boolean isRestored = false;
 
-  public NavigationView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    ThemeSwitcher.setTheme(context, attrs);
-    initializeView();
-  }
-
-  /**
-   * Uses savedInstanceState as a cue to restore state (if not null).
-   *
-   * @param savedInstanceState to restore state if not null
-   */
-  public void onCreate(@Nullable Bundle savedInstanceState) {
-    updateSavedInstanceStateMapStyle(savedInstanceState);
-    mapView.onCreate(savedInstanceState);
-    updatePresenterState(savedInstanceState);
-    navigationViewModel.onCreate();
-  }
-
-  /**
-   * Low memory must be reported so the {@link MapView}
-   * can react appropriately.
-   */
-  public void onLowMemory() {
-    mapView.onLowMemory();
-  }
-
-  /**
-   * If the instruction list is showing and onBackPressed is called,
-   * hide the instruction list and do not hide the activity or fragment.
-   *
-   * @return true if back press handled, false if not
-   */
-  public boolean onBackPressed() {
-    return instructionView.handleBackPressed();
-  }
-
-  /**
-   * Used to store the bottomsheet state and re-center
-   * button visibility.  As well as anything the {@link MapView}
-   * needs to store in the bundle.
-   *
-   * @param outState to store state variables
-   */
-  public void onSaveInstanceState(Bundle outState) {
-    int bottomSheetBehaviorState = summaryBehavior == null ? INVALID_STATE : summaryBehavior.getState();
-    NavigationViewInstanceState navigationViewInstanceState = new NavigationViewInstanceState(bottomSheetBehaviorState,
-      recenterBtn.getVisibility(), instructionView.isShowingInstructionList());
-    String instanceKey = getContext().getString(R.string.navigation_view_instance_state);
-    outState.putParcelable(instanceKey, navigationViewInstanceState);
-    outState.putBoolean(getContext().getString(R.string.navigation_running), navigationViewModel.isRunning());
-    mapView.onSaveInstanceState(outState);
-    saveNavigationMapInstanceState(outState);
-  }
-
-  /**
-   * Used to restore the bottomsheet state and re-center
-   * button visibility.  As well as the {@link MapView}
-   * position prior to rotation.
-   *
-   * @param savedInstanceState to extract state variables
-   */
-  public void onRestoreInstanceState(Bundle savedInstanceState) {
-    String instanceKey = getContext().getString(R.string.navigation_view_instance_state);
-    NavigationViewInstanceState navigationViewInstanceState = savedInstanceState.getParcelable(instanceKey);
-    recenterBtn.setVisibility(navigationViewInstanceState.getRecenterButtonVisibility());
-    resetBottomSheetState(navigationViewInstanceState.getBottomSheetBehaviorState());
-    updateInstructionListState(navigationViewInstanceState.isInstructionViewVisible());
-    mapInstanceState = savedInstanceState.getParcelable(MAP_INSTANCE_STATE_KEY);
-  }
-
-  /**
-   * Called to ensure the {@link MapView} is destroyed
-   * properly.
-   * <p>
-   * In an {@link Activity} this should be in {@link Activity#onDestroy()}.
-   * <p>
-   * In a {@link android.app.Fragment}, this should be in {@link Fragment#onDestroyView()}.
-   */
-  public void onDestroy() {
-    if (navigationMap != null) {
-      navigationMap.removeOnMoveListener(onMoveListener);
+    public NavigationView(Context context) {
+        this(context, null);
     }
-    navigationViewEventDispatcher.onDestroy(navigationViewModel.retrieveNavigation());
-    shutdown();
-  }
 
-  public void onStart() {
-    mapView.onStart();
-    if (navigationMap != null) {
-      navigationMap.onStart();
+    public NavigationView(Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, -1);
     }
-  }
 
-  public void onResume() {
-    mapView.onResume();
-  }
-
-  public void onPause() {
-    mapView.onPause();
-  }
-
-  public void onStop() {
-    mapView.onStop();
-    if (navigationMap != null) {
-      navigationMap.onStop();
+    public NavigationView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        ThemeSwitcher.setTheme(context, attrs);
+        initializeView();
     }
-  }
 
-  /**
-   * Fired after the map is ready, this is our cue to finish
-   * setting up the rest of the plugins / location engine.
-   * <p>
-   * Also, we check for launch data (coordinates or route).
-   *
-   * @param mapboxMap used for route, camera, and location UI
-   * @since 0.6.0
-   */
-  @Override
-  public void onMapReady(MapboxMap mapboxMap) {
-    initializeNavigationMap(mapView, mapboxMap);
-    onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
-    isMapInitialized = true;
-  }
-
-  @Override
-  public void setSummaryBehaviorState(int state) {
-    summaryBehavior.setState(state);
-  }
-
-  @Override
-  public void setSummaryBehaviorHideable(boolean isHideable) {
-    summaryBehavior.setHideable(isHideable);
-  }
-
-  @Override
-  public boolean isSummaryBottomSheetHidden() {
-    return summaryBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN;
-  }
-
-  @Override
-  public void updateCameraTrackingEnabled(boolean isEnabled) {
-    if (navigationMap != null) {
-      navigationMap.updateCameraTrackingEnabled(isEnabled);
+    /**
+     * Uses savedInstanceState as a cue to restore state (if not null).
+     *
+     * @param savedInstanceState to restore state if not null
+     */
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        updateSavedInstanceStateMapStyle(savedInstanceState);
+        mapView.onCreate(savedInstanceState);
+        updatePresenterState(savedInstanceState);
+        navigationViewModel.onCreate();
     }
-  }
 
-  @Override
-  public void resetCameraPosition() {
-    if (navigationMap != null) {
-      navigationMap.resetCameraPosition();
+    /**
+     * Low memory must be reported so the {@link MapView}
+     * can react appropriately.
+     */
+    public void onLowMemory() {
+        mapView.onLowMemory();
     }
-  }
 
-  @Override
-  public void showRecenterBtn() {
-    recenterBtn.show();
-  }
-
-  @Override
-  public void hideRecenterBtn() {
-    recenterBtn.hide();
-  }
-
-  @Override
-  public boolean isRecenterButtonVisible() {
-    return recenterBtn.getVisibility() == View.VISIBLE;
-  }
-
-  @Override
-  public void drawRoute(DirectionsRoute directionsRoute) {
-    if (navigationMap != null) {
-      navigationMap.drawRoute(directionsRoute);
+    /**
+     * If the instruction list is showing and onBackPressed is called,
+     * hide the instruction list and do not hide the activity or fragment.
+     *
+     * @return true if back press handled, false if not
+     */
+    public boolean onBackPressed() {
+        return instructionView.handleBackPressed();
     }
-  }
 
-  private void initializeNavigationMap(MapView mapView, MapboxMap map) {
-    navigationMap = new NavigationMapboxMap(mapView, map);
-    if (mapInstanceState != null) {
-      navigationMap.restoreFrom(mapInstanceState);
+    /**
+     * Used to store the bottomsheet state and re-center
+     * button visibility.  As well as anything the {@link MapView}
+     * needs to store in the bundle.
+     *
+     * @param outState to store state variables
+     */
+    public void onSaveInstanceState(Bundle outState) {
+        int bottomSheetBehaviorState = summaryBehavior == null ? INVALID_STATE : summaryBehavior.getState();
+        NavigationViewInstanceState navigationViewInstanceState = new NavigationViewInstanceState(bottomSheetBehaviorState,
+                recenterBtn.getVisibility(), instructionView.isShowingInstructionList());
+        String instanceKey = getContext().getString(R.string.navigation_view_instance_state);
+        outState.putParcelable(instanceKey, navigationViewInstanceState);
+        outState.putBoolean(getContext().getString(R.string.navigation_running), navigationViewModel.isRunning());
+        mapView.onSaveInstanceState(outState);
+        saveNavigationMapInstanceState(outState);
     }
-  }
 
-  @Override
-  public void addMarker(Point position) {
-    if (navigationMap != null) {
-      navigationMap.addMarker(getContext(), position);
+    /**
+     * Used to restore the bottomsheet state and re-center
+     * button visibility.  As well as the {@link MapView}
+     * position prior to rotation.
+     *
+     * @param savedInstanceState to extract state variables
+     */
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        isRestored = true;
+        String instanceKey = getContext().getString(R.string.navigation_view_instance_state);
+        NavigationViewInstanceState navigationViewInstanceState = savedInstanceState.getParcelable(instanceKey);
+        recenterBtn.setVisibility(navigationViewInstanceState.getRecenterButtonVisibility());
+        resetBottomSheetState(navigationViewInstanceState.getBottomSheetBehaviorState());
+        updateInstructionListState(navigationViewInstanceState.isInstructionViewVisible());
+        mapInstanceState = savedInstanceState.getParcelable(MAP_INSTANCE_STATE_KEY);
+
     }
-  }
 
-  public void clearMarkers() {
-    if (navigationMap != null) {
-      navigationMap.clearMarkers();
+    /**
+     * Called to ensure the {@link MapView} is destroyed
+     * properly.
+     * <p>
+     * In an {@link Activity} this should be in {@link Activity#onDestroy()}.
+     * <p>
+     * In a {@link android.app.Fragment}, this should be in {@link Fragment#onDestroyView()}.
+     */
+    public void onDestroy() {
+        if (navigationMap != null) {
+            navigationMap.removeOnMoveListener(onMoveListener);
+        }
+        navigationViewEventDispatcher.onDestroy(navigationViewModel.retrieveNavigation());
+        shutdown();
     }
-  }
 
-  public void updateWaynameView(String wayname) {
-    if (navigationMap != null) {
-      navigationMap.updateWaynameView(wayname);
+    public void onStart() {
+        mapView.onStart();
+        if (navigationMap != null) {
+            navigationMap.onStart();
+        }
     }
-  }
 
-  @Override
-  public void updateWaynameVisibility(boolean isVisible) {
-    if (navigationMap != null) {
-      navigationMap.updateWaynameVisibility(isVisible);
+    public void onResume() {
+        mapView.onResume();
     }
-  }
 
-  public void updateWaynameQueryMap(boolean isEnabled) {
-    if (navigationMap != null) {
-      navigationMap.updateWaynameQueryMap(isEnabled);
+    public void onPause() {
+        mapView.onPause();
     }
-  }
 
-  @Override
-  public void takeScreenshot() {
-    if (navigationMap != null) {
-      navigationMap.takeScreenshot(new NavigationSnapshotReadyCallback(this, navigationViewModel));
+    public void onStop() {
+        mapView.onStop();
+        if (navigationMap != null) {
+            navigationMap.onStop();
+        }
     }
-  }
 
-  /**
-   * Used when starting this {@link android.app.Activity}
-   * for the first time.
-   * <p>
-   * Zooms to the beginning of the {@link DirectionsRoute}.
-   *
-   * @param directionsRoute where camera should move to
-   */
-  @Override
-  public void startCamera(DirectionsRoute directionsRoute) {
-    if (navigationMap != null) {
-      navigationMap.startCamera(directionsRoute);
+    /**
+     * Fired after the map is ready, this is our cue to finish
+     * setting up the rest of the plugins / location engine.
+     * <p>
+     * Also, we check for launch data (coordinates or route).
+     *
+     * @param mapboxMap used for route, camera, and location UI
+     * @since 0.6.0
+     */
+    @Override
+    public void onMapReady(MapboxMap mapboxMap) {
+        initializeNavigationMap(mapView, mapboxMap);
+        onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
+        isMapInitialized = true;
     }
-  }
 
-  /**
-   * Used after configuration changes to resume the camera
-   * to the last location update from the Navigation SDK.
-   *
-   * @param location where the camera should move to
-   */
-  @Override
-  public void resumeCamera(Location location) {
-    if (navigationMap != null) {
-      navigationMap.resumeCamera(location);
+    @Override
+    public boolean isRestored() {
+        boolean _isRestored = isRestored;
+        isRestored = false;
+        return _isRestored;
     }
-  }
 
-  @Override
-  public void updateNavigationMap(Location location) {
-    if (navigationMap != null) {
-      navigationMap.updateLocation(location);
+    @Override
+    public void setSummaryBehaviorState(int state) {
+        summaryBehavior.setState(state);
     }
-  }
 
-  @Override
-  public void updateCameraRouteOverview() {
-    if (navigationMap != null) {
-      int[] padding = buildRouteOverviewPadding(getContext());
-      navigationMap.showRouteOverview(padding);
+    @Override
+    public void setSummaryBehaviorHideable(boolean isHideable) {
+        summaryBehavior.setHideable(isHideable);
     }
-  }
 
-  /**
-   * Should be called when this view is completely initialized.
-   *
-   * @param options with containing route / coordinate data
-   */
-  public void startNavigation(NavigationViewOptions options) {
-    initializeNavigation(options);
-  }
-
-  /**
-   * Call this when the navigation session needs to end navigation without finishing the whole view
-   *
-   * @since 0.16.0
-   */
-  public void stopNavigation() {
-    navigationViewModel.stopNavigation();
-  }
-
-
-  /**
-   * Should be called after {@link NavigationView#onCreate(Bundle)}.
-   * <p>
-   * This method adds the {@link OnNavigationReadyCallback},
-   * which will fire ready / cancel events for this view.
-   *
-   * @param onNavigationReadyCallback to be set to this view
-   */
-  public void initialize(OnNavigationReadyCallback onNavigationReadyCallback) {
-    this.onNavigationReadyCallback = onNavigationReadyCallback;
-    if (!isMapInitialized) {
-      mapView.getMapAsync(this);
-    } else {
-      onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
+    @Override
+    public boolean isSummaryBottomSheetHidden() {
+        return summaryBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN;
     }
-  }
 
-  /**
-   * Gives the ability to manipulate the map directly for anything that might not currently be
-   * supported. This returns null until the view is initialized.
-   * <p>
-   * The {@link NavigationMapboxMap} gives direct access to the map UI (location marker, route, etc.).
-   *
-   * @return navigation mapbox map object, or null if view has not been initialized
-   */
-  @Nullable
-  public NavigationMapboxMap retrieveNavigationMapboxMap() {
-    return navigationMap;
-  }
-
-  /**
-   * Returns the instance of {@link MapboxNavigation} powering the {@link NavigationView}
-   * once navigation has started.  Will return null if navigation has not been started with
-   * {@link NavigationView#startNavigation(NavigationViewOptions)}.
-   *
-   * @return mapbox navigation, or null if navigation has not started
-   */
-  @Nullable
-  public MapboxNavigation retrieveMapboxNavigation() {
-    return navigationViewModel.retrieveNavigation();
-  }
-
-  /**
-   * Returns the sound button used for muting instructions
-   *
-   * @return sound button
-   */
-  public NavigationButton retrieveSoundButton() {
-    return instructionView.retrieveSoundButton();
-  }
-
-  /**
-   * Returns the feedback button for sending feedback about navigation
-   *
-   * @return feedback button
-   */
-  public NavigationButton retrieveFeedbackButton() {
-    return instructionView.retrieveFeedbackButton();
-  }
-
-  /**
-   * Returns the re-center button for recentering on current location
-   *
-   * @return recenter button
-   */
-  public NavigationButton retrieveRecenterButton() {
-    return recenterBtn;
-  }
-
-  private void initializeView() {
-    inflate(getContext(), R.layout.navigation_view_layout, this);
-    bind();
-    initializeNavigationViewModel();
-    initializeNavigationEventDispatcher();
-    initializeNavigationPresenter();
-    initializeInstructionListListener();
-    initializeSummaryBottomSheet();
-  }
-
-  private void bind() {
-    mapView = findViewById(R.id.navigationMapView);
-    instructionView = findViewById(R.id.instructionView);
-    summaryBottomSheet = findViewById(R.id.summaryBottomSheet);
-    cancelBtn = findViewById(R.id.cancelBtn);
-    recenterBtn = findViewById(R.id.recenterBtn);
-    routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
-  }
-
-  private void initializeNavigationViewModel() {
-    try {
-      navigationViewModel = ViewModelProviders.of((FragmentActivity) getContext()).get(NavigationViewModel.class);
-    } catch (ClassCastException exception) {
-      throw new ClassCastException("Please ensure that the provided Context is a valid FragmentActivity");
+    @Override
+    public boolean isSummaryBottomSheetCollapsed() {
+        return summaryBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED;
     }
-  }
 
-  private void initializeSummaryBottomSheet() {
-    summaryBehavior = BottomSheetBehavior.from(summaryBottomSheet);
-    summaryBehavior.setHideable(false);
-    summaryBehavior.setBottomSheetCallback(new SummaryBottomSheetCallback(navigationPresenter,
-      navigationViewEventDispatcher));
-  }
-
-  private void initializeNavigationEventDispatcher() {
-    navigationViewEventDispatcher = new NavigationViewEventDispatcher();
-    navigationViewModel.initializeEventDispatcher(navigationViewEventDispatcher);
-  }
-
-  private void initializeInstructionListListener() {
-    instructionView.setInstructionListListener(new NavigationInstructionListListener(navigationPresenter,
-      navigationViewEventDispatcher));
-  }
-
-  private void updateSavedInstanceStateMapStyle(@Nullable Bundle savedInstanceState) {
-    if (savedInstanceState != null) {
-      String mapStyleUrl = ThemeSwitcher.retrieveMapStyle(getContext());
-      savedInstanceState.putString(MapboxConstants.STATE_STYLE_URL, mapStyleUrl);
+    @Override
+    public boolean isSummaryBottomSheetExpanded() {
+        return summaryBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
     }
-  }
 
-  private void saveNavigationMapInstanceState(Bundle outState) {
-    if (navigationMap != null) {
-      navigationMap.saveStateWith(MAP_INSTANCE_STATE_KEY, outState);
+    @Override
+    public void setBottomSheetChangerBtnResource(int resource) {
+        btnBottomSheetStateChanger.setImageResource(resource);
+
     }
-  }
 
-  private void resetBottomSheetState(int bottomSheetState) {
-    if (bottomSheetState > INVALID_STATE) {
-      boolean isShowing = bottomSheetState == BottomSheetBehavior.STATE_EXPANDED;
-      summaryBehavior.setHideable(!isShowing);
-      summaryBehavior.setState(bottomSheetState);
+    @Override
+    public void updateCameraTrackingEnabled(boolean isEnabled) {
+        if (navigationMap != null) {
+            navigationMap.updateCameraTrackingEnabled(isEnabled);
+        }
     }
-  }
 
-  private void updateInstructionListState(boolean visible) {
-    if (visible) {
-      instructionView.showInstructionList();
-    } else {
-      instructionView.hideInstructionList();
+    @Override
+    public void resetCameraPosition() {
+        if (navigationMap != null) {
+                navigationMap.resetCameraPosition();
+
+        }
     }
-  }
 
-  private int[] buildRouteOverviewPadding(Context context) {
-    Resources resources = context.getResources();
-    int leftRightPadding = (int) resources.getDimension(R.dimen.route_overview_left_right_padding);
-    int paddingBuffer = (int) resources.getDimension(R.dimen.route_overview_buffer_padding);
-    int instructionHeight = (int) (resources.getDimension(R.dimen.instruction_layout_height) + paddingBuffer);
-    int summaryHeight = (int) resources.getDimension(R.dimen.summary_bottomsheet_height);
-    return new int[] {leftRightPadding, instructionHeight, leftRightPadding, summaryHeight};
-  }
-
-  private boolean isChangingConfigurations() {
-    try {
-      return ((FragmentActivity) getContext()).isChangingConfigurations();
-    } catch (ClassCastException exception) {
-      throw new ClassCastException("Please ensure that the provided Context is a valid FragmentActivity");
+    @Override
+    public void showRecenterBtn() {
+        recenterBtn.show();
     }
-  }
 
-  private void initializeNavigationPresenter() {
-    navigationPresenter = new NavigationPresenter(this);
-  }
-
-  private void updatePresenterState(@Nullable Bundle savedInstanceState) {
-    if (savedInstanceState != null) {
-      String navigationRunningKey = getContext().getString(R.string.navigation_running);
-      boolean resumeState = savedInstanceState.getBoolean(navigationRunningKey);
-      navigationPresenter.updateResumeState(resumeState);
+    @Override
+    public void hideRecenterBtn() {
+        recenterBtn.hide();
     }
-  }
 
-  private void initializeNavigation(NavigationViewOptions options) {
-    establish(options);
-    MapboxNavigation navigation = navigationViewModel.initialize(options);
-    initializeNavigationListeners(options, navigation);
-    setupNavigationMapboxMap(options);
-
-    if (!isSubscribed) {
-      initializeClickListeners();
-      initializeOnMoveListener();
-      subscribeViewModels();
+    @Override
+    public boolean isRecenterButtonVisible() {
+        return recenterBtn.getVisibility() == View.VISIBLE;
     }
-  }
 
-  private void initializeClickListeners() {
-    cancelBtn.setOnClickListener(new CancelBtnClickListener(navigationViewEventDispatcher));
-    recenterBtn.addOnClickListener(new RecenterBtnClickListener(navigationPresenter));
-    routeOverviewBtn.setOnClickListener(new RouteOverviewBtnClickListener(navigationPresenter));
-  }
+    @Override
+    public void drawRoute(DirectionsRoute directionsRoute) {
+        if (navigationMap != null) {
+            navigationMap.drawRoute(directionsRoute);
+        }
+    }
 
-  private void initializeOnMoveListener() {
-    onMoveListener = new NavigationOnMoveListener(navigationPresenter, summaryBehavior);
-    navigationMap.addOnMoveListener(onMoveListener);
-  }
+    private void initializeNavigationMap(MapView mapView, MapboxMap map) {
+        navigationMap = new NavigationMapboxMap(mapView, map);
+        if (mapInstanceState != null) {
+            navigationMap.restoreFrom(mapInstanceState);
+        }
+    }
 
-  private void establish(NavigationViewOptions options) {
-    LocaleUtils localeUtils = new LocaleUtils();
+    @Override
+    public void addMarker(Point position) {
+        if (navigationMap != null) {
+            navigationMap.addMarker(getContext(), position);
+        }
+    }
 
-    establishDistanceFormatter(localeUtils, options);
-    establishTimeFormat(options);
-  }
+    public void clearMarkers() {
+        if (navigationMap != null) {
+            navigationMap.clearMarkers();
+        }
+    }
 
-  private void establishDistanceFormatter(LocaleUtils localeUtils, NavigationViewOptions options) {
-    String unitType = establishUnitType(localeUtils, options);
-    String language = establishLanguage(localeUtils, options);
-    int roundingIncrement = establishRoundingIncrement(options);
-    DistanceFormatter distanceFormatter = new DistanceFormatter(getContext(), language, unitType, roundingIncrement);
+    public void updateWaynameView(String wayname) {
+        if (navigationMap != null) {
+            navigationMap.updateWaynameView(wayname);
+        }
+    }
 
-    instructionView.setDistanceFormatter(distanceFormatter);
-    summaryBottomSheet.setDistanceFormatter(distanceFormatter);
-  }
+    @Override
+    public void updateWaynameVisibility(boolean isVisible) {
+        if (navigationMap != null) {
+            navigationMap.updateWaynameVisibility(isVisible);
+        }
+    }
 
-  private int establishRoundingIncrement(NavigationViewOptions navigationViewOptions) {
-    MapboxNavigationOptions mapboxNavigationOptions = navigationViewOptions.navigationOptions();
-    return mapboxNavigationOptions.roundingIncrement();
-  }
+    public void updateWaynameQueryMap(boolean isEnabled) {
+        if (navigationMap != null) {
+            navigationMap.updateWaynameQueryMap(isEnabled);
+        }
+    }
 
-  private String establishLanguage(LocaleUtils localeUtils, NavigationViewOptions options) {
-    return localeUtils.getNonEmptyLanguage(getContext(), options.directionsRoute().voiceLanguage());
-  }
+    @Override
+    public void takeScreenshot() {
+        if (navigationMap != null) {
+            navigationMap.takeScreenshot(new NavigationSnapshotReadyCallback(this, navigationViewModel));
+        }
+    }
 
-  private String establishUnitType(LocaleUtils localeUtils, NavigationViewOptions options) {
-    RouteOptions routeOptions = options.directionsRoute().routeOptions();
-    String voiceUnits = routeOptions == null ? null : routeOptions.voiceUnits();
-    return localeUtils.retrieveNonNullUnitType(getContext(), voiceUnits);
-  }
+    /**
+     * Used when starting this {@link android.app.Activity}
+     * for the first time.
+     * <p>
+     * Zooms to the beginning of the {@link DirectionsRoute}.
+     *
+     * @param directionsRoute where camera should move to
+     */
+    @Override
+    public void startCamera(DirectionsRoute directionsRoute) {
+        if (navigationMap != null) {
+            navigationMap.startCamera(directionsRoute);
+        }
+    }
 
-  private void establishTimeFormat(NavigationViewOptions options) {
-    @NavigationTimeFormat.Type
-    int timeFormatType = options.navigationOptions().timeFormatType();
-    summaryBottomSheet.setTimeFormat(timeFormatType);
-  }
+    /**
+     * Used after configuration changes to resume the camera
+     * to the last location update from the Navigation SDK.
+     *
+     * @param location where the camera should move to
+     */
+    @Override
+    public void resumeCamera(Location location) {
+        if (navigationMap != null) {
+            navigationMap.resumeCamera(location);
+        }
+    }
 
-  private void initializeNavigationListeners(NavigationViewOptions options, MapboxNavigation navigation) {
-    navigationMap.addProgressChangeListener(navigation);
-    navigationViewEventDispatcher.initializeListeners(options, navigation);
-  }
+    @Override
+    public void updateNavigationMap(Location location) {
+        if (navigationMap != null) {
+            navigationMap.updateLocation(location);
+        }
+    }
 
-  private void setupNavigationMapboxMap(NavigationViewOptions options) {
-    navigationMap.updateWaynameQueryMap(options.waynameChipEnabled());
-  }
+    @Override
+    public void updateCameraRouteOverview() {
+        if (navigationMap != null) {
+            int[] padding = buildRouteOverviewPadding(getContext());
+            navigationMap.showRouteOverview(padding);
+        }
+    }
 
-  /**
-   * Subscribes the {@link InstructionView} and {@link SummaryBottomSheet} to the {@link NavigationViewModel}.
-   * <p>
-   * Then, creates an instance of {@link NavigationViewSubscriber}, which takes a presenter.
-   * <p>
-   * The subscriber then subscribes to the view models, setting up the appropriate presenter / listener
-   * method calls based on the {@link android.arch.lifecycle.LiveData} updates.
-   */
-  private void subscribeViewModels() {
-    instructionView.subscribe(navigationViewModel);
-    summaryBottomSheet.subscribe(navigationViewModel);
 
-    NavigationViewSubscriber subscriber = new NavigationViewSubscriber(navigationPresenter);
-    subscriber.subscribe(((LifecycleOwner) getContext()), navigationViewModel);
-    isSubscribed = true;
-  }
+    /**
+     * Should be called when this view is completely initialized.
+     *
+     * @param options with containing route / coordinate data
+     */
+    public void startNavigation(NavigationViewOptions options) {
+        initializeNavigation(options);
+    }
 
-  private void shutdown() {
-    mapView.onDestroy();
-    navigationViewModel.onDestroy(isChangingConfigurations());
-    ImageCoordinator.getInstance().shutdown();
-    navigationMap = null;
-  }
+    /**
+     * Call this when the navigation session needs to end navigation without finishing the whole view
+     *
+     * @since 0.16.0
+     */
+    public void stopNavigation() {
+        navigationViewModel.stopNavigation();
+    }
+
+
+    /**
+     * Should be called after {@link NavigationView#onCreate(Bundle)}.
+     * <p>
+     * This method adds the {@link OnNavigationReadyCallback},
+     * which will fire ready / cancel events for this view.
+     *
+     * @param onNavigationReadyCallback to be set to this view
+     */
+    public void initialize(OnNavigationReadyCallback onNavigationReadyCallback) {
+        this.onNavigationReadyCallback = onNavigationReadyCallback;
+        if (!isMapInitialized) {
+            mapView.getMapAsync(this);
+        } else {
+            onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
+        }
+    }
+
+    /**
+     * Gives the ability to manipulate the map directly for anything that might not currently be
+     * supported. This returns null until the view is initialized.
+     * <p>
+     * The {@link NavigationMapboxMap} gives direct access to the map UI (location marker, route, etc.).
+     *
+     * @return navigation mapbox map object, or null if view has not been initialized
+     */
+    @Nullable
+    public NavigationMapboxMap retrieveNavigationMapboxMap() {
+        return navigationMap;
+    }
+
+    /**
+     * Returns the instance of {@link MapboxNavigation} powering the {@link NavigationView}
+     * once navigation has started.  Will return null if navigation has not been started with
+     * {@link NavigationView#startNavigation(NavigationViewOptions)}.
+     *
+     * @return mapbox navigation, or null if navigation has not started
+     */
+    @Nullable
+    public MapboxNavigation retrieveMapboxNavigation() {
+        return navigationViewModel.retrieveNavigation();
+    }
+
+    /**
+     * Returns the sound button used for muting instructions
+     *
+     * @return sound button
+     */
+    public NavigationButton retrieveSoundButton() {
+        return instructionView.retrieveSoundButton();
+    }
+
+    /**
+     * Returns the feedback button for sending feedback about navigation
+     *
+     * @return feedback button
+     */
+    public NavigationButton retrieveFeedbackButton() {
+        return instructionView.retrieveFeedbackButton();
+    }
+
+    /**
+     * Returns the re-center button for recentering on current location
+     *
+     * @return recenter button
+     */
+    public NavigationButton retrieveRecenterButton() {
+        return recenterBtn;
+    }
+
+    private void initializeView() {
+        inflate(getContext(), R.layout.navigation_view_layout, this);
+        bind();
+        initializeBottomSheetButtons();
+        initializeNavigationViewModel();
+        initializeNavigationEventDispatcher();
+        initializeNavigationPresenter();
+        initializeInstructionListListener();
+        initializeSummaryBottomSheet();
+    }
+
+    private void bind() {
+        mapView = findViewById(R.id.navigationMapView);
+        instructionView = findViewById(R.id.instructionView);
+        summaryBottomSheet = findViewById(R.id.summaryBottomSheet);
+        btnCancel= findViewById(R.id.btnCancel);
+        recenterBtn = findViewById(R.id.recenterBtn);
+        routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
+        btnBottomSheetStateChanger = findViewById(R.id.btn_bottomSheetStateChanger);
+
+        btnBottomSheetExample1 = findViewById(R.id.btnBottomsheetExample1);
+        btnBottomSheetExample2 = findViewById(R.id.btnBottomsheetExample2);
+        btnBottomSheetExample3 = findViewById(R.id.btnBottomsheetExample3);
+    }
+
+    private void initializeNavigationViewModel() {
+        try {
+            navigationViewModel = ViewModelProviders.of((FragmentActivity) getContext()).get(NavigationViewModel.class);
+        } catch (ClassCastException exception) {
+            throw new ClassCastException("Please ensure that the provided Context is a valid FragmentActivity");
+        }
+    }
+
+    private void initializeSummaryBottomSheet() {
+        summaryBehavior = BottomSheetBehavior.from(summaryBottomSheet);
+        summaryBehavior.setHideable(false);
+        summaryBehavior.setBottomSheetCallback(new SummaryBottomSheetCallback(navigationPresenter,
+                navigationViewEventDispatcher));
+    }
+
+    private void initializeNavigationEventDispatcher() {
+        navigationViewEventDispatcher = new NavigationViewEventDispatcher();
+        navigationViewModel.initializeEventDispatcher(navigationViewEventDispatcher);
+    }
+
+    private void initializeInstructionListListener() {
+        instructionView.setInstructionListListener(new NavigationInstructionListListener(navigationPresenter,
+                navigationViewEventDispatcher));
+    }
+
+    private void updateSavedInstanceStateMapStyle(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            String mapStyleUrl = ThemeSwitcher.retrieveMapStyle(getContext());
+            savedInstanceState.putString(MapboxConstants.STATE_STYLE_URL, mapStyleUrl);
+        }
+    }
+
+    private void saveNavigationMapInstanceState(Bundle outState) {
+        if (navigationMap != null) {
+            navigationMap.saveStateWith(MAP_INSTANCE_STATE_KEY, outState);
+        }
+    }
+
+    private void resetBottomSheetState(int bottomSheetState) {
+            if (bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED || bottomSheetState == INVALID_STATE) {
+               summaryBehavior.setHideable(false);
+                summaryBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            } else if(bottomSheetState == BottomSheetBehavior.STATE_HIDDEN){
+                summaryBehavior.setHideable(true);
+                summaryBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            }else{
+                summaryBehavior.setHideable(false);
+                summaryBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+
+
+//        if (bottomSheetState > INVALID_STATE) {
+//            boolean isShowing = bottomSheetState == BottomSheetBehavior.STATE_EXPANDED;
+//            summaryBehavior.setHideable(!isShowing);
+//            summaryBehavior.setState(bottomSheetState);
+//        }
+    }
+
+    private void updateInstructionListState(boolean visible) {
+        if (visible) {
+            instructionView.showInstructionList();
+        } else {
+            instructionView.hideInstructionList();
+        }
+    }
+
+    private int[] buildRouteOverviewPadding(Context context) {
+        Resources resources = context.getResources();
+        int leftRightPadding = (int) resources.getDimension(R.dimen.route_overview_left_right_padding);
+        int paddingBuffer = (int) resources.getDimension(R.dimen.route_overview_buffer_padding);
+        int instructionHeight = (int) (resources.getDimension(R.dimen.instruction_layout_height) + paddingBuffer);
+        int summaryHeight = (int) resources.getDimension(R.dimen.summary_bottomsheet_height);
+        return new int[]{leftRightPadding, instructionHeight, leftRightPadding, summaryHeight};
+    }
+
+    private boolean isChangingConfigurations() {
+        try {
+            return ((FragmentActivity) getContext()).isChangingConfigurations();
+        } catch (ClassCastException exception) {
+            throw new ClassCastException("Please ensure that the provided Context is a valid FragmentActivity");
+        }
+    }
+
+    private void initializeNavigationPresenter() {
+        navigationPresenter = new NavigationPresenter(this);
+    }
+
+    private void updatePresenterState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            String navigationRunningKey = getContext().getString(R.string.navigation_running);
+            boolean resumeState = savedInstanceState.getBoolean(navigationRunningKey);
+            navigationPresenter.updateResumeState(resumeState);
+        }
+    }
+
+    private void initializeNavigation(NavigationViewOptions options) {
+        establish(options);
+        MapboxNavigation navigation = navigationViewModel.initialize(options);
+        initializeNavigationListeners(options, navigation);
+        setupNavigationMapboxMap(options);
+
+        if (!isSubscribed) {
+            initializeClickListeners();
+            initializeOnMoveListener();
+            subscribeViewModels();
+        }
+    }
+
+    private void initializeBottomSheetButtons() {
+        setBottomSheetButton(btnCancel, getContext().getString(R.string.dropoff_dialog_negative_text), R.drawable.ic_cancel_circle, R.color.red);
+        setBottomSheetButton(btnBottomSheetExample1, "Example 1");
+        setBottomSheetButton(btnBottomSheetExample2, "Example 2");
+        setBottomSheetButton(btnBottomSheetExample3, "Example 3");
+    }
+
+    private void initializeClickListeners() {
+        btnCancel.setOnClickListener(new CancelBtnClickListener(navigationViewEventDispatcher));
+        recenterBtn.addOnClickListener(new RecenterBtnClickListener(navigationPresenter));
+        routeOverviewBtn.setOnClickListener(new RouteOverviewBtnClickListener(navigationPresenter));
+        btnBottomSheetStateChanger.setOnClickListener(new BottomSheetStateChangerBtnClickListener(navigationPresenter));
+        btnBottomSheetExample1.setOnClickListener(new BottomSheetExample1BtnClickListener(navigationPresenter));
+        btnBottomSheetExample2.setOnClickListener(new BottomSheetExample2BtnClickListener(navigationPresenter));
+        btnBottomSheetExample3.setOnClickListener(new BottomSheetExample3BtnClickListener(navigationPresenter));
+    }
+
+    private void initializeOnMoveListener() {
+        onMoveListener = new NavigationOnMoveListener(navigationPresenter, summaryBehavior);
+        navigationMap.addOnMoveListener(onMoveListener);
+    }
+
+    private void establish(NavigationViewOptions options) {
+        LocaleUtils localeUtils = new LocaleUtils();
+
+        establishDistanceFormatter(localeUtils, options);
+        establishTimeFormat(options);
+    }
+
+    private void establishDistanceFormatter(LocaleUtils localeUtils, NavigationViewOptions options) {
+        String unitType = establishUnitType(localeUtils, options);
+        String language = establishLanguage(localeUtils, options);
+        int roundingIncrement = establishRoundingIncrement(options);
+        DistanceFormatter distanceFormatter = new DistanceFormatter(getContext(), language, unitType, roundingIncrement);
+
+        instructionView.setDistanceFormatter(distanceFormatter);
+        summaryBottomSheet.setDistanceFormatter(distanceFormatter);
+    }
+
+    private int establishRoundingIncrement(NavigationViewOptions navigationViewOptions) {
+        MapboxNavigationOptions mapboxNavigationOptions = navigationViewOptions.navigationOptions();
+        return mapboxNavigationOptions.roundingIncrement();
+    }
+
+    private String establishLanguage(LocaleUtils localeUtils, NavigationViewOptions options) {
+        return localeUtils.getNonEmptyLanguage(getContext(), options.directionsRoute().voiceLanguage());
+    }
+
+    private String establishUnitType(LocaleUtils localeUtils, NavigationViewOptions options) {
+        RouteOptions routeOptions = options.directionsRoute().routeOptions();
+        String voiceUnits = routeOptions == null ? null : routeOptions.voiceUnits();
+        return localeUtils.retrieveNonNullUnitType(getContext(), voiceUnits);
+    }
+
+    private void establishTimeFormat(NavigationViewOptions options) {
+        @NavigationTimeFormat.Type
+        int timeFormatType = options.navigationOptions().timeFormatType();
+        summaryBottomSheet.setTimeFormat(timeFormatType);
+    }
+
+    private void initializeNavigationListeners(NavigationViewOptions options, MapboxNavigation navigation) {
+        navigationMap.addProgressChangeListener(navigation);
+        navigationViewEventDispatcher.initializeListeners(options, navigation);
+    }
+
+    private void setupNavigationMapboxMap(NavigationViewOptions options) {
+        navigationMap.updateWaynameQueryMap(options.waynameChipEnabled());
+    }
+
+    /**
+     * Subscribes the {@link InstructionView} and {@link SummaryBottomSheet} to the {@link NavigationViewModel}.
+     * <p>
+     * Then, creates an instance of {@link NavigationViewSubscriber}, which takes a presenter.
+     * <p>
+     * The subscriber then subscribes to the view models, setting up the appropriate presenter / listener
+     * method calls based on the {@link android.arch.lifecycle.LiveData} updates.
+     */
+    private void subscribeViewModels() {
+        instructionView.subscribe(navigationViewModel);
+        summaryBottomSheet.subscribe(navigationViewModel);
+
+        NavigationViewSubscriber subscriber = new NavigationViewSubscriber(navigationPresenter);
+        subscriber.subscribe(((LifecycleOwner) getContext()), navigationViewModel);
+        isSubscribed = true;
+    }
+
+    private void shutdown() {
+        mapView.onDestroy();
+        navigationViewModel.onDestroy(isChangingConfigurations());
+        ImageCoordinator.getInstance().shutdown();
+        navigationMap = null;
+    }
+
+    private void setBottomSheetButton(LinearLayout button, String _title, int _imageResource, int color) {
+        TextView title = button.findViewById(R.id.title);
+        ImageView image = button.findViewById(R.id.imageView);
+        title.setText(_title);
+        title.setTextColor(ContextCompat.getColor(getContext(), color));
+        image.setImageResource(_imageResource);
+        image.setColorFilter(ContextCompat.getColor(getContext(), color));
+    }
+    private void setBottomSheetButton(LinearLayout button, String _title, int _imageResource) {
+        TextView title = button.findViewById(R.id.title);
+        ImageView image = button.findViewById(R.id.imageView);
+        title.setText(_title);
+        image.setImageResource(_imageResource);
+    }
+    private void setBottomSheetButton(LinearLayout button, String _title) {
+        TextView title = button.findViewById(R.id.title);
+        title.setText(_title);
+    }
+
+
 }

@@ -5,6 +5,7 @@ android {
   buildToolsVersion androidVersions.buildToolsVersion
 
   defaultConfig {
+
     minSdkVersion androidVersions.minSdkVersion
     targetSdkVersion androidVersions.targetSdkVersion
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -39,7 +40,20 @@ android {
 }
 
 dependencies {
+//  api fileTree(dir: 'libs', include: ['*.jar'])
+// //events
+//  implementation project(':libcore')
+//  implementation project(':libtelemetry')
+
+  //Retrofit
+  api 'com.squareup.retrofit2:retrofit:2.9.0'
+  api 'com.squareup.retrofit2:converter-gson:2.8.2'
+
+
+
   api dependenciesList.mapboxEvents
+
+
   api dependenciesList.mapboxSdkServices
   api dependenciesList.mapboxSdkTurf
 

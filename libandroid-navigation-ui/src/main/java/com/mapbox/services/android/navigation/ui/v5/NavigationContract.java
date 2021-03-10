@@ -9,11 +9,19 @@ public interface NavigationContract {
 
   interface View {
 
+    boolean isRestored();
+
     void setSummaryBehaviorState(int state);
 
     void setSummaryBehaviorHideable(boolean isHideable);
 
     boolean isSummaryBottomSheetHidden();
+
+    boolean isSummaryBottomSheetCollapsed();
+
+    boolean isSummaryBottomSheetExpanded();
+
+    void setBottomSheetChangerBtnResource(int resource);
 
     void updateWaynameVisibility(boolean isVisible);
 
@@ -40,5 +48,6 @@ public interface NavigationContract {
     boolean isRecenterButtonVisible();
 
     void updateCameraRouteOverview();
+
   }
 }

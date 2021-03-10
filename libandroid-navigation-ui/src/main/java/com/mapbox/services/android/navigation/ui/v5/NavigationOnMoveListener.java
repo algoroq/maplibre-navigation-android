@@ -1,6 +1,8 @@
 package com.mapbox.services.android.navigation.ui.v5;
 
 import android.support.design.widget.BottomSheetBehavior;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.mapbox.android.gestures.MoveGestureDetector;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -16,7 +18,9 @@ class NavigationOnMoveListener implements MapboxMap.OnMoveListener {
 
   @Override
   public void onMoveBegin(MoveGestureDetector detector) {
-    // Intentionally empty
+      if (summaryBehavior.getState() != BottomSheetBehavior.STATE_DRAGGING) {
+        navigationPresenter.onMapMoveBegin();
+    }
   }
 
   @Override
@@ -26,8 +30,9 @@ class NavigationOnMoveListener implements MapboxMap.OnMoveListener {
 
   @Override
   public void onMoveEnd(MoveGestureDetector detector) {
-    if (summaryBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-      navigationPresenter.onMapScroll();
+    if (summaryBehavior.getState() != BottomSheetBehavior.STATE_DRAGGING) {
+      navigationPresenter.onMapMoveEnd();
     }
   }
+
 }

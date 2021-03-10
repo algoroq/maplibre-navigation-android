@@ -322,6 +322,7 @@ public class NavigationMapboxMap {
     resetMapPadding();
   }
 
+
   /**
    * Adjusts the map camera to {@link DirectionsRoute} being traveled along.
    * <p>
@@ -534,6 +535,8 @@ public class NavigationMapboxMap {
       mapPaddingAdjustor.updateTopPaddingWithDefault();
     }
   }
+
+
 
   private void initializeRoute(MapView mapView, MapboxMap map) {
     Context context = mapView.getContext();

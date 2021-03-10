@@ -15,6 +15,7 @@ class MapPaddingAdjustor {
 
   private final int defaultTopPadding;
   private final int waynameTopPadding;
+
   private MapboxMap mapboxMap;
 
   MapPaddingAdjustor(MapView mapView, MapboxMap mapboxMap) {
@@ -30,6 +31,7 @@ class MapPaddingAdjustor {
   void updateTopPaddingWithDefault() {
     updateTopPadding(defaultTopPadding);
   }
+
 
   void removeAllPadding() {
     updatePadding(ZERO_MAP_PADDING);
@@ -53,7 +55,12 @@ class MapPaddingAdjustor {
     mapboxMap.setPadding(padding[0], padding[1], padding[2], padding[3]);
   }
 
+
+
   private void updateTopPadding(int topPadding) {
     mapboxMap.setPadding(0, topPadding, 0, 0);
   }
+
+
+
 }

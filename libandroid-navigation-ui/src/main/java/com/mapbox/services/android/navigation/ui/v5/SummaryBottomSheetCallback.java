@@ -17,7 +17,7 @@ class SummaryBottomSheetCallback extends BottomSheetBehavior.BottomSheetCallback
   @Override
   public void onStateChanged(@NonNull View bottomSheet, int newState) {
     dispatcher.onBottomSheetStateChanged(bottomSheet, newState);
-    presenter.onSummaryBottomSheetHidden();
+    presenter.onSummaryBottomSheetStateChange();
   }
 
   @Override

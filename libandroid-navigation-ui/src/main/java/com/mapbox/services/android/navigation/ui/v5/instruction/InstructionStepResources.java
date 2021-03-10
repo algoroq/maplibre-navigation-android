@@ -2,6 +2,7 @@ package com.mapbox.services.android.navigation.ui.v5.instruction;
 
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
+import android.util.Pair;
 
 import com.mapbox.api.directions.v5.models.BannerInstructions;
 import com.mapbox.api.directions.v5.models.BannerText;
@@ -28,10 +29,20 @@ class InstructionStepResources {
   private List<IntersectionLanes> turnLanes;
   private boolean shouldShowThenStep;
 
+  private String stepDistanceRemainingV2;
+
   InstructionStepResources(DistanceFormatter distanceFormatter, RouteProgress progress) {
     double distanceRemaining = progress.currentLegProgress().currentStepProgress().distanceRemaining();
     stepDistanceRemaining = distanceFormatter.formatDistance(distanceRemaining);
     extractStepResources(progress);
+
+    Pair<String, String> remainingDistance = distanceFormatter.getDistanceRemaining(distanceRemaining);
+    stepDistanceRemainingV2 = remainingDistance.first + " " + remainingDistance.second;
+
+  }
+
+  String getStepDistanceRemainingV2(){
+    return stepDistanceRemainingV2;
   }
 
   SpannableString getStepDistanceRemaining() {

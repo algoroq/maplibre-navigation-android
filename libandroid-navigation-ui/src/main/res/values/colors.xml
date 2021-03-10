@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- Primary route colors -->
-  <color name="mapbox_navigation_route_layer_blue">#56A8FB</color>
-  <color name="mapbox_navigation_route_layer_congestion_yellow">#F3A64F</color>
-  <color name="mapbox_navigation_route_layer_congestion_red">#E93340</color>
-  <color name="mapbox_navigation_route_shield_layer_color">#2F7AC6</color>
+  <color name="mapbox_navigation_route_layer_blue">#56A8FB</color> <!--barva trasy-->
+  <color name="mapbox_navigation_route_layer_congestion_yellow">#F3A64F</color> <!-- lehká zácpa-->
+  <color name="mapbox_navigation_route_layer_congestion_red">#E93340</color> <!--těžká zácpa-->
+  <color name="mapbox_navigation_route_shield_layer_color">#56A8FB</color> <!--outline trasy-->
 
   <!-- Alternative route colors -->
   <color name="mapbox_navigation_route_alternative_color">#8694A5</color>
@@ -23,9 +23,9 @@
   <color name="mapbox_navigation_view_color_accent_text">#424242</color>
   <color name="mapbox_navigation_view_color_divider">#D8D8D8</color>
 
-  <color name="mapbox_navigation_view_color_list_background">#2D3F53</color>
+  <color name="mapbox_navigation_view_color_list_background">#458726</color>
 
-  <color name="mapbox_navigation_view_color_banner_background">#37516F</color>
+  <color name="mapbox_navigation_view_color_banner_background">#5db339</color>
   <color name="mapbox_navigation_view_color_banner_primary_text">#FFFFFF</color>
   <color name="mapbox_navigation_view_color_banner_secondary_text">#E6FFFFFF</color>
   <color name="mapbox_navigation_view_color_banner_maneuver_primary">#FFFFFF</color>
@@ -48,7 +48,7 @@
   <color name="mapbox_navigation_view_color_banner_maneuver_secondary_dark">#4DFFFFFF</color>
 
   <!-- Alert View -->
-  <color name="mapbox_navigation_view_color_progress">#4B75A4</color>
+  <color name="mapbox_navigation_view_color_progress">#5db339</color>
   <color name="mapbox_navigation_view_color_progress_background">#39587B</color>
 
   <color name="mapbox_navigation_view_color_progress_dark">#4B75A4</color>
@@ -61,5 +61,11 @@
   <color name="md_grey_700">#616161</color>
   <color name="md_grey_800">#424242</color>
   <color name="md_grey_900">#212121</color>
+
+
+<!--  JV-->
+  <color name="semitransparent">#10000000</color>
+  <color name="transparent">#00000000</color>
+  <color name="red">#FF0000</color>
 </resources>
 

@@ -32,8 +32,10 @@ android {
 }
 
 dependencies {
-  // Navigation SDK
+    // Navigation SDK
   api project(':libandroid-navigation')
+
+
 
   // Mapbox Map SDK
   implementation dependenciesList.mapboxMapSdk
@@ -51,7 +53,7 @@ dependencies {
   // Mapbox plugins
   implementation dependenciesList.locationLayerPlugin
 
-  // AutoValues
+//   AutoValues
   annotationProcessor dependenciesList.autoValue
   compileOnly dependenciesList.autoValue
 

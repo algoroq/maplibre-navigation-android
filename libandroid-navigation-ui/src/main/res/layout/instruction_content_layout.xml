@@ -1,96 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="96dp"
+    android:layout_height="90dp"
     tools:background="?navigationViewBannerBackground">
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/guidelineRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="80dp"/>
+        app:layout_constraintGuide_percent="0.2" />
 
-    <android.support.constraint.ConstraintLayout
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginVertical="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.mapbox.services.android.navigation.ui.v5.instruction.maneuver.ManeuverView
             android:id="@+id/maneuverView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:layout_constraintBottom_toTopOf="@+id/stepDistanceText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"/>
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/stepDistanceText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="11dp"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textColor="?attr/navigationViewBannerSecondaryText"
-            android:textSize="22sp"
+        <LinearLayout
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="302 mi"/>
+            app:layout_constraintStart_toEndOf="@+id/guidelineRight"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/instructionLayoutText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="8dp"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp">
 
-    </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/stepDistanceText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:includeFontPadding="false"
+                android:gravity="bottom|start"
+                android:maxLines="1"
+                android:textColor="?attr/navigationViewBannerSecondaryText"
+                android:textStyle="bold"
+                android:textSize="30sp"
+                tools:text="70 m" />
 
-    <LinearLayout
-        android:id="@+id/instructionLayoutText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="start|top"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/stepPrimaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textSize="20sp"
+                    android:textColor="?attr/navigationViewBannerPrimaryText"
+                    tools:text="I-580 South" />
 
-        <TextView
-            android:id="@+id/stepPrimaryText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:minHeight="35dp"
-            android:textColor="?attr/navigationViewBannerPrimaryText"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            tools:text="I-580 South"/>
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/stepSecondaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="?attr/navigationViewBannerSecondaryText"
+                    tools:text="San Jose / Cupertino" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/stepSecondaryText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:lineSpacingMultiplier="0.8"
-            android:maxLines="1"
-            android:minHeight="31dp"
-            android:textColor="?attr/navigationViewBannerSecondaryText"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            tools:text="San Jose / Cupertino"/>
 
-    </LinearLayout>
+        </LinearLayout>
+
+
+
+
 
 </android.support.constraint.ConstraintLayout>

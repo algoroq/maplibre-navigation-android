@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="instructionLayoutHeightV2">90dp</dimen>
+    <dimen name="summaryBottomsheetHeightV2">68dp</dimen>
+
+</resources>

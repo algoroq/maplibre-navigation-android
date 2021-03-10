@@ -282,14 +282,15 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
    * can be animated appropriately.
    */
   public void hideInstructionList() {
+    onInstructionListVisibilityChanged(false);
     rvInstructions.stopScroll();
     beginDelayedTransition();
-    int orientation = getContext().getResources().getConfiguration().orientation;
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      updateLandscapeConstraintsTo(R.layout.instruction_layout);
-    }
+//    int orientation = getContext().getResources().getConfiguration().orientation;
+//    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//      updateLandscapeConstraintsTo(R.layout.instruction_layout);
+//    }
     instructionListLayout.setVisibility(GONE);
-    onInstructionListVisibilityChanged(false);
+
   }
 
   /**
@@ -302,10 +303,10 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     onInstructionListVisibilityChanged(true);
     instructionLayout.requestFocus();
     beginDelayedListTransition();
-    int orientation = getContext().getResources().getConfiguration().orientation;
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      updateLandscapeConstraintsTo(R.layout.instruction_layout_alt);
-    }
+//    int orientation = getContext().getResources().getConfiguration().orientation;
+//    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//      updateLandscapeConstraintsTo(R.layout.instruction_layout_alt);
+//    }
     instructionListLayout.setVisibility(VISIBLE);
   }
 
@@ -369,9 +370,12 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     upcomingDistanceText = findViewById(R.id.stepDistanceText);
     upcomingPrimaryText = findViewById(R.id.stepPrimaryText);
     upcomingSecondaryText = findViewById(R.id.stepSecondaryText);
+
     thenManeuverView = findViewById(R.id.thenManeuverView);
     thenStepText = findViewById(R.id.thenStepText);
+
     alertView = findViewById(R.id.alertView);
+
     rerouteLayout = findViewById(R.id.rerouteLayout);
     turnLaneLayout = findViewById(R.id.turnLaneLayout);
     thenStepLayout = findViewById(R.id.thenStepLayout);
@@ -382,7 +386,7 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     rvInstructions = findViewById(R.id.rvInstructions);
     soundButton = findViewById(R.id.soundLayout);
     feedbackButton = findViewById(R.id.feedbackLayout);
-    initializeInstructionAutoSize();
+    //initializeInstructionAutoSize();
   }
 
   /**
@@ -559,7 +563,10 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
    * @param model provides distance text
    */
   private void distanceText(InstructionModel model) {
-    upcomingDistanceText.setText(model.getStepResources().getStepDistanceRemaining());
+    // dostanu npouze string. ne spanneble string.
+    upcomingDistanceText.setText(model.getStepResources().getStepDistanceRemainingV2());
+
+    //upcomingDistanceText.setText(model.getStepResources().getStepDistanceRemaining());
   }
 
   private InstructionLoader createInstructionLoader(TextView textView, BannerText bannerText) {
@@ -752,13 +759,13 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
       if (upcomingSecondaryText.getVisibility() == GONE) {
         upcomingSecondaryText.setVisibility(VISIBLE);
         upcomingPrimaryText.setMaxLines(1);
-        adjustBannerTextVerticalBias(0.65f);
+        //adjustBannerTextVerticalBias(0.65f);
       }
       createInstructionLoader(upcomingSecondaryText, model.getSecondaryBannerText()).loadInstruction();
     } else {
       upcomingPrimaryText.setMaxLines(2);
       upcomingSecondaryText.setVisibility(GONE);
-      adjustBannerTextVerticalBias(0.5f);
+      //adjustBannerTextVerticalBias(0.5f);
     }
   }
 

@@ -8,6 +8,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Pair;
 
 import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.geojson.Point;
@@ -103,6 +104,30 @@ public class DistanceFormatter {
     } else {
       return getDistanceString(roundToDecimalPlace(distanceLargeUnit, 1), largeUnit);
     }
+  }
+
+  public Pair<String, String> getDistanceRemaining(double distance){
+    double distanceSmallUnit = TurfConversion.convertLength(distance, TurfConstants.UNIT_METERS, smallUnit);
+    double distanceLargeUnit = TurfConversion.convertLength(distance, TurfConstants.UNIT_METERS, largeUnit);
+
+    String distanceRemaining;
+    String distanceUnitRemaining;
+
+    // If the distance is greater than 10 miles/kilometers, then round to nearest mile/kilometer
+    if (distanceLargeUnit > LARGE_UNIT_THRESHOLD) {
+      distanceUnitRemaining = unitStrings.get(largeUnit);
+      distanceRemaining = roundToDecimalPlace(distanceLargeUnit, 0);
+      // If the distance is less than 401 feet/meters, round by fifty feet/meters
+    } else if (distanceSmallUnit < SMALL_UNIT_THRESHOLD) {
+      distanceUnitRemaining = unitStrings.get(smallUnit);
+      distanceRemaining = roundToClosestIncrement(distanceSmallUnit);
+      // If the distance is between 401 feet/meters and 10 miles/kilometers, then round to one decimal place
+    } else {
+      distanceUnitRemaining = unitStrings.get(largeUnit);
+      distanceRemaining = roundToDecimalPlace(distanceLargeUnit, 1);
+    }
+
+    return Pair.create(distanceRemaining, distanceUnitRemaining);
   }
 
   /**

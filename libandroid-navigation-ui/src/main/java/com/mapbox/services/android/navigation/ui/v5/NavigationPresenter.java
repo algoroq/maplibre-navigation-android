@@ -1,6 +1,7 @@
 package com.mapbox.services.android.navigation.ui.v5;
 
 import android.location.Location;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
@@ -21,24 +22,29 @@ class NavigationPresenter {
 
   void onRecenterClick() {
     view.setSummaryBehaviorHideable(false);
-    view.setSummaryBehaviorState(BottomSheetBehavior.STATE_EXPANDED);
+    view.setSummaryBehaviorState(BottomSheetBehavior.STATE_COLLAPSED);
     view.updateWaynameVisibility(true);
     view.resetCameraPosition();
     view.hideRecenterBtn();
   }
 
-  void onMapScroll() {
-    if (!view.isSummaryBottomSheetHidden()) {
-      view.setSummaryBehaviorHideable(true);
-      view.setSummaryBehaviorState(BottomSheetBehavior.STATE_HIDDEN);
-      view.updateCameraTrackingEnabled(false);
-      view.updateWaynameVisibility(false);
-    }
+  void onMapMoveEnd(){
+    view.updateCameraTrackingEnabled(false);
+    view.updateWaynameVisibility(false);
+    view.showRecenterBtn();
   }
 
-  void onSummaryBottomSheetHidden() {
-    if (view.isSummaryBottomSheetHidden()) {
-      view.showRecenterBtn();
+  void onMapMoveBegin(){
+    view.setSummaryBehaviorHideable(false);
+    view.setSummaryBehaviorState(BottomSheetBehavior.STATE_COLLAPSED);
+  }
+
+
+  void onSummaryBottomSheetStateChange(){
+   if(view.isSummaryBottomSheetCollapsed()){
+      view.setBottomSheetChangerBtnResource(R.drawable.ic_arrow_up);
+    }else if (view.isSummaryBottomSheetExpanded()){
+      view.setBottomSheetChangerBtnResource(R.drawable.ic_arrow_down);
     }
   }
 
@@ -67,13 +73,28 @@ class NavigationPresenter {
   }
 
   void onInstructionListVisibilityChanged(boolean visible) {
-    if (visible) {
-      view.hideRecenterBtn();
-    } else {
-      if (view.isSummaryBottomSheetHidden()) {
-        view.showRecenterBtn();
+    if(view.isRestored()){
+      if(view.isSummaryBottomSheetCollapsed()){
+        view.setSummaryBehaviorState(BottomSheetBehavior.STATE_COLLAPSED);
+        view.setSummaryBehaviorHideable(false);
+      } else if(view.isSummaryBottomSheetHidden()){
+        view.setSummaryBehaviorHideable(true);
+        view.setSummaryBehaviorState(BottomSheetBehavior.STATE_HIDDEN);
+      }else{
+        view.setSummaryBehaviorState(BottomSheetBehavior.STATE_EXPANDED);
+        view.setSummaryBehaviorHideable(false);
+      }
+    }else{
+      if(visible){
+        view.hideRecenterBtn();
+        view.setSummaryBehaviorHideable(true);
+        view.setSummaryBehaviorState(BottomSheetBehavior.STATE_HIDDEN);
+      }else{
+        view.setSummaryBehaviorState(BottomSheetBehavior.STATE_COLLAPSED);
+        view.setSummaryBehaviorHideable(false);
       }
     }
+    onSummaryBottomSheetStateChange();
   }
 
   void onRouteOverviewClick() {
@@ -81,4 +102,21 @@ class NavigationPresenter {
     view.updateCameraRouteOverview();
     view.showRecenterBtn();
   }
+
+
+
+  void onBottomSheetChangerButtonClick(){
+    if(view.isSummaryBottomSheetExpanded()){
+      view.setSummaryBehaviorHideable(false);
+      view.setSummaryBehaviorState(BottomSheetBehavior.STATE_COLLAPSED);
+    }else{
+      view.setSummaryBehaviorHideable(false);
+      view.setSummaryBehaviorState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+    onSummaryBottomSheetStateChange();
+  }
+
+  void onBottomSheetExample1ButtonClick(){}
+  void onBottomSheetExample2ButtonClick(){}
+  void onBottomSheetExample3ButtonClick(){}
 }

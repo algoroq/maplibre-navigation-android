@@ -12,34 +12,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:mapbox_uiAttribution="false"
+        app:mapbox_styleUrl="?attr/navigationViewMapStyle"
         app:mapbox_uiCompass="false"
-        app:mapbox_uiLogo="false"/>
+        app:mapbox_uiLogo="false" />
 
     <ImageView
         android:id="@+id/screenshotView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
     <com.mapbox.services.android.navigation.ui.v5.RecenterButton
         android:id="@+id/recenterBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"
         android:visibility="invisible"
         app:layout_anchor="@id/summaryBottomSheet"
-        app:layout_anchorGravity="top|left"/>
+        app:layout_anchorGravity="end|bottom" />
 
-    <com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet
-        android:id="@+id/summaryBottomSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"/>
 
     <com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView
         android:id="@+id/instructionView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
+    <com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet
+        android:id="@+id/summaryBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:behavior_peekHeight="75dp"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior" />
 </android.support.design.widget.CoordinatorLayout>

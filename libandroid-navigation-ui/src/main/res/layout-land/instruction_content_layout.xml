@@ -1,92 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="90dp"
+    tools:background="?navigationViewBannerBackground">
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/guidelineRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="88dp"/>
+        app:layout_constraintGuide_percent="0.2" />
 
-    <LinearLayout
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
+        android:layout_height="0dp"
+        android:layout_marginVertical="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toStartOf="@id/guidelineRight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.mapbox.services.android.navigation.ui.v5.instruction.maneuver.ManeuverView
             android:id="@+id/maneuverView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="8dp"/>
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guidelineRight"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/instructionLayoutText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="8dp"
+        android:orientation="vertical"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp">
 
         <TextView
+            android:layout_weight="1"
             android:id="@+id/stepDistanceText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:includeFontPadding="false"
+            android:gravity="bottom|start"
             android:maxLines="1"
             android:textColor="?attr/navigationViewBannerSecondaryText"
-            android:textSize="20sp"
-            tools:text="302 mi"/>
+            android:textStyle="bold"
+            android:textSize="30sp"
+            tools:text="70 m" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="start|top"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/stepPrimaryText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:textColor="?attr/navigationViewBannerPrimaryText"
+                tools:text="I-580 South" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/stepSecondaryText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="?attr/navigationViewBannerSecondaryText"
+                tools:text="San Jose / Cupertino" />
+        </LinearLayout>
+
 
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/instructionLayoutText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/stepPrimaryText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textColor="?attr/navigationViewBannerPrimaryText"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Fulton St."/>
 
-        <TextView
-            android:id="@+id/stepSecondaryText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textColor="?attr/navigationViewBannerSecondaryText"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/stepPrimaryText"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="San Jose / Cupertino / Saratoga Montery / SR-1"/>
 
-    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

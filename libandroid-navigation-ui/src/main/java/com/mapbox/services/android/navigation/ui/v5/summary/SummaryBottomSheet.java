@@ -39,6 +39,12 @@ public class SummaryBottomSheet extends FrameLayout {
   private TextView distanceRemainingText;
   private TextView timeRemainingText;
   private TextView arrivalTimeText;
+
+  private TextView txtArrivalTimeTitle;
+  private TextView txtTimeUnitsRemaining;
+  private TextView txtDistanceUnitsRemaining;
+
+  private ProgressBar routeProgressProgressBar;
   private ProgressBar rerouteProgressBar;
   private boolean isRerouting;
   @NavigationTimeFormat.Type
@@ -67,6 +73,7 @@ public class SummaryBottomSheet extends FrameLayout {
   protected void onFinishInflate() {
     super.onFinishInflate();
     bind();
+    clearViews();
   }
 
   public void subscribe(NavigationViewModel navigationViewModel) {
@@ -75,8 +82,13 @@ public class SummaryBottomSheet extends FrameLayout {
       public void onChanged(@Nullable SummaryModel summaryModel) {
         if (summaryModel != null && !isRerouting) {
           arrivalTimeText.setText(summaryModel.getArrivalTime());
-          timeRemainingText.setText(summaryModel.getTimeRemaining());
-          distanceRemainingText.setText(summaryModel.getDistanceRemaining());
+          txtArrivalTimeTitle.setText(summaryModel.getArrivalTitle());
+          timeRemainingText.setText(summaryModel.getTimeRemainingV2());
+          txtTimeUnitsRemaining.setText(summaryModel.getTimeUnitsRemaining());
+          distanceRemainingText.setText(summaryModel.getDistanceRemainingV2());
+          txtDistanceUnitsRemaining.setText(summaryModel.getDistanceUnitsRemaining());
+          routeProgressProgressBar.setProgress(summaryModel.getProgress());
+
         }
       }
     });
@@ -107,8 +119,12 @@ public class SummaryBottomSheet extends FrameLayout {
     if (routeProgress != null && !isRerouting) {
       SummaryModel model = new SummaryModel(getContext(), distanceFormatter, routeProgress, timeFormatType);
       arrivalTimeText.setText(model.getArrivalTime());
-      timeRemainingText.setText(model.getTimeRemaining());
-      distanceRemainingText.setText(model.getDistanceRemaining());
+      txtArrivalTimeTitle.setText(model.getArrivalTitle());
+      timeRemainingText.setText(model.getTimeRemainingV2());
+      txtTimeUnitsRemaining.setText(model.getTimeUnitsRemaining());
+      distanceRemainingText.setText(model.getDistanceRemainingV2());
+      txtDistanceUnitsRemaining.setText(model.getDistanceUnitsRemaining());
+      routeProgressProgressBar.setProgress(model.getProgress());
     }
   }
 
@@ -159,7 +175,7 @@ public class SummaryBottomSheet extends FrameLayout {
    */
   private void initialize() {
     initializeDistanceFormatter();
-    inflate(getContext(), R.layout.summary_bottomsheet_layout, this);
+    inflate(getContext(), R.layout.bottomsheet_full, this);
   }
 
   private void initializeDistanceFormatter() {
@@ -178,6 +194,13 @@ public class SummaryBottomSheet extends FrameLayout {
     timeRemainingText = findViewById(R.id.timeRemainingText);
     arrivalTimeText = findViewById(R.id.arrivalTimeText);
     rerouteProgressBar = findViewById(R.id.rerouteProgressBar);
+
+    txtArrivalTimeTitle = findViewById(R.id.txt_arrivalTimeTitle);
+    txtDistanceUnitsRemaining = findViewById(R.id.txt_distanceUnitsRemaining);
+    txtTimeUnitsRemaining = findViewById(R.id.txt_timeUnitsRemaining);
+
+    routeProgressProgressBar = findViewById(R.id.progressBar);
+
     updateRouteOverviewImage();
   }
 
@@ -193,5 +216,9 @@ public class SummaryBottomSheet extends FrameLayout {
     arrivalTimeText.setText(EMPTY_STRING);
     timeRemainingText.setText(EMPTY_STRING);
     distanceRemainingText.setText(EMPTY_STRING);
+    txtTimeUnitsRemaining.setText(EMPTY_STRING);
+    txtDistanceUnitsRemaining.setText(EMPTY_STRING);
+    txtArrivalTimeTitle.setText(EMPTY_STRING);
+    routeProgressProgressBar.setProgress(0);
   }
 }

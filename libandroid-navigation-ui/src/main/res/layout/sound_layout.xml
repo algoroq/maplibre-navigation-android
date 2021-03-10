@@ -33,7 +33,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:tint="?attr/navigationViewSecondary"
         app:backgroundTint="?attr/navigationViewPrimary"
         app:borderWidth="0dp"

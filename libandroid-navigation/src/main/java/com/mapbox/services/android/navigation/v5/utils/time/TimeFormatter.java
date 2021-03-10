@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Pair;
 
 import com.mapbox.services.android.navigation.R;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationTimeFormat;
@@ -20,73 +21,115 @@ import java.util.concurrent.TimeUnit;
 
 public class TimeFormatter {
 
-  private static final String TIME_STRING_FORMAT = " %s ";
+    private static final String TIME_STRING_FORMAT = " %s ";
 
-  public static String formatTime(Calendar time, double routeDuration, @NavigationTimeFormat.Type int type,
-                                  boolean isDeviceTwentyFourHourFormat) {
-    time.add(Calendar.SECOND, (int) routeDuration);
-    TimeFormattingChain chain = new TimeFormattingChain();
-    return chain.setup(isDeviceTwentyFourHourFormat).obtainTimeFormatted(type, time);
-  }
-
-  public static SpannableStringBuilder formatTimeRemaining(Context context, double routeDuration) {
-    long seconds = (long) routeDuration;
-
-    if (seconds < 0) {
-      throw new IllegalArgumentException("Duration must be greater than zero.");
+    public static String formatTime(Calendar time, double routeDuration, @NavigationTimeFormat.Type int type,
+                                    boolean isDeviceTwentyFourHourFormat) {
+        time.add(Calendar.SECOND, (int) routeDuration);
+        TimeFormattingChain chain = new TimeFormattingChain();
+        return chain.setup(isDeviceTwentyFourHourFormat).obtainTimeFormatted(type, time);
     }
 
-    long days = TimeUnit.SECONDS.toDays(seconds);
-    seconds -= TimeUnit.DAYS.toSeconds(days);
-    long hours = TimeUnit.SECONDS.toHours(seconds);
-    seconds -= TimeUnit.HOURS.toSeconds(hours);
-    long minutes = TimeUnit.SECONDS.toMinutes(seconds);
-    seconds -= TimeUnit.MINUTES.toSeconds(minutes);
+    public static Pair<String, String> getTimeRemaining(Context context, double routeDuration) {
+        long totalSeconds = (long)routeDuration;
 
-    if (seconds >= 30) {
-      minutes = minutes + 1;
+        long seconds = (totalSeconds % 60);
+        long minutes = (totalSeconds % 3600) / 60;
+        long hours = (totalSeconds % 86400) / 3600;
+        long days = (totalSeconds % (86400 * 30)) / 86400;
+
+        String daysString = toTwoDigitString(days);
+        String hoursString = toTwoDigitString(hours);
+        String minutesString = toTwoDigitString(minutes);
+        String secondsString = toTwoDigitString(seconds);
+
+        String timeRemaining;
+        String unitsRemaining;
+        if(days != 0) {
+            //days:hours
+            timeRemaining = daysString + ":" + hoursString;
+            String dayQuantityString = context.getResources().getQuantityString(R.plurals.numberOfDays, (int) days);
+            unitsRemaining = String.format(TIME_STRING_FORMAT, dayQuantityString);
+        }else if(hours != 0){
+            //hours:minutes
+            timeRemaining = hoursString + ":" + minutesString;
+            unitsRemaining = String.format(TIME_STRING_FORMAT, context.getString(R.string.hr));
+        }else{
+            //minutes:seconds
+            timeRemaining = minutesString + ":" + secondsString;
+            unitsRemaining = String.format(TIME_STRING_FORMAT, context.getString(R.string.min));
+        }
+        return Pair.create(timeRemaining, unitsRemaining);
     }
 
-    List<SpanItem> textSpanItems = new ArrayList<>();
-    Resources resources = context.getResources();
-    formatDays(resources, days, textSpanItems);
-    formatHours(context, hours, textSpanItems);
-    formatMinutes(context, minutes, textSpanItems);
-    formatNoData(context, days, hours, minutes, textSpanItems);
-    return SpanUtils.combineSpans(textSpanItems);
-  }
-
-  private static void formatDays(Resources resources, long days, List<SpanItem> textSpanItems) {
-    if (days != 0) {
-      String dayQuantityString = resources.getQuantityString(R.plurals.numberOfDays, (int) days);
-      String dayString = String.format(TIME_STRING_FORMAT, dayQuantityString);
-      textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(days)));
-      textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), dayString));
+    private static String toTwoDigitString (long number){
+        String twoDigitNumber;
+        if(number < 10){
+            twoDigitNumber = "0"+number;
+        }else{
+            twoDigitNumber = ""+number;
+        }
+        return twoDigitNumber;
     }
-  }
 
-  private static void formatHours(Context context, long hours, List<SpanItem> textSpanItems) {
-    if (hours != 0) {
-      String hourString = String.format(TIME_STRING_FORMAT, context.getString(R.string.hr));
-      textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(hours)));
-      textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), hourString));
-    }
-  }
+    public static SpannableStringBuilder formatTimeRemaining(Context context, double routeDuration) {
+        long seconds = (long) routeDuration;
 
-  private static void formatMinutes(Context context, long minutes, List<SpanItem> textSpanItems) {
-    if (minutes != 0) {
-      String minuteString = String.format(TIME_STRING_FORMAT, context.getString(R.string.min));
-      textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(minutes)));
-      textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), minuteString));
-    }
-  }
+        if (seconds < 0) {
+            throw new IllegalArgumentException("Duration must be greater than zero.");
+        }
 
-  private static void formatNoData(Context context, long days, long hours, long minutes,
-                                   List<SpanItem> textSpanItems) {
-    if (days == 0 && hours == 0 && minutes == 0) {
-      String minuteString = String.format(TIME_STRING_FORMAT, context.getString(R.string.min));
-      textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(1)));
-      textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), minuteString));
+        long days = TimeUnit.SECONDS.toDays(seconds);
+        seconds -= TimeUnit.DAYS.toSeconds(days);
+        long hours = TimeUnit.SECONDS.toHours(seconds);
+        seconds -= TimeUnit.HOURS.toSeconds(hours);
+        long minutes = TimeUnit.SECONDS.toMinutes(seconds);
+        seconds -= TimeUnit.MINUTES.toSeconds(minutes);
+
+        if (seconds >= 30) {
+            minutes = minutes + 1;
+        }
+
+        List<SpanItem> textSpanItems = new ArrayList<>();
+        Resources resources = context.getResources();
+        formatDays(resources, days, textSpanItems);
+        formatHours(context, hours, textSpanItems);
+        formatMinutes(context, minutes, textSpanItems);
+        formatNoData(context, days, hours, minutes, textSpanItems);
+        return SpanUtils.combineSpans(textSpanItems);
     }
-  }
+
+    private static void formatDays(Resources resources, long days, List<SpanItem> textSpanItems) {
+        if (days != 0) {
+            String dayQuantityString = resources.getQuantityString(R.plurals.numberOfDays, (int) days);
+            String dayString = String.format(TIME_STRING_FORMAT, dayQuantityString);
+            textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(days)));
+            textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), dayString));
+        }
+    }
+
+    private static void formatHours(Context context, long hours, List<SpanItem> textSpanItems) {
+        if (hours != 0) {
+            String hourString = String.format(TIME_STRING_FORMAT, context.getString(R.string.hr));
+            textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(hours)));
+            textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), hourString));
+        }
+    }
+
+    private static void formatMinutes(Context context, long minutes, List<SpanItem> textSpanItems) {
+        if (minutes != 0) {
+            String minuteString = String.format(TIME_STRING_FORMAT, context.getString(R.string.min));
+            textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(minutes)));
+            textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), minuteString));
+        }
+    }
+
+    private static void formatNoData(Context context, long days, long hours, long minutes,
+                                     List<SpanItem> textSpanItems) {
+        if (days == 0 && hours == 0 && minutes == 0) {
+            String minuteString = String.format(TIME_STRING_FORMAT, context.getString(R.string.min));
+            textSpanItems.add(new TextSpanItem(new StyleSpan(Typeface.BOLD), String.valueOf(1)));
+            textSpanItems.add(new TextSpanItem(new RelativeSizeSpan(1f), minuteString));
+        }
+    }
 }

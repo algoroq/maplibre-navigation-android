@@ -14,7 +14,8 @@ class NavigationInstructionListListener implements InstructionListListener {
 
   @Override
   public void onInstructionListVisibilityChanged(boolean visible) {
-    presenter.onInstructionListVisibilityChanged(visible);
     dispatcher.onInstructionListVisibilityChanged(visible);
+    presenter.onInstructionListVisibilityChanged(visible);
+
   }
 }

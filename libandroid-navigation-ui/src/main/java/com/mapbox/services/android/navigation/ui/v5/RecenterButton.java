@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.LinearLayout;
 
 /**
  * Button used to re-activate following user location during navigation.
@@ -20,7 +21,7 @@ import android.view.animation.TranslateAnimation;
  *
  * @since 0.6.0
  */
-public class RecenterButton extends CardView implements NavigationButton {
+public class RecenterButton extends LinearLayout implements NavigationButton {
   private MultiOnClickListener multiOnClickListener;
   private Animation slideUpBottom;
 

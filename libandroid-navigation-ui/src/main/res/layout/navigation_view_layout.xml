@@ -32,15 +32,16 @@
         app:layout_anchor="@id/summaryBottomSheet"
         app:layout_anchorGravity="top|left"/>
 
-    <com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet
-        android:id="@+id/summaryBottomSheet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"/>
-
     <com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView
         android:id="@+id/instructionView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet
+        android:id="@+id/summaryBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:behavior_peekHeight="68dp"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"/>
 
 </android.support.design.widget.CoordinatorLayout>
