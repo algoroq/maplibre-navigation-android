@@ -36,7 +36,13 @@ dependencies {
   api project(':libandroid-navigation')
 
   // Mapbox Map SDK
-  implementation dependenciesList.mapboxMapSdk
+//  implementation dependenciesList.mapboxMapSdk
+  implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:6.5.0') {
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
 
   // Support libraries
   implementation dependenciesList.supportDesign
@@ -49,7 +55,13 @@ dependencies {
   annotationProcessor dependenciesList.lifecycleCompiler
 
   // Mapbox plugins
-  implementation dependenciesList.locationLayerPlugin
+//  implementation dependenciesList.locationLayerPlugin
+  implementation('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.8.1') {
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
 
   // AutoValues
   annotationProcessor dependenciesList.autoValue
@@ -57,6 +69,8 @@ dependencies {
 
   // Picasso
   implementation dependenciesList.picasso
+
+  implementation dependenciesList.retrofit
 
   // Mapbox Map SDK Javadoc
   javadocDeps dependenciesList.mapboxMapSdk

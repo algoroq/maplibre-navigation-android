@@ -30,7 +30,8 @@ ext {
       robolectric        : '3.8',
       lifecycle          : '1.1.1',
       picasso            : '2.71828',
-      gmsLocation        : '15.0.1'
+      gmsLocation        : '15.0.1',
+      retrofit           : '2.4.0',
   ]
 
   pluginVersion = [
@@ -78,6 +79,7 @@ ext {
       // square crew
       timber                 : "com.jakewharton.timber:timber:${version.timber}",
       picasso                : "com.squareup.picasso:picasso:${version.picasso}",
+      retrofit               : "com.squareup.retrofit2:retrofit:${version.retrofit}",
       leakCanaryDebug        : "com.squareup.leakcanary:leakcanary-android:${version.leakCanaryVersion}",
       leakCanaryRelease      : "com.squareup.leakcanary:leakcanary-android-no-op:${version.leakCanaryVersion}",
       leakCanaryTest         : "com.squareup.leakcanary:leakcanary-android-no-op:${version.leakCanaryVersion}",

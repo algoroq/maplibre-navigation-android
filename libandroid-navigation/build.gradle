@@ -39,12 +39,19 @@ android {
 }
 
 dependencies {
+  api files('libs/mapbox-sdk-core-4.0.0.jar')
+  api files('libs/mapbox-sdk-geojson-4.0.0.jar')
+  api files('libs/mapbox-sdk-services-4.0.0.jar')
+  api files('libs/mapbox-sdk-turf-4.0.0.jar')
+
   api dependenciesList.mapboxEvents
-  api dependenciesList.mapboxSdkServices
-  api dependenciesList.mapboxSdkTurf
+//  api dependenciesList.mapboxSdkServices
+//  api dependenciesList.mapboxSdkTurf
 
   // Support
   implementation dependenciesList.supportAppcompatV7
+
+  implementation dependenciesList.retrofit
 
   // Logging
   implementation dependenciesList.timber

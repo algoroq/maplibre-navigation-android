@@ -41,8 +41,22 @@ android {
 dependencies {
   // Mapbox Navigation SDK
   implementation project(':libandroid-navigation-ui')
-  implementation dependenciesList.mapboxMapSdk
-  implementation dependenciesList.locationLayerPlugin
+
+//  implementation dependenciesList.mapboxMapSdk
+  implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:6.5.0') {
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
+
+//  implementation dependenciesList.locationLayerPlugin
+  implementation (dependenciesList.locationLayerPlugin) {
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
 
   // Support libraries
   implementation dependenciesList.supportAppcompatV7
@@ -51,6 +65,7 @@ dependencies {
   implementation dependenciesList.supportConstraintLayout
   implementation dependenciesList.supportCardView
   implementation dependenciesList.lifecycleExtensions
+  implementation dependenciesList.retrofit
 
   implementation dependenciesList.gmsLocation
 
