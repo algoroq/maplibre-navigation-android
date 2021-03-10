@@ -40,10 +40,8 @@ android {
 }
 
 dependencies {
-//  api fileTree(dir: 'libs', include: ['*.jar'])
-// //events
-//  implementation project(':libcore')
-//  implementation project(':libtelemetry')
+  api fileTree(dir: 'libs', include: ['*.jar'])
+
 
   //Retrofit
   api 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -52,10 +50,8 @@ dependencies {
 
 
   api dependenciesList.mapboxEvents
-
-
-  api dependenciesList.mapboxSdkServices
-  api dependenciesList.mapboxSdkTurf
+//  api dependenciesList.mapboxSdkServices
+//  api dependenciesList.mapboxSdkTurf
 
   // Support
   implementation dependenciesList.supportAppcompatV7
