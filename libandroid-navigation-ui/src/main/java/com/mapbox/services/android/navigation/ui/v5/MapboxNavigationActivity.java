@@ -110,6 +110,7 @@ public class MapboxNavigationActivity extends AppCompatActivity implements OnNav
   @Override
   public void onNavigationFinished() {
     // Navigation finished, finish the activity
+    System.out.println("XXXX - finishedddd");
     finish();
   }
 

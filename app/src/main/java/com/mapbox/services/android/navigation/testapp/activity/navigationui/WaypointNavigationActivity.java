@@ -153,6 +153,7 @@ public class WaypointNavigationActivity extends AppCompatActivity implements OnN
     if (!dropoffDialogShown && !points.isEmpty()) {
       showDropoffDialog();
       dropoffDialogShown = true; // Accounts for multiple arrival events
+      System.out.println("xxxx - ARRIVED");
     }
   }
 

@@ -520,8 +520,8 @@ public final class NavigationRoute {
             directionsBuilder
                     .steps(true)
                     .continueStraight(true)
-                    .geometries(DirectionsCriteria.GEOMETRY_GEOJSON)
-                    .overview(DirectionsCriteria.OVERVIEW_FALSE);
+                    .geometries(DirectionsCriteria.GEOMETRY_POLYLINE6)
+                    .overview(DirectionsCriteria.OVERVIEW_FULL);
             //.voiceInstructions(false)
             //.bannerInstructions(false)
             //.roundaboutExits(true);

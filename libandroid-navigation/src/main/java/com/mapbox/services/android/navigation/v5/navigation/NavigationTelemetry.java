@@ -129,7 +129,7 @@ class NavigationTelemetry implements LocationEngineListener, NavigationMetricLis
     if (!isInitialized) {
       updateLocationEngine(locationEngine);
 
-      validateAccessToken(accessToken);
+//TODO      validateAccessToken(accessToken);
       NavigationMetricsWrapper.init(context, accessToken, BuildConfig.MAPBOX_NAVIGATION_EVENTS_USER_AGENT);
 
       MapboxNavigationOptions options = navigation.options();
@@ -302,11 +302,11 @@ class NavigationTelemetry implements LocationEngineListener, NavigationMetricLis
   }
 
   private void validateAccessToken(String accessToken) {
-    if (TextUtils.isEmpty(accessToken) || (!accessToken.toLowerCase(Locale.US).startsWith("pk.")
-      && !accessToken.toLowerCase(Locale.US).startsWith("sk."))) {
-      throw new NavigationException("A valid access token must be passed in when first initializing"
-        + " MapboxNavigation");
-    }
+//   TODO  if (TextUtils.isEmpty(accessToken) || (!accessToken.toLowerCase(Locale.US).startsWith("pk.")
+//      && !accessToken.toLowerCase(Locale.US).startsWith("sk."))) {
+//      throw new NavigationException("A valid access token must be passed in when first initializing"
+//        + " MapboxNavigation");
+//    }
   }
 
   private void initEventDispatcherListeners(MapboxNavigation navigation) {

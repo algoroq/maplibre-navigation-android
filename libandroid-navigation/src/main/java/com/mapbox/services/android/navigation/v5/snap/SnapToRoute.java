@@ -98,29 +98,31 @@ public class SnapToRoute extends Snap {
 
   @NonNull
   private static LineString createCurrentLineString(RouteLegProgress legProgress) {
-    List<Point> points = new ArrayList<>();
-    for (List<Double> coordinate : legProgress.currentStep().geometry().coordinates()) {
-      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-      points.add(point);
-    }
-   return LineString.fromLngLats(points);
-//    String currentGeometry = legProgress.currentStep().geometry();
-//    return LineString.fromPolyline(currentGeometry, PRECISION_6);
+    //TODO ready for GeoJSON
+//    List<Point> points = new ArrayList<>();
+//    for (List<Double> coordinate : legProgress.currentStep().geometry().coordinates()) {
+//      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+//      points.add(point);
+//    }
+//   return LineString.fromLngLats(points);
+    String currentGeometry = legProgress.currentStep().geometry();
+    return LineString.fromPolyline(currentGeometry, PRECISION_6);
   }
 
   @Nullable
   private static LineString createUpcomingLineString(RouteLegProgress legProgress, boolean distanceRemainingZero) {
     LineString upcomingLineString = null;
-    List<Point> points = new ArrayList<>();
+//    List<Point> points = new ArrayList<>();
     if (distanceRemainingZero && legProgress.upComingStep() != null) {
-      for (List<Double> coordinate : legProgress.upComingStep().geometry().coordinates()) {
-        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-        points.add(point);
-      }
+//TODO ready for GeoJSON
+      //      for (List<Double> coordinate : legProgress.upComingStep().geometry().coordinates()) {
+//        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+//        points.add(point);
+//      }
+//      upcomingLineString = LineString.fromLngLats(points);
+      String upcomingGeometry = legProgress.upComingStep().geometry();
+      upcomingLineString = LineString.fromPolyline(upcomingGeometry, PRECISION_6);
 
-//      String upcomingGeometry = legProgress.upComingStep().geometry();
-//      upcomingLineString = LineString.fromPolyline(upcomingGeometry, PRECISION_6);
-      upcomingLineString = LineString.fromLngLats(points);
     }
     return upcomingLineString;
   }

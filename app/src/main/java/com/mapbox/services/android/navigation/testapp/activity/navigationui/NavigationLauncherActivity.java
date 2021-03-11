@@ -270,8 +270,8 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
     private void fetchRoute() {
         NavigationRoute.Builder builder = NavigationRoute.builder(this)
                 .origin(currentLocation)
-                //.destination(destination)
-                .destination(Point.fromLngLat(14.468504, 48.984820))
+                .destination(destination)
+//                .destination(Point.fromLngLat(14.468504, 48.984820))
                 .profile(DirectionsCriteria.PROFILE_WALKING)
                 .alternatives(false);
         setFieldsFromSharedPreferences(builder);
@@ -372,21 +372,18 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
 
     public void boundCameraToRoute() {
         if (route != null) {
-            List<Point> routeCoords = new ArrayList<>();
-            for (RouteLeg leg : route.legs()) {
-                for (LegStep step : leg.steps()) {
-                    for (List<Double> coordinate : step.geometry().coordinates()) {
-                        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-                        routeCoords.add(point);
-                    }
-                }
-            }
-
-
-
-
-//            List<Point> routeCoords = LineString.fromPolyline(route.geometry(),
-//                    Constants.PRECISION_6).coordinates();
+//TODO ready for GeoJSON
+//            List<Point> routeCoords = new ArrayList<>();
+//            for (RouteLeg leg : route.legs()) {
+//                for (LegStep step : leg.steps()) {
+//                    for (List<Double> coordinate : step.geometry().coordinates()) {
+//                        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+//                        routeCoords.add(point);
+//                    }
+//                }
+//            }
+            List<Point> routeCoords = LineString.fromPolyline(route.geometry(),
+                    Constants.PRECISION_6).coordinates();
             List<LatLng> bboxPoints = new ArrayList<>();
             for (Point point : routeCoords) {
                 bboxPoints.add(new LatLng(point.latitude(), point.longitude()));
