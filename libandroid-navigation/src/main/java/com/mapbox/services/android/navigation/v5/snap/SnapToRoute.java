@@ -15,6 +15,7 @@ import com.mapbox.turf.TurfConstants;
 import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfMisc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
@@ -97,16 +98,29 @@ public class SnapToRoute extends Snap {
 
   @NonNull
   private static LineString createCurrentLineString(RouteLegProgress legProgress) {
-    String currentGeometry = legProgress.currentStep().geometry();
-    return LineString.fromPolyline(currentGeometry, PRECISION_6);
+    List<Point> points = new ArrayList<>();
+    for (List<Double> coordinate : legProgress.currentStep().geometry().coordinates()) {
+      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+      points.add(point);
+    }
+   return LineString.fromLngLats(points);
+//    String currentGeometry = legProgress.currentStep().geometry();
+//    return LineString.fromPolyline(currentGeometry, PRECISION_6);
   }
 
   @Nullable
   private static LineString createUpcomingLineString(RouteLegProgress legProgress, boolean distanceRemainingZero) {
     LineString upcomingLineString = null;
+    List<Point> points = new ArrayList<>();
     if (distanceRemainingZero && legProgress.upComingStep() != null) {
-      String upcomingGeometry = legProgress.upComingStep().geometry();
-      upcomingLineString = LineString.fromPolyline(upcomingGeometry, PRECISION_6);
+      for (List<Double> coordinate : legProgress.upComingStep().geometry().coordinates()) {
+        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+        points.add(point);
+      }
+
+//      String upcomingGeometry = legProgress.upComingStep().geometry();
+//      upcomingLineString = LineString.fromPolyline(upcomingGeometry, PRECISION_6);
+      upcomingLineString = LineString.fromLngLats(points);
     }
     return upcomingLineString;
   }

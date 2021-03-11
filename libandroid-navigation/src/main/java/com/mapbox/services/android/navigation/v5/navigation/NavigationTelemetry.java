@@ -169,8 +169,8 @@ class NavigationTelemetry implements LocationEngineListener, NavigationMetricLis
       navigationSessionState = navigationSessionState.toBuilder()
         .sessionIdentifier(TelemetryUtils.obtainUniversalUniqueIdentifier())
         .originalDirectionRoute(directionsRoute)
-        .originalRequestIdentifier(directionsRoute.routeOptions().requestUuid())
-        .requestIdentifier(directionsRoute.routeOptions().requestUuid())
+        //.originalRequestIdentifier(directionsRoute.routeOptions().requestUuid())
+        //.requestIdentifier(directionsRoute.routeOptions().requestUuid())
         .currentDirectionRoute(directionsRoute)
         .eventRouteDistanceCompleted(0)
         .mockLocation(metricLocation.getLocation().getProvider().equals(MOCK_PROVIDER))
@@ -216,7 +216,7 @@ class NavigationTelemetry implements LocationEngineListener, NavigationMetricLis
       // If we are off-route, update the reroute count
       navigationBuilder.rerouteCount(navigationSessionState.rerouteCount() + 1);
       boolean hasRouteOptions = directionsRoute.routeOptions() != null;
-      navigationBuilder.requestIdentifier(hasRouteOptions ? directionsRoute.routeOptions().requestUuid() : null);
+      //navigationBuilder.requestIdentifier(hasRouteOptions ? directionsRoute.routeOptions().requestUuid() : null);
       navigationSessionState = navigationBuilder.build();
 
       updateLastRerouteEvent(directionsRoute);

@@ -124,7 +124,6 @@ public class NavigationFragment extends Fragment implements OnNavigationReadyCal
 
   private void fetchRoute(Point origin, Point destination) {
     NavigationRoute.builder(getContext())
-      .accessToken(Mapbox.getAccessToken())
       .origin(origin)
       .destination(destination)
       .build()

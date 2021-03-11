@@ -257,7 +257,6 @@ public class RerouteActivity extends AppCompatActivity implements OnMapReadyCall
     NavigationRoute.builder(this)
       .origin(origin, heading, 90d)
       .destination(destination)
-      .accessToken(Mapbox.getAccessToken())
       .build().getRoute(this);
   }
 

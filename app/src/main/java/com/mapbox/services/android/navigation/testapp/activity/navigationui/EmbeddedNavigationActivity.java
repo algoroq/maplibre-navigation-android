@@ -195,7 +195,6 @@ public class EmbeddedNavigationActivity extends AppCompatActivity implements OnN
 
   private void fetchRoute() {
     NavigationRoute.builder(this)
-      .accessToken(Mapbox.getAccessToken())
       .origin(ORIGIN)
       .destination(DESTINATION)
       .alternatives(true)

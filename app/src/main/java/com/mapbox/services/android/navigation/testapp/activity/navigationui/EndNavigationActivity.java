@@ -112,7 +112,6 @@ public class EndNavigationActivity extends AppCompatActivity implements OnNaviga
 
   private void fetchRoute() {
     NavigationRoute builder = NavigationRoute.builder(this)
-      .accessToken(getString(R.string.mapbox_access_token))
       .origin(origin)
       .addWaypoint(pickup)
       .destination(destination)

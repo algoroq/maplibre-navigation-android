@@ -421,7 +421,6 @@ public class ComponentNavigationActivity extends AppCompatActivity implements On
     Point origin = Point.fromLngLat(lastLocation.getLongitude(), lastLocation.getLatitude());
     Double bearing = Float.valueOf(lastLocation.getBearing()).doubleValue();
     NavigationRoute.builder(this)
-      .accessToken(Mapbox.getAccessToken())
       .origin(origin, bearing, BEARING_TOLERANCE)
       .destination(destination)
       .build()

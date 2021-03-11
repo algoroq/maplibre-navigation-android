@@ -210,8 +210,7 @@ public class MockNavigationActivity extends AppCompatActivity implements OnMapRe
       return;
     }
 
-    final NavigationRoute.Builder navigationRouteBuilder = NavigationRoute.builder(this)
-      .accessToken(Mapbox.getAccessToken());
+    final NavigationRoute.Builder navigationRouteBuilder = NavigationRoute.builder(this);
     navigationRouteBuilder.origin(origin);
     navigationRouteBuilder.destination(destination);
     if (waypoint != null) {

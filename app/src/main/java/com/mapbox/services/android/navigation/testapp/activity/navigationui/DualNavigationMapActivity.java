@@ -254,7 +254,6 @@ public class DualNavigationMapActivity extends AppCompatActivity implements OnNa
 
   private void fetchRoute() {
     NavigationRoute builder = NavigationRoute.builder(this)
-      .accessToken(getString(R.string.mapbox_access_token))
       .origin(origin)
       .destination(destination)
       .alternatives(true)

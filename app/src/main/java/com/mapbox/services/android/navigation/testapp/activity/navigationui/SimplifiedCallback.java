@@ -12,6 +12,7 @@ import timber.log.Timber;
 public abstract class SimplifiedCallback implements Callback<DirectionsResponse> {
   @Override
   public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+    System.out.println("XXXX -" + call.request().url().toString());
     Timber.e(throwable, throwable.getMessage());
   }
 }

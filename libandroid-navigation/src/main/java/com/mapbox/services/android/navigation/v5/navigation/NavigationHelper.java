@@ -103,9 +103,19 @@ public class NavigationHelper {
                                       DirectionsRoute directionsRoute, List<Point> coordinates) {
     List<LegStep> steps = directionsRoute.legs().get(legIndex).steps();
     Point nextManeuverPosition = nextManeuverPosition(stepIndex, steps, coordinates);
+    List<Point> points = new ArrayList<>();
 
-    LineString lineString = LineString.fromPolyline(steps.get(stepIndex).geometry(),
-      Constants.PRECISION_6);
+    for (LegStep step : steps) {
+      for (List<Double> coordinate : step.geometry().coordinates()) {
+        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+        points.add(point);
+      }
+    }
+
+    LineString lineString = LineString.fromLngLats(points);
+
+//    LineString lineString = LineString.fromPolyline(steps.get(stepIndex).geometry(),
+//      Constants.PRECISION_6);
     // If the users snapped position equals the next maneuver
     // position or the linestring coordinate size is less than 2,the distance remaining is zero.
     if (snappedPosition.equals(nextManeuverPosition) || lineString.coordinates().size() < 2) {
@@ -256,10 +266,11 @@ public class NavigationHelper {
     if (step == null) {
       return currentPoints;
     }
-    String stepGeometry = step.geometry();
-    if (stepGeometry != null) {
-      return PolylineUtils.decode(stepGeometry, PRECISION_6);
-    }
+// todo
+//    String stepGeometry = step.geometry();
+//    if (stepGeometry != null) {
+//      return PolylineUtils.decode(stepGeometry, PRECISION_6);
+//    }
     return currentPoints;
   }
 
