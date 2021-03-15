@@ -146,6 +146,7 @@ public class NavigationMapboxMap {
   public void updateLocation(Location location) {
     locationLayer.forceLocationUpdate(location);
     updateMapWaynameWithLocation(location);
+
   }
 
   /**

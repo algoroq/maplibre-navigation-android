@@ -41,7 +41,7 @@
     <com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet
         android:id="@+id/summaryBottomSheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:behavior_peekHeight="75dp"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior" />
 </android.support.design.widget.CoordinatorLayout>

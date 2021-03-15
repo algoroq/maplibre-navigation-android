@@ -45,6 +45,7 @@
     <!-- Test app dialog text cancel navigation -->
     <string name="dropoff_dialog_negative_text">Zrušit</string>
 
-    <string name="arrival" translatable="true">Příjezd</string>
+    <string name="arrival">Příjezd</string>
+    <string name="change_map">Změnit mapu</string>
 
 </resources>

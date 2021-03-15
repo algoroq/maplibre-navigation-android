@@ -67,5 +67,7 @@
   <color name="semitransparent">#10000000</color>
   <color name="transparent">#00000000</color>
   <color name="red">#FF0000</color>
+  <color name="green">#00FF00</color>
+  <color name="black">#000000</color>
 </resources>
 

@@ -16,8 +16,8 @@ public final class ValidationUtils {
     if (defaultMilestonesEnabled) {
       RouteOptions routeOptions = directionsRoute.routeOptions();
       checkNullRouteOptions(routeOptions);
-      //TODO checkInvalidVoiceInstructions(routeOptions);
-//TODO      checkInvalidBannerInstructions(routeOptions);
+     //todo checkInvalidVoiceInstructions(routeOptions);
+     //todo checkInvalidBannerInstructions(routeOptions);
     }
   }
 
@@ -29,23 +29,21 @@ public final class ValidationUtils {
   }
 
   private static void checkInvalidVoiceInstructions(RouteOptions routeOptions) {
-//TODO
-//    Boolean instructions = routeOptions.voiceInstructions();
-//    boolean invalidVoiceInstructions = instructions == null
-//      || !instructions;
-//    if (invalidVoiceInstructions) {
-//      throw new MissingFormatArgumentException("Using the default milestones requires the "
-//        + "directions route to be requested with voice instructions enabled.");
-//    }
+    Boolean instructions = routeOptions.voiceInstructions();
+    boolean invalidVoiceInstructions = instructions == null
+      || !instructions;
+    if (invalidVoiceInstructions) {
+      throw new MissingFormatArgumentException("Using the default milestones requires the "
+        + "directions route to be requested with voice instructions enabled.");
+    }
   }
 
   private static void checkInvalidBannerInstructions(RouteOptions routeOptions) {
-//TODO
-    //    Boolean instructions = routeOptions.bannerInstructions();
-//    boolean invalidBannerInstructions = instructions == null || !instructions;
-//    if (invalidBannerInstructions) {
-//      throw new MissingFormatArgumentException("Using the default milestones requires the "
-//        + "directions route to be requested with banner instructions enabled.");
-//    }
+        Boolean instructions = routeOptions.bannerInstructions();
+    boolean invalidBannerInstructions = instructions == null || !instructions;
+    if (invalidBannerInstructions) {
+      throw new MissingFormatArgumentException("Using the default milestones requires the "
+        + "directions route to be requested with banner instructions enabled.");
+    }
   }
 }

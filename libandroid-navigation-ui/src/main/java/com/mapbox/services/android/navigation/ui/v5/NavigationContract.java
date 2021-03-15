@@ -49,5 +49,7 @@ public interface NavigationContract {
 
     void updateCameraRouteOverview();
 
+    void showChangeMapBottomSheet();
+
   }
 }

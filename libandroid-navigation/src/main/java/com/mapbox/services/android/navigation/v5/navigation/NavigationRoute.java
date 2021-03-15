@@ -62,12 +62,11 @@ public final class NavigationRoute {
     }
 
     static Builder builder(Context context, LocaleUtils localeUtils) {
-        return new Builder()
-                //TODO - neumí zpracovat server
-                //.annotations(DirectionsCriteria.ANNOTATION_CONGESTION, DirectionsCriteria.ANNOTATION_DISTANCE)
-                //.language(context, localeUtils)
-                //.voiceUnits(context, localeUtils)
-                .profile(DirectionsCriteria.PROFILE_WALKING);
+        return new Builder();
+        //TODO - neumí zpracovat server
+        //.annotations(DirectionsCriteria.ANNOTATION_CONGESTION, DirectionsCriteria.ANNOTATION_DISTANCE)
+        //.language(context, localeUtils)
+        //.voiceUnits(context, localeUtils)
     }
 
     /**
@@ -277,6 +276,7 @@ public final class NavigationRoute {
         }
 
         Builder language(Context context, LocaleUtils localeUtils) {
+            //TODO - neumí zpracovat server
 //            directionsBuilder.language(localeUtils.inferDeviceLocale(context));
             return this;
         }
@@ -372,13 +372,13 @@ public final class NavigationRoute {
          */
         public Builder voiceUnits(@VoiceUnitCriteria String voiceUnits) {
             //TODO - neumí zpracovat server
-            //directionsBuilder.voiceUnits(voiceUnits);
+//            directionsBuilder.voiceUnits(voiceUnits);
             return this;
         }
 
         Builder voiceUnits(Context context, LocaleUtils localeUtils) {
             //TODO - neumí zpracovat server
-            //directionsBuilder.voiceUnits(localeUtils.getUnitTypeForDeviceLocale(context));
+//            directionsBuilder.voiceUnits(localeUtils.getUnitTypeForDeviceLocale(context));
             return this;
         }
 
@@ -473,9 +473,9 @@ public final class NavigationRoute {
             }
 
 //TODO - neumí zpracovat server
-//      if (!TextUtils.isEmpty(options.language())) {
-//        directionsBuilder.language(new Locale(options.language()));
-//      }
+            if (!TextUtils.isEmpty(options.language())) {
+                directionsBuilder.language(new Locale(options.language()));
+            }
 
             if (options.alternatives() != null) {
                 directionsBuilder.alternatives(options.alternatives());
@@ -486,14 +486,14 @@ public final class NavigationRoute {
             }
 
 //TODO - neumí zpracovat server
-//      if (!TextUtils.isEmpty(options.voiceUnits())) {
-//        directionsBuilder.voiceUnits(options.voiceUnits());
-//      }
+            if (!TextUtils.isEmpty(options.voiceUnits())) {
+                directionsBuilder.voiceUnits(options.voiceUnits());
+            }
 
 //TODO - neumí zpracovat server
-//      if (!TextUtils.isEmpty(options.annotations())) {
-//        directionsBuilder.annotations(options.annotations());
-//      }
+            if (!TextUtils.isEmpty(options.annotations())) {
+                directionsBuilder.annotations(options.annotations());
+            }
 
             if (!TextUtils.isEmpty(options.approaches())) {
                 String[] approaches = options.approaches().split(";");
@@ -522,9 +522,9 @@ public final class NavigationRoute {
                     .continueStraight(true)
                     .geometries(DirectionsCriteria.GEOMETRY_POLYLINE6)
                     .overview(DirectionsCriteria.OVERVIEW_FULL);
-            //.voiceInstructions(false)
-            //.bannerInstructions(false)
-            //.roundaboutExits(true);
+//                    .voiceInstructions(false)
+//                    .bannerInstructions(false)
+//                    .roundaboutExits(true);
             return new NavigationRoute(directionsBuilder.build());
         }
     }

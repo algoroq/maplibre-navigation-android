@@ -62,4 +62,8 @@
             translatable="false">navigation_running</string>
 
     <string name="arrival" translatable="true">Arrival</string>
+
+    <string name="change_map" translatable="true">Change map</string>
+
+    <string name="selected_map_index_key" translatable="false">selected_map_index</string>
 </resources>

@@ -45,6 +45,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
 import com.mapbox.services.android.navigation.testapp.R;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.services.android.navigation.ui.v5.listeners.NavigationListener;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.ui.v5.route.OnRouteSelectionChangeListener;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
@@ -271,10 +272,9 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
         NavigationRoute.Builder builder = NavigationRoute.builder(this)
                 .origin(currentLocation)
                 .destination(destination)
-//                .destination(Point.fromLngLat(14.468504, 48.984820))
                 .profile(DirectionsCriteria.PROFILE_WALKING)
-                .alternatives(false);
-        setFieldsFromSharedPreferences(builder);
+                .alternatives(true);
+       // setFieldsFromSharedPreferences(builder);
         builder.build()
                 .getRoute(new SimplifiedCallback() {
                     @Override
@@ -297,9 +297,9 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
     }
 
     private void setFieldsFromSharedPreferences(NavigationRoute.Builder builder) {
-//        builder
-//                .language(getLanguageFromSharedPreferences())
-//                .voiceUnits(getUnitTypeFromSharedPreferences());
+        builder
+                .language(getLanguageFromSharedPreferences())
+                .voiceUnits(getUnitTypeFromSharedPreferences());
     }
 
     private String getUnitTypeFromSharedPreferences() {
@@ -343,8 +343,8 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
         }
 
         NavigationLauncherOptions.Builder optionsBuilder = NavigationLauncherOptions.builder()
-                .shouldSimulateRoute(getShouldSimulateRouteFromSharedPreferences())
-                .directionsProfile(getRouteProfileFromSharedPreferences());
+                .shouldSimulateRoute(getShouldSimulateRouteFromSharedPreferences());
+                //.directionsProfile(getRouteProfileFromSharedPreferences());
 
         optionsBuilder.directionsRoute(route);
 

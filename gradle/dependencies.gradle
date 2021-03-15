@@ -1,7 +1,7 @@
 ext {
 
     androidVersions = [
-            minSdkVersion    : 14,
+            minSdkVersion    : 21,
             targetSdkVersion : 27,
             compileSdkVersion: 27,
             buildToolsVersion: '28.0.3'
@@ -108,10 +108,12 @@ ext {
             retrofitGson           : "com.squareup.retrofit2:converter-gson:${version.retrofitGson}",
 
             //MapBox-Java jar
-            mapboxJavaServices : files('../libs/services.jar'),
-            mapboxJavaCore : files('../libs/services-core.jar'),
-            mapboxJavaGeoJSON : files('../libs/services-geojson.jar'),
-            mapboxJavaTurf : files('../libs/services-turf.jar')
+            mapboxJavaServices     : files('../libs/services.jar'),
+            mapboxJavaCore         : files('../libs/services-core.jar'),
+            mapboxJavaGeoJSON      : files('../libs/services-geojson.jar'),
+            mapboxJavaTurf         : files('../libs/services-turf.jar'),
+            mapboxEventsCore       : files('../libs/libcore.jar')
+
     ]
 
     pluginDependencies = [

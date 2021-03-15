@@ -6,14 +6,16 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -29,6 +31,10 @@ import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.services.android.navigation.ui.v5.changeMap.ChangeMapBottomSheet;
+import com.mapbox.services.android.navigation.ui.v5.changeMap.ChangeMapBottomSheetListener;
+import com.mapbox.services.android.navigation.ui.v5.changeMap.ChangeMapItem;
+import com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackBottomSheet;
 import com.mapbox.services.android.navigation.ui.v5.instruction.ImageCoordinator;
 import com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView;
 import com.mapbox.services.android.navigation.ui.v5.map.NavigationMapboxMap;
@@ -37,10 +43,13 @@ import com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet;
 import com.mapbox.services.android.navigation.v5.location.replay.ReplayRouteLocationEngine;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigationOptions;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationConstants;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationTimeFormat;
 import com.mapbox.services.android.navigation.v5.utils.DistanceFormatter;
 import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
+
+import timber.log.Timber;
 
 /**
  * View that creates the drop-in UI.
@@ -65,7 +74,7 @@ import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
  * @since 0.7.0
  */
 public class NavigationView extends CoordinatorLayout implements LifecycleObserver, OnMapReadyCallback,
-        NavigationContract.View {
+        NavigationContract.View, ChangeMapBottomSheetListener {
 
     private static final String MAP_INSTANCE_STATE_KEY = "navgation_mapbox_map_instance_state";
     private static final int INVALID_STATE = 0;
@@ -78,9 +87,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
 
     private LinearLayout btnCancel;
     private ImageButton btnBottomSheetStateChanger;
-    private LinearLayout btnBottomSheetExample1;
-    private LinearLayout btnBottomSheetExample2;
-    private LinearLayout btnBottomSheetExample3;
+    private LinearLayout btnChangeMap;
 
 
     private NavigationPresenter navigationPresenter;
@@ -210,6 +217,12 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         if (navigationMap != null) {
             navigationMap.onStop();
         }
+    }
+
+
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        addBottomSheetListener();
     }
 
     /**
@@ -392,6 +405,38 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         }
     }
 
+    @Override
+    public void showChangeMapBottomSheet() {
+        FragmentManager fragmentManager = obtainSupportFragmentManager();
+        setSummaryBehaviorHideable(true);
+        setSummaryBehaviorState(BottomSheetBehavior.STATE_HIDDEN);
+        if (fragmentManager != null) {
+
+            ChangeMapBottomSheet.newInstance(this).show(fragmentManager, ChangeMapBottomSheet.TAG);
+        }
+    }
+
+    @Nullable
+    private FragmentManager obtainSupportFragmentManager() {
+        try {
+            return ((FragmentActivity) getContext()).getSupportFragmentManager();
+        } catch (ClassCastException exception) {
+            Timber.e(exception);
+            return null;
+        }
+    }
+
+    private void addBottomSheetListener() {
+        FragmentManager fragmentManager = obtainSupportFragmentManager();
+        if (fragmentManager != null) {
+            String tag = ChangeMapBottomSheet.TAG;
+            ChangeMapBottomSheet changeMapBottomSheet = (ChangeMapBottomSheet) fragmentManager.findFragmentByTag(tag);
+            if (changeMapBottomSheet != null) {
+                changeMapBottomSheet.setChangeMapBottomSheetListener(this);
+            }
+        }
+    }
+
 
     /**
      * Should be called when this view is completely initialized.
@@ -500,10 +545,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         recenterBtn = findViewById(R.id.recenterBtn);
         routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
         btnBottomSheetStateChanger = findViewById(R.id.btn_bottomSheetStateChanger);
-
-        btnBottomSheetExample1 = findViewById(R.id.btnBottomsheetExample1);
-        btnBottomSheetExample2 = findViewById(R.id.btnBottomsheetExample2);
-        btnBottomSheetExample3 = findViewById(R.id.btnBottomsheetExample3);
+        btnChangeMap = findViewById(R.id.btnChangeMap);
     }
 
     private void initializeNavigationViewModel() {
@@ -616,9 +658,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
 
     private void initializeBottomSheetButtons() {
         setBottomSheetButton(btnCancel, getContext().getString(R.string.dropoff_dialog_negative_text), R.drawable.ic_cancel_circle, R.color.red);
-        setBottomSheetButton(btnBottomSheetExample1, "Example 1");
-        setBottomSheetButton(btnBottomSheetExample2, "Example 2");
-        setBottomSheetButton(btnBottomSheetExample3, "Example 3");
+        setBottomSheetButton(btnChangeMap, getContext().getString(R.string.change_map), R.drawable.ic_change_map);
     }
 
     private void initializeClickListeners() {
@@ -626,9 +666,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         recenterBtn.addOnClickListener(new RecenterBtnClickListener(navigationPresenter));
         routeOverviewBtn.setOnClickListener(new RouteOverviewBtnClickListener(navigationPresenter));
         btnBottomSheetStateChanger.setOnClickListener(new BottomSheetStateChangerBtnClickListener(navigationPresenter));
-        btnBottomSheetExample1.setOnClickListener(new BottomSheetExample1BtnClickListener(navigationPresenter));
-        btnBottomSheetExample2.setOnClickListener(new BottomSheetExample2BtnClickListener(navigationPresenter));
-        btnBottomSheetExample3.setOnClickListener(new BottomSheetExample3BtnClickListener(navigationPresenter));
+        btnChangeMap.setOnClickListener(new BtnChangeMapClickListener(navigationPresenter));
     }
 
     private void initializeOnMoveListener() {
@@ -727,4 +765,21 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
     }
 
 
+    @Override
+    public void onMapSelected(ChangeMapItem changeMapItem) {
+        setSelectedMap(changeMapItem.getId());
+        //TODO změna mapy
+    }
+
+    @Override
+    public void onChangeMapDismissed() {
+        setSummaryBehaviorState(BottomSheetBehavior.STATE_COLLAPSED);
+        setSummaryBehaviorHideable(false);
+    }
+
+    private void setSelectedMap(long id) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+        editor.putLong(getContext().getString(R.string.selected_map_index_key), id);
+        editor.apply();
+    }
 }

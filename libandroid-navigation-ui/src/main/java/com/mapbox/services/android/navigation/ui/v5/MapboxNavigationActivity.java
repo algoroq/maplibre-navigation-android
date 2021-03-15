@@ -85,6 +85,12 @@ public class MapboxNavigationActivity extends AppCompatActivity implements OnNav
   }
 
   @Override
+  public void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    navigationView.onAttachedToWindow();
+  }
+
+  @Override
   protected void onDestroy() {
     super.onDestroy();
     navigationView.onDestroy();
@@ -103,14 +109,14 @@ public class MapboxNavigationActivity extends AppCompatActivity implements OnNav
 
   @Override
   public void onCancelNavigation() {
-    // Navigation canceled, finish the activity
+    System.out.println("xxxx - Canceled NavigationActivity");
     finish();
   }
 
   @Override
   public void onNavigationFinished() {
     // Navigation finished, finish the activity
-    System.out.println("XXXX - finishedddd");
+    System.out.println("xxxx - Finish NavigationActivity");
     finish();
   }
 

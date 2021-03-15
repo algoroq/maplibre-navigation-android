@@ -41,11 +41,11 @@ class NavigationPresenter {
 
 
   void onSummaryBottomSheetStateChange(){
-   if(view.isSummaryBottomSheetCollapsed()){
-      view.setBottomSheetChangerBtnResource(R.drawable.ic_arrow_up);
-    }else if (view.isSummaryBottomSheetExpanded()){
+   if (view.isSummaryBottomSheetExpanded()){
       view.setBottomSheetChangerBtnResource(R.drawable.ic_arrow_down);
-    }
+    }else{
+     view.setBottomSheetChangerBtnResource(R.drawable.ic_arrow_up);
+   }
   }
 
   void onRouteUpdate(DirectionsRoute directionsRoute) {
@@ -69,6 +69,7 @@ class NavigationPresenter {
       view.resumeCamera(location);
       resumeState = false;
     }
+    System.out.println("xxxxx - update");
     view.updateNavigationMap(location);
   }
 
@@ -116,7 +117,7 @@ class NavigationPresenter {
     onSummaryBottomSheetStateChange();
   }
 
-  void onBottomSheetExample1ButtonClick(){}
-  void onBottomSheetExample2ButtonClick(){}
-  void onBottomSheetExample3ButtonClick(){}
+  void onChangeMapButtonClick(){
+    view.showChangeMapBottomSheet();
+  }
 }

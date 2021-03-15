@@ -89,7 +89,6 @@ public class OnNavigationReadyIdlingResource implements IdlingResource, Callback
     Point origin = Point.fromLngLat(-77.033987, 38.900123);
     Point destination = Point.fromLngLat(-77.044818, 38.848942);
     NavigationRoute.builder(context)
-      .accessToken(Mapbox.getAccessToken())
       .origin(origin)
       .destination(destination)
       .build().getRoute(this);
