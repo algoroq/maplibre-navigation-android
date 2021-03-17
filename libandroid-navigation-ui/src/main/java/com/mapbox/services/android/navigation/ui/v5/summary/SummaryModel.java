@@ -39,7 +39,12 @@ public class SummaryModel {
 
 
 
-    this.progress = (int) (100*progress.distanceTraveled()/progress.directionsRoute().distance());
+    if(progress.directionsRoute().distance() != null){
+      this.progress = (int) (100*progress.distanceTraveled()/progress.directionsRoute().distance());
+    }else{
+      this.progress = 100;
+    }
+
 
     Pair<String, String> remainingTime = getTimeRemaining(context, progress.durationRemaining());
     timeRemainingV2 = remainingTime.first;

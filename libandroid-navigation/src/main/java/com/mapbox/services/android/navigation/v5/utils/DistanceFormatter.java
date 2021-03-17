@@ -152,8 +152,12 @@ public class DistanceFormatter {
    */
   private String roundToClosestIncrement(double distance) {
     int roundedNumber = ((int) Math.round(distance)) / roundingIncrement * roundingIncrement;
+    if(distance <=150 ){
+      roundedNumber = (int) distance;
+    }
 
-    return String.valueOf(roundedNumber < roundingIncrement ? roundingIncrement : roundedNumber);
+     return String.valueOf(roundedNumber);
+    //return String.valueOf(roundedNumber < roundingIncrement ? roundingIncrement : roundedNumber);
   }
 
   /**

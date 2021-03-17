@@ -296,10 +296,16 @@ public class NavigationViewModel extends AndroidViewModel {
   private ProgressChangeListener progressChangeListener = new ProgressChangeListener() {
     @Override
     public void onProgressChange(Location location, RouteProgress routeProgress) {
+      //JV IF
+      if(routeProgress.durationRemaining() > 1) {
       NavigationViewModel.this.routeProgress = routeProgress;
       instructionModel.setValue(new InstructionModel(distanceFormatter, routeProgress));
       summaryModel.setValue(new SummaryModel(getApplication(), distanceFormatter, routeProgress, timeFormatType));
-      navigationLocation.setValue(location);
+
+        navigationLocation.setValue(location);
+      }else {
+        endNavigation();
+      }
     }
   };
 
@@ -455,8 +461,8 @@ public class NavigationViewModel extends AndroidViewModel {
     if (navigationViewEventDispatcher != null && navigationViewEventDispatcher.allowRerouteFrom(newOrigin)) {
       navigationViewEventDispatcher.onOffRoute(newOrigin);
       OffRouteEvent event = new OffRouteEvent(newOrigin, routeProgress);
-      navigationViewRouteEngine.fetchRouteFromOffRouteEvent(event);
-      isOffRoute.setValue(true);
+        navigationViewRouteEngine.fetchRouteFromOffRouteEvent(event);
+        isOffRoute.setValue(true);
     }
   }
 
