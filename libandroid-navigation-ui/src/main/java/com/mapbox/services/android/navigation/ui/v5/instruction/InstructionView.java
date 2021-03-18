@@ -197,7 +197,7 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
             showRerouteState();
           } else if (isRerouting) {
             hideRerouteState();
-            alertView.showReportProblem();
+//TODO            alertView.showReportProblem();
           }
           isRerouting = isOffRoute;
         }
@@ -477,7 +477,7 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
 
   private void initializeButtons() {
     setupSoundButton();
-    setupFeedbackButton();
+    //TODO setupFeedbackButton();
   }
 
   private void setupFeedbackButton() {

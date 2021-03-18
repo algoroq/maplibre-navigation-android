@@ -93,11 +93,12 @@ public class NavigationAlertView extends AlertView implements FeedbackBottomShee
     setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (isShowingReportProblem()) {
-          navigationViewModel.recordFeedback(FeedbackEvent.FEEDBACK_SOURCE_REROUTE);
-          showFeedbackBottomSheet();
-        }
-        hide();
+//TODO
+//        if (isShowingReportProblem()) {
+//          navigationViewModel.recordFeedback(FeedbackEvent.FEEDBACK_SOURCE_REROUTE);
+//          showFeedbackBottomSheet();
+//        }
+//        hide();
       }
     });
   }
