@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -239,6 +240,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         initializeNavigationMap(mapView, mapboxMap);
         onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
         isMapInitialized = true;
+        mapboxMap.setCameraPosition(new CameraPosition.Builder().zoom(17.0).build());
     }
 
     @Override
