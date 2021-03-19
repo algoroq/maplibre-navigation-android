@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.RouteOptions;
@@ -166,14 +167,18 @@ public class RouteFetcher {
   private Callback<DirectionsResponse> directionsResponseCallback = new Callback<DirectionsResponse>() {
     @Override
     public void onResponse(@NonNull Call<DirectionsResponse> call, @NonNull Response<DirectionsResponse> response) {
+
       if (!response.isSuccessful()) {
+        Log.println(Log.DEBUG, "URL - REROUTE", "onResponse, but not successful, URL: " + response.raw().request().url().toString());
         return;
       }
+      Log.println(Log.DEBUG, "URL - REROUTE", "SUCCESS! URL: " + response.raw().request().url().toString());
       updateListeners(response.body(), routeProgress);
     }
 
     @Override
     public void onFailure(@NonNull Call<DirectionsResponse> call, @NonNull Throwable throwable) {
+      Log.println(Log.DEBUG, "URL - REROUTE", "FAIL!\nMessage: " + throwable.getMessage() + "\nURL:" + call.request().url().toString());
       updateListenersWithError(throwable);
     }
   };
