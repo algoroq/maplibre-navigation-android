@@ -3,11 +3,17 @@ package com.mapbox.services.android.navigation.v5.navigation.metrics;
 import android.support.annotation.NonNull;
 
 import com.mapbox.android.telemetry.TelemetryUtils;
+import com.mapbox.core.constants.Constants;
+import com.mapbox.geojson.Point;
+import com.mapbox.geojson.utils.PolylineUtils;
+
+import java.util.List;
 
 public class RerouteEvent implements TelemetryEvent {
 
   private SessionState rerouteSessionState;
   private String eventId;
+
   private String newRouteGeometry;
   private int newDurationRemaining;
   private int newDistanceRemaining;
@@ -40,6 +46,10 @@ public class RerouteEvent implements TelemetryEvent {
     this.newRouteGeometry = newRouteGeometry;
   }
 
+  public void setNewRouteGeometry(List<Point> newRouteGeometry) {
+    this.newRouteGeometry = PolylineUtils.encode(newRouteGeometry, Constants.PRECISION_5);
+
+  }
   public int getNewDurationRemaining() {
     return newDurationRemaining;
   }

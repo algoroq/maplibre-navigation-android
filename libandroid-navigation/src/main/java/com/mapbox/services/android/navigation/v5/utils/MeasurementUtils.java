@@ -33,23 +33,25 @@ public final class MeasurementUtils {
    */
   public static double userTrueDistanceFromStep(Point usersRawLocation, LegStep step) {
     // Check that the leg step contains geometry.
-    if (TextUtils.isEmpty(step.geometry())) {
-      return 0;
-    }
- //TODO ready for GeoJSON
-//    if (step.geometry().coordinates().size()==0) {
+
+//    if (TextUtils.isEmpty(step.geometry())) {
 //      return 0;
 //    }
 
+ //TODO ready for GeoJSON
+    if (step.geometry().coordinates() == null) {
+      return 0;
+    }
+
     // Get the lineString from the step geometry.
     //TODO ready for GeoJSON
-//    List<Point> points = new ArrayList<>();
-//    for (List<Double> coordinate : step.geometry().coordinates()) {
-//      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-//      points.add(point);
-//    }
-//    LineString lineString = LineString.fromLngLats(points);
-    LineString lineString = LineString.fromPolyline(step.geometry(), Constants.PRECISION_6);
+    List<Point> points = new ArrayList<>();
+    for (List<Double> coordinate : step.geometry().coordinates()) {
+      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+      points.add(point);
+    }
+    LineString lineString = LineString.fromLngLats(points);
+//    LineString lineString = LineString.fromPolyline(step.geometry(), Constants.PRECISION_6);
 
     // Make sure that the step coordinates isn't less than size 2. If the points equal each other,
     // the distance is obviously zero, so return 0 to avoid executing additional unnecessary code.

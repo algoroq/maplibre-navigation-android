@@ -97,7 +97,8 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_launcher);
         ButterKnife.bind(this);
-        mapView.onCreate(savedInstanceState);
+        mapView.onCreate(savedInstanceState);;
+        mapView.setStyleUrl("https://api.maptiler.com/maps/topo/style.json?key=5fogXiJ0m6IEn9pBj7ZA");
         mapView.getMapAsync(this);
         localeUtils = new LocaleUtils();
     }
@@ -269,7 +270,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
     }
 
     private void fetchRoute() {
-        NavigationRoute.Builder builder = NavigationRoute.builder(this)
+        NavigationRoute.Builder builder = NavigationRoute.builder()
                 .origin(currentLocation)
                 .destination(destination)
                 .profile(DirectionsCriteria.PROFILE_WALKING)
@@ -373,17 +374,17 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
     public void boundCameraToRoute() {
         if (route != null) {
 //TODO ready for GeoJSON
-//            List<Point> routeCoords = new ArrayList<>();
-//            for (RouteLeg leg : route.legs()) {
-//                for (LegStep step : leg.steps()) {
-//                    for (List<Double> coordinate : step.geometry().coordinates()) {
-//                        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-//                        routeCoords.add(point);
-//                    }
-//                }
-//            }
-            List<Point> routeCoords = LineString.fromPolyline(route.geometry(),
-                    Constants.PRECISION_6).coordinates();
+            List<Point> routeCoords = new ArrayList<>();
+            for (List<Double> coordinate :  route.geometry().coordinates()) {
+                Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+                routeCoords.add(point);
+            }
+            // -----
+
+//            List<Point> routeCoords = LineString.fromPolyline(route.geometry(),
+//                    Constants.PRECISION_6).coordinates();
+
+
             List<LatLng> bboxPoints = new ArrayList<>();
             for (Point point : routeCoords) {
                 bboxPoints.add(new LatLng(point.latitude(), point.longitude()));

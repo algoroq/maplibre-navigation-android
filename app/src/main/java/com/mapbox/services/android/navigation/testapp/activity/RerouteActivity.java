@@ -249,7 +249,7 @@ public class RerouteActivity extends AppCompatActivity implements OnMapReadyCall
 
   @Override
   public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-    Timber.e("Getting directions failed: ", throwable);
+    //Timber.e("Getting directions failed: ", throwable);
   }
 
   private void getRoute(Point origin, Point destination, Float bearing) {
@@ -261,25 +261,25 @@ public class RerouteActivity extends AppCompatActivity implements OnMapReadyCall
   }
 
   private void drawRoute(DirectionsRoute route) {
-    List<LatLng> points = new ArrayList<>();
-    List<Point> coords = LineString.fromPolyline(route.geometry(), Constants.PRECISION_6).coordinates();
-
-    for (Point point : coords) {
-      points.add(new LatLng(point.latitude(), point.longitude()));
-    }
-
-    if (!points.isEmpty()) {
-
-      if (polyline != null) {
-        mapboxMap.removePolyline(polyline);
-      }
-
-      // Draw polyline on map
-      polyline = mapboxMap.addPolyline(new PolylineOptions()
-        .addAll(points)
-        .color(Color.parseColor("#4264fb"))
-        .width(5));
-    }
+//    List<LatLng> points = new ArrayList<>();
+//    List<Point> coords = LineString.fromPolyline(route.geometry(), Constants.PRECISION_6).coordinates();
+//
+//    for (Point point : coords) {
+//      points.add(new LatLng(point.latitude(), point.longitude()));
+//    }
+//
+//    if (!points.isEmpty()) {
+//
+//      if (polyline != null) {
+//        mapboxMap.removePolyline(polyline);
+//      }
+//
+//      // Draw polyline on map
+//      polyline = mapboxMap.addPolyline(new PolylineOptions()
+//        .addAll(points)
+//        .color(Color.parseColor("#4264fb"))
+//        .width(5));
+//    }
   }
 
   private void resetLocationEngine(DirectionsRoute directionsRoute) {

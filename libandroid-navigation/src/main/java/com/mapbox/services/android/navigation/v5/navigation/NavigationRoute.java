@@ -57,6 +57,11 @@ public final class NavigationRoute {
      * @return a {@link Builder} object for creating this object
      * @since 0.5.0
      */
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static Builder builder(Context context) {
         return builder(context, new LocaleUtils());
     }
@@ -520,7 +525,7 @@ public final class NavigationRoute {
             directionsBuilder
                     .steps(true)
                     .continueStraight(true)
-                    .geometries(DirectionsCriteria.GEOMETRY_POLYLINE6)
+                    .geometries(DirectionsCriteria.GEOMETRY_GEOJSON)
                     .overview(DirectionsCriteria.OVERVIEW_FULL);
 //                    .voiceInstructions(false)
 //                    .bannerInstructions(false)
