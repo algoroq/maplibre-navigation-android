@@ -19,6 +19,7 @@ import com.mapbox.core.utils.TextUtils;
 import com.mapbox.geojson.Point;
 import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
 
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -211,12 +212,21 @@ public final class NavigationRoute {
          * {@link DirectionsCriteria#PROFILE_DRIVING_TRAFFIC} that the max number of waypoints allowed
          * in the request is currently limited to 1.
          *
-         * @param waypoint a {@link Point} which represents the pit-stop or waypoint where you'd like
+         * @param waypoints a {@link Point} which represents the pit-stop or waypoint where you'd like
          *                 one of the {@link com.mapbox.api.directions.v5.models.RouteLeg} to
          *                 navigate the user to
          * @return this builder for chaining options together
          * @since 0.5.0
          */
+        public Builder addWaypoints(@NonNull List<Point> waypoints) {
+            if(waypoints.size() != 0){
+                directionsBuilder.addWaypoints(waypoints);
+                directionsBuilder.addBearing(null, null);
+            }
+
+            return this;
+        }
+
         public Builder addWaypoint(@NonNull Point waypoint) {
             directionsBuilder.addWaypoint(waypoint);
             directionsBuilder.addBearing(null, null);
@@ -239,12 +249,12 @@ public final class NavigationRoute {
          * @return this builder for chaining options together
          * @since 0.5.0
          */
-        public Builder addWaypoint(@NonNull Point waypoint, @Nullable Double angle,
-                                   @Nullable Double tolerance) {
-            directionsBuilder.addWaypoint(waypoint);
-            directionsBuilder.addBearing(angle, tolerance);
-            return this;
-        }
+//        public Builder addWaypoint(@NonNull Point waypoint, @Nullable Double angle,
+//                                   @Nullable Double tolerance) {
+//            directionsBuilder.addWaypoint(waypoint);
+//            directionsBuilder.addBearing(angle, tolerance);
+//            return this;
+//        }
 
         /**
          * Optionally set whether to try to return alternative routes. An alternative is classified as a
@@ -420,7 +430,7 @@ public final class NavigationRoute {
          * @since 0.5.0
          */
         public Builder baseUrl(String baseUrl) {
-            directionsBuilder.baseApiUrl(baseUrl);
+            directionsBuilder.baseUrl(baseUrl);
             return this;
         }
 
@@ -474,7 +484,7 @@ public final class NavigationRoute {
         public Builder routeOptions(RouteOptions options) {
 
             if (!TextUtils.isEmpty(options.baseUrl())) {
-                directionsBuilder.baseApiUrl(options.baseUrl());
+                directionsBuilder.baseUrl(options.baseUrl());
             }
 
 //TODO - neumí zpracovat server
