@@ -31,20 +31,34 @@ class AndroidSpeechPlayer implements SpeechPlayer {
    * Creates an instance of {@link AndroidSpeechPlayer}.
    *
    * @param context  used to create an instance of {@link TextToSpeech}
-   * @param language to initialize locale to set
    * @since 0.6.0
    */
-  AndroidSpeechPlayer(Context context, final String language, final SpeechListener speechListener) {
+  AndroidSpeechPlayer(final Context context, final SpeechListener speechListener, final Locale locale) {
     textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
       @Override
       public void onInit(int status) {
-        boolean ableToInitialize = status == TextToSpeech.SUCCESS && language != null;
+        boolean ableToInitialize = status == TextToSpeech.SUCCESS;
         if (!ableToInitialize) {
           Timber.e("There was an error initializing native TTS");
           return;
         }
         setSpeechListener(speechListener);
-        initializeWithLanguage(new Locale(language));
+        initializeWithLanguage(locale);
+      }
+    });
+  }
+
+  AndroidSpeechPlayer(final Context context, final SpeechListener speechListener) {
+    textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+      @Override
+      public void onInit(int status) {
+        boolean ableToInitialize = status == TextToSpeech.SUCCESS;
+        if (!ableToInitialize) {
+          Timber.e("There was an error initializing native TTS");
+          return;
+        }
+        setSpeechListener(speechListener);
+        initializeWithLanguage(new Locale(context.getResources().getConfiguration().locale.toLanguageTag()));
       }
     });
   }
@@ -57,7 +71,7 @@ class AndroidSpeechPlayer implements SpeechPlayer {
   @Override
   public void play(SpeechAnnouncement speechAnnouncement) {
     boolean isValidAnnouncement = speechAnnouncement != null
-      && !TextUtils.isEmpty(speechAnnouncement.announcement());
+            && !TextUtils.isEmpty(speechAnnouncement.announcement());
     boolean canPlay = isValidAnnouncement && languageSupported && !isMuted;
     if (!canPlay) {
       return;

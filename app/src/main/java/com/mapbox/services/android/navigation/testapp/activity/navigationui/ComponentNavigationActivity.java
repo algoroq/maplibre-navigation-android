@@ -304,9 +304,7 @@ public class ComponentNavigationActivity extends AppCompatActivity implements On
   }
 
   private void initializeSpeechPlayer() {
-    String english = Locale.US.getLanguage();
-    String accessToken = Mapbox.getAccessToken();
-    SpeechPlayerProvider speechPlayerProvider = new SpeechPlayerProvider(getApplication(), english, true, accessToken);
+    SpeechPlayerProvider speechPlayerProvider = new SpeechPlayerProvider(getApplication());
     speechPlayer = new NavigationSpeechPlayer(speechPlayerProvider);
   }
 

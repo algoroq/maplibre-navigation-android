@@ -26,6 +26,6 @@ class NavigationSpeechListener implements SpeechListener {
   @Override
   public void onError(String errorText, SpeechAnnouncement speechAnnouncement) {
     Timber.e(errorText);
-    speechPlayerProvider.retrieveAndroidSpeechPlayer().play(speechAnnouncement);
+    speechPlayerProvider.retrieveSpeechPlayer().play(speechAnnouncement);
   }
 }
