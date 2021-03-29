@@ -1062,22 +1062,18 @@ public class NavigationMapRoute implements MapView.OnMapChangedListener,
     private FeatureCollection addTrafficToSource(DirectionsRoute route, int index) {
         final List<Feature> features = new ArrayList<>();
         //TODO ready for GeoJSON
-//        List<Point> points = new ArrayList<>();
-//        for (RouteLeg leg : route.legs()) {
-//            for (LegStep step : leg.steps()) {
-//                for (List<Double> coordinate : step.geometry().coordinates()) {
-//                    Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-//                    points.add(point);
-//                }
-//            }
-//        }
-//        LineString originalGeometry = LineString.fromLngLats(points);
-    LineString originalGeometry = LineString.fromPolyline(route.geometry(), Constants.PRECISION_6);
+        List<Point> points = new ArrayList<>();
+        for (List<Double> coordinate :  route.geometry().coordinates()) {
+            Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+            points.add(point);
+        }
+        LineString originalGeometry = LineString.fromLngLats(points);
+
+        //    LineString originalGeometry = LineString.fromPolyline(route.geometry(), Constants.PRECISION_6);
         buildRouteFeatureFromGeometry(index, features, originalGeometry);
         routeLineStrings.put(originalGeometry, route);
 
-        LineString lineString = LineString.fromPolyline(route.geometry(), Constants.PRECISION_6);
-        buildTrafficFeaturesFromRoute(route, index, features, lineString);
+        buildTrafficFeaturesFromRoute(route, index, features, originalGeometry);
         return FeatureCollection.fromFeatures(features);
     }
 

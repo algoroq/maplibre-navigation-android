@@ -109,7 +109,7 @@ public abstract class VoiceInstructionLoader {
   abstract String accessToken();
 
   private MapboxSpeech.Builder getMapboxBuilder() {
-    MapboxSpeech.Builder builder = MapboxSpeech.builder().accessToken(accessToken());
+    MapboxSpeech.Builder builder = MapboxSpeech.builder();
 
     if (language() != null) {
       builder.language(language());

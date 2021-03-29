@@ -6,8 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 /**
  * Given to the constructor of {@link NavigationSpeechPlayer}, this class decides which
@@ -24,58 +23,39 @@ import java.util.List;
  */
 public class SpeechPlayerProvider {
 
-  private static final int FIRST_PLAYER = 0;
-
-  private AndroidSpeechPlayer androidSpeechPlayer;
-  private List<SpeechPlayer> speechPlayers = new ArrayList<>(2);
+  private SpeechPlayer speechPlayer;
 
   /**
    * Constructed when creating an instance of {@link NavigationSpeechPlayer}.
    *
    * @param context                for the initialization of the speech players
-   * @param language               to be used
-   * @param voiceLanguageSupported true if <tt>voiceLanguage</tt> is not null, false otherwise
-   * @param accessToken            your given Mapbox access token
    * @since 0.16.0
    */
-  public SpeechPlayerProvider(@NonNull Context context, String language,
-                              boolean voiceLanguageSupported, String accessToken) {
-    initialize(context, language, voiceLanguageSupported, accessToken);
+  public SpeechPlayerProvider(@NonNull Context context) {
+    initialize(context);
   }
 
   SpeechPlayer retrieveSpeechPlayer() {
-    return speechPlayers.get(FIRST_PLAYER);
-  }
-
-  AndroidSpeechPlayer retrieveAndroidSpeechPlayer() {
-    return androidSpeechPlayer;
+    return speechPlayer;
   }
 
   void setMuted(boolean isMuted) {
-    for (SpeechPlayer player : speechPlayers) {
-      player.setMuted(isMuted);
-    }
+    speechPlayer.setMuted(isMuted);
   }
 
   void onOffRoute() {
-    for (SpeechPlayer player : speechPlayers) {
-      player.onOffRoute();
-    }
+    speechPlayer.onOffRoute();
   }
 
   void onDestroy() {
-    for (SpeechPlayer player : speechPlayers) {
-      player.onDestroy();
-    }
+    speechPlayer.onDestroy();
   }
 
-  private void initialize(@NonNull Context context, String language,
-                          boolean voiceLanguageSupported, String accessToken) {
+  private void initialize(@NonNull Context context) {
     AudioFocusDelegateProvider provider = buildAudioFocusDelegateProvider(context);
     SpeechAudioFocusManager audioFocusManager = new SpeechAudioFocusManager(provider);
     SpeechListener speechListener = new NavigationSpeechListener(this, audioFocusManager);
-    initMapboxSpeechPlayer(context, language, voiceLanguageSupported, accessToken, speechListener);
-    initAndroidSpeechPlayer(context, language, speechListener);
+    initSpeechPlayer(context, speechListener);
   }
 
   private AudioFocusDelegateProvider buildAudioFocusDelegateProvider(Context context) {
@@ -83,18 +63,8 @@ public class SpeechPlayerProvider {
     return new AudioFocusDelegateProvider(audioManager);
   }
 
-  private void initMapboxSpeechPlayer(Context context, String language,
-                                      boolean voiceLanguageSupported, String accessToken, SpeechListener listener) {
-    if (!voiceLanguageSupported) {
-      return;
-    }
-    MapboxSpeechPlayer mapboxSpeechPlayer = new MapboxSpeechPlayer(context, language, listener, accessToken);
-    speechPlayers.add(mapboxSpeechPlayer);
-  }
-
-  private void initAndroidSpeechPlayer(Context context, String language,
-                                       SpeechListener listener) {
-    androidSpeechPlayer = new AndroidSpeechPlayer(context, language, listener);
-    speechPlayers.add(androidSpeechPlayer);
+  private void initSpeechPlayer(Context context,
+                                SpeechListener listener) {
+    speechPlayer = new AndroidSpeechPlayer(context, listener);
   }
 }

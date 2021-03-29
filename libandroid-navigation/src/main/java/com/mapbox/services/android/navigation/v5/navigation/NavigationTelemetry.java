@@ -520,9 +520,19 @@ class NavigationTelemetry implements LocationEngineListener, NavigationMetricLis
   private void updateLastRerouteEvent(DirectionsRoute newDirectionsRoute) {
     if (!queuedRerouteEvents.isEmpty()) {
       RerouteEvent rerouteEvent = queuedRerouteEvents.get(queuedRerouteEvents.size() - 1);
-      List<Point> geometryPositions = PolylineUtils.decode(newDirectionsRoute.geometry(), Constants.PRECISION_6);
-      PolylineUtils.encode(geometryPositions, Constants.PRECISION_5);
-      rerouteEvent.setNewRouteGeometry(PolylineUtils.encode(geometryPositions, Constants.PRECISION_5));
+//TODO ready for geoJson
+      List<Point> points = new ArrayList<>();
+      for (List<Double> coordinate : newDirectionsRoute.geometry().coordinates()){
+        Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+        points.add(point);
+      }
+      rerouteEvent.setNewRouteGeometry(points);
+
+//      List<Point> geometryPositions = PolylineUtils.decode(newDirectionsRoute.geometry(), Constants.PRECISION_6);
+//      PolylineUtils.encode(geometryPositions, Constants.PRECISION_5);
+//      rerouteEvent.setNewRouteGeometry(PolylineUtils.encode(geometryPositions, Constants.PRECISION_5));
+
+
       int newDistanceRemaining = newDirectionsRoute.distance() == null ? 0 : newDirectionsRoute.distance().intValue();
       rerouteEvent.setNewDistanceRemaining(newDistanceRemaining);
       int newDurationRemaining = newDirectionsRoute.duration() == null ? 0 : newDirectionsRoute.duration().intValue();

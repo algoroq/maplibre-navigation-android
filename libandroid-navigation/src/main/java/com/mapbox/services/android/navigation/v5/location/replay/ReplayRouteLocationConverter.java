@@ -114,15 +114,17 @@ class ReplayRouteLocationConverter {
     private List<Point> calculateStepPoints() {
         List<Point> stepPoints = new ArrayList<>();
         //TODO ready for GeoJSON
-//    List<Point> points = new ArrayList<>();
-//    for (List<Double> coordinate : route.legs().get(currentLeg).steps().get(currentStep).geometry().coordinates()) {
-//      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
-//      points.add(point);
-//    }
-//    LineString line = LineString.fromLngLats(points);
+        List<Point> points = new ArrayList<>();
+    for (List<Double> coordinate : route.legs().get(currentLeg).steps().get(currentStep).geometry().coordinates()) {
+      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+      points.add(point);
+    }
+    LineString line = LineString.fromLngLats(points);
+    //------
 
-    LineString line = LineString.fromPolyline(
-      route.legs().get(currentLeg).steps().get(currentStep).geometry(), Constants.PRECISION_6);
+//    LineString line = LineString.fromPolyline(
+//      route.legs().get(currentLeg).steps().get(currentStep).geometry(), Constants.PRECISION_6);
+
         stepPoints.addAll(sliceRoute(line));
         increaseIndex();
 

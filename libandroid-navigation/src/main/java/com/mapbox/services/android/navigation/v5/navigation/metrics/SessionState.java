@@ -12,6 +12,7 @@ import com.mapbox.geojson.Point;
 import com.mapbox.geojson.utils.PolylineUtils;
 import com.mapbox.services.android.navigation.v5.routeprogress.MetricsRouteProgress;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,13 +23,27 @@ public abstract class SessionState {
    * Original route values
    */
   public String originalGeometry() {
-    if (originalDirectionRoute() == null || TextUtils.isEmpty(originalDirectionRoute().geometry())) {
+//TODO ready for geoJson
+    if (originalDirectionRoute() == null || originalDirectionRoute().geometry().coordinates().size() == 0) {
       return "";
     }
 
-    List<Point> geometryPositions
-      = PolylineUtils.decode(originalDirectionRoute().geometry(), Constants.PRECISION_6);
-    return PolylineUtils.encode(geometryPositions, Constants.PRECISION_5);
+    List<Point> points = new ArrayList<>();
+    for(List<Double> coordinate: originalDirectionRoute().geometry().coordinates()){
+      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+      points.add(point);
+    }
+
+    return PolylineUtils.encode(points, Constants.PRECISION_5);
+
+
+    //    if (originalDirectionRoute() == null || TextUtils.isEmpty(originalDirectionRoute().geometry())) {
+//      return "";
+//    }
+//    List<Point> geometryPositions
+//      = PolylineUtils.decode(originalDirectionRoute().geometry(), Constants.PRECISION_6);
+//
+//    return PolylineUtils.encode(geometryPositions, Constants.PRECISION_5);
   }
 
   public int originalDistance() {
@@ -71,13 +86,27 @@ public abstract class SessionState {
   }
 
   public String currentGeometry() {
-    if (currentDirectionRoute() == null || TextUtils.isEmpty(currentDirectionRoute().geometry())) {
+    //TODO ready for geoJson
+    if (currentDirectionRoute() == null || currentDirectionRoute().geometry().coordinates().size() == 0) {
       return "";
     }
 
-    List<Point> geometryPositions
-      = PolylineUtils.decode(currentDirectionRoute().geometry(), Constants.PRECISION_6);
-    return PolylineUtils.encode(geometryPositions, Constants.PRECISION_5);
+    List<Point> points = new ArrayList<>();
+    for(List<Double> coordinate: currentDirectionRoute().geometry().coordinates()){
+      Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+      points.add(point);
+    }
+
+    return PolylineUtils.encode(points, Constants.PRECISION_5);
+
+
+//    if (currentDirectionRoute() == null || TextUtils.isEmpty(currentDirectionRoute().geometry())) {
+//      return "";
+//    }
+//
+//    List<Point> geometryPositions
+//      = PolylineUtils.decode(currentDirectionRoute().geometry(), Constants.PRECISION_6);
+//    return PolylineUtils.encode(geometryPositions, Constants.PRECISION_5);
   }
 
   public abstract int secondsSinceLastReroute();

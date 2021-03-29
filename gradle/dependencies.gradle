@@ -1,7 +1,7 @@
 ext {
 
     androidVersions = [
-            minSdkVersion    : 21,
+            minSdkVersion    : 15,
             targetSdkVersion : 27,
             compileSdkVersion: 27,
             buildToolsVersion: '28.0.3'
@@ -49,7 +49,7 @@ ext {
 
     dependenciesList = [
             // mapbox
-            mapboxMapSdk           : project(':MapboxSDK'),
+            mapboxMapSdk           : "com.mapbox.mapboxsdk:mapbox-android-sdk:${version.mapboxMapSdk}",
             mapboxSdkServices      : "com.mapbox.mapboxsdk:mapbox-sdk-services:${version.mapboxSdkServices}",
             mapboxSdkTurf          : "com.mapbox.mapboxsdk:mapbox-sdk-turf:${version.mapboxSdkServices}",
             mapboxEvents           : "com.mapbox.mapboxsdk:mapbox-android-telemetry:${version.mapboxEvents}",
