@@ -24,7 +24,6 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationConstants;
  * </p>
  */
 public class NavigationLauncher {
-
   /**
    * Starts the UI with a {@link DirectionsRoute} already retrieved from
    * {@link com.mapbox.services.android.navigation.v5.navigation.NavigationRoute}
@@ -32,14 +31,14 @@ public class NavigationLauncher {
    * @param activity must be launched from another {@link Activity}
    * @param options  with fields to customize the navigation view
    */
-  public static void startNavigation(Activity activity, NavigationLauncherOptions options) {
+  public static void startNavigation(Activity activity, NavigationLauncherOptions options, String mapStyleUrl) {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
     SharedPreferences.Editor editor = preferences.edit();
 
     storeDirectionsRouteValue(options, editor);
     storeConfiguration(options, editor);
 
-    storeThemePreferences(options, editor);
+    storeThemePreferences(options, editor, mapStyleUrl);
 
     editor.apply();
 
@@ -74,7 +73,8 @@ public class NavigationLauncher {
     editor.putBoolean(NavigationConstants.NAVIGATION_VIEW_SNAP_ENABLED_KEY, options.snapToRoute());
   }
 
-  private static void storeThemePreferences(NavigationLauncherOptions options, SharedPreferences.Editor editor) {
+  private static void storeThemePreferences(NavigationLauncherOptions options, SharedPreferences.Editor editor, String mapStyleUrl) {
+    editor.putString(NavigationConstants.MAP_STYLE_URL, mapStyleUrl);
     boolean preferenceThemeSet = options.lightThemeResId() != null || options.darkThemeResId() != null;
     editor.putBoolean(NavigationConstants.NAVIGATION_VIEW_PREFERENCE_SET_THEME, preferenceThemeSet);
 

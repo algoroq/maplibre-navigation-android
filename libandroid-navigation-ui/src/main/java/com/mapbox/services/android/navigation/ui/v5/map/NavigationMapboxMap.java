@@ -115,7 +115,6 @@ public class NavigationMapboxMap {
 
   /**
    * Adds a marker icon on the map at the given position.
-   * <p>
    * The icon used for this method can be defined in your theme with
    * the attribute <tt>navigationViewDestinationMarker</tt>.
    *

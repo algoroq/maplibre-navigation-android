@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.mapboxsdk.offline.OfflineManager;
 import com.mapbox.services.android.navigation.testapp.activity.MockNavigationActivity;
 import com.mapbox.services.android.navigation.testapp.activity.RerouteActivity;
 import com.mapbox.services.android.navigation.testapp.activity.navigationui.ComponentNavigationActivity;
@@ -37,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
     final List<SampleItem> samples = new ArrayList<>(Arrays.asList(
       new SampleItem(
         getString(R.string.title_navigation_launcher),

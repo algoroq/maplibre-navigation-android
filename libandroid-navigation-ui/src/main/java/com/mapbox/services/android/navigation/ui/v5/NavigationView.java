@@ -88,7 +88,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
 
     private LinearLayout btnCancel;
     private ImageButton btnBottomSheetStateChanger;
-    private LinearLayout btnChangeMap;
+//    private LinearLayout btnChangeMap;
 
 
     private NavigationPresenter navigationPresenter;
@@ -124,6 +124,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
     public void onCreate(@Nullable Bundle savedInstanceState) {
         updateSavedInstanceStateMapStyle(savedInstanceState);
         mapView.onCreate(savedInstanceState);
+        mapView.setStyleUrl(ThemeSwitcher.retrieveMapStyle(getContext()));
         updatePresenterState(savedInstanceState);
         navigationViewModel.onCreate();
     }
@@ -186,7 +187,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
      * Called to ensure the {@link MapView} is destroyed
      * properly.
      * <p>
-     * In an {@link Activity} this should be in {@link Activity#onDestroy()}.
+     * In an {@link Activity} this should be in {@link Activity()}.
      * <p>
      * In a {@link android.app.Fragment}, this should be in {@link Fragment#onDestroyView()}.
      */
@@ -547,7 +548,6 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         recenterBtn = findViewById(R.id.recenterBtn);
         routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
         btnBottomSheetStateChanger = findViewById(R.id.btn_bottomSheetStateChanger);
-        btnChangeMap = findViewById(R.id.btnChangeMap);
     }
 
     private void initializeNavigationViewModel() {
@@ -660,7 +660,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
 
     private void initializeBottomSheetButtons() {
         setBottomSheetButton(btnCancel, getContext().getString(R.string.dropoff_dialog_negative_text), R.drawable.ic_cancel_circle, R.color.red);
-        setBottomSheetButton(btnChangeMap, getContext().getString(R.string.change_map), R.drawable.ic_change_map);
+//        setBottomSheetButton(btnChangeMap, getContext().getString(R.string.change_map), R.drawable.ic_change_map);
     }
 
     private void initializeClickListeners() {
@@ -668,7 +668,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         recenterBtn.addOnClickListener(new RecenterBtnClickListener(navigationPresenter));
         routeOverviewBtn.setOnClickListener(new RouteOverviewBtnClickListener(navigationPresenter));
         btnBottomSheetStateChanger.setOnClickListener(new BottomSheetStateChangerBtnClickListener(navigationPresenter));
-        btnChangeMap.setOnClickListener(new BtnChangeMapClickListener(navigationPresenter));
+//        btnChangeMap.setOnClickListener(new BtnChangeMapClickListener(navigationPresenter));
     }
 
     private void initializeOnMoveListener() {

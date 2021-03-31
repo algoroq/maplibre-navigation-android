@@ -41,10 +41,10 @@ android {
 
 dependencies {
   // MapBox-Java jar
-  api dependenciesList.mapboxJavaServices
-  api dependenciesList.mapboxJavaCore
-  api dependenciesList.mapboxJavaGeoJSON
-  api dependenciesList.mapboxJavaTurf
+  implementation dependenciesList.mapboxJavaServices
+  implementation dependenciesList.mapboxJavaCore
+  implementation dependenciesList.mapboxJavaGeoJSON
+  implementation dependenciesList.mapboxJavaTurf
 
 
   api dependenciesList.mapboxEvents

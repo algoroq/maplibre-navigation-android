@@ -44,6 +44,9 @@ android {
 dependencies {
   // Mapbox Navigation SDK
   implementation project(':libandroid-navigation-ui')
+
+
+
 //  implementation('com.mapbox.mapboxsdk:mapbox-android-sdk@aar') {
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
@@ -51,18 +54,23 @@ dependencies {
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
 //  }
 
-  implementation (dependenciesList.mapboxMapSdk) {
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
-  }
-  implementation (dependenciesList.locationLayerPlugin) {
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
-  }
+//  implementation (dependenciesList.mapboxMapSdk) {
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+//  }
+
+//  implementation (dependenciesList.locationLayerPlugin) {
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+//  }
+
+
+
+  //implementation ('com.mapbox.mapboxsdk:mapbox-android-sdk@aar')
 
   // Support libraries
   implementation dependenciesList.supportAppcompatV7
@@ -71,6 +79,7 @@ dependencies {
   implementation dependenciesList.supportConstraintLayout
   implementation dependenciesList.supportCardView
   implementation dependenciesList.lifecycleExtensions
+
   implementation dependenciesList.retrofit
   implementation dependenciesList.retrofitGson
 

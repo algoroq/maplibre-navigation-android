@@ -36,19 +36,20 @@ dependencies {
   api project(':libandroid-navigation')
 
   // Mapbox Map SDK
-//  implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:6.5.0') {
+  api project(':MapboxSDK')
+
+  api dependenciesList.mapboxJavaServices
+  api dependenciesList.mapboxJavaCore
+  api dependenciesList.mapboxJavaTurf
+  implementation dependenciesList.mapboxJavaGeoJSON
+
+
+//  implementation (dependenciesList.mapboxMapSdk) {
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
 //    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
 //  }
-
-  implementation (dependenciesList.mapboxMapSdk) {
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
-  }
 
   // Support libraries
   implementation dependenciesList.supportDesign
@@ -61,14 +62,12 @@ dependencies {
   annotationProcessor dependenciesList.lifecycleCompiler
 
   // Mapbox plugins
-  implementation (dependenciesList.locationLayerPlugin) {
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
-    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  api (dependenciesList.locationLayerPlugin){
+    exclude group:'com.mapbox.mapboxsdk', module: 'mapbox-android-sdk'
   }
+  implementation 'com.mapbox.mapboxsdk:mapbox-android-gestures:0.5.1'
 
-  // AutoValues
+  // AutoValuesM
   annotationProcessor dependenciesList.autoValue
   compileOnly dependenciesList.autoValue
 
@@ -80,7 +79,7 @@ dependencies {
   implementation dependenciesList.retrofitGson
 
   // Mapbox Map SDK Javadoc
-  javadocDeps dependenciesList.mapboxMapSdk
+  //javadocDeps dependenciesList.mapboxMapSdk
 
   // Unit testing
   testImplementation dependenciesList.junit

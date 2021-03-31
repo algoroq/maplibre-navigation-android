@@ -16,6 +16,7 @@ public final class NavigationConstants {
     // Empty private constructor to prevent users creating an instance of this class.
   }
 
+  public static final String MAP_STYLE_URL = "MAP_STYLE_URL";
   /**
    * If default voice instructions are enabled, this identifier will be used to differentiate them
    * from custom milestones in the

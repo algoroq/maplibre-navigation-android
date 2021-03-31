@@ -108,8 +108,10 @@ public class ThemeSwitcher {
   }
 
   static String retrieveMapStyle(Context context) {
-    TypedValue mapStyleAttr = resolveAttributeFromId(context, R.attr.navigationViewMapStyle);
-    return mapStyleAttr.string.toString();
+    return retrieveMapStyleUrlFromPreferences(context);
+
+//    TypedValue mapStyleAttr = resolveAttributeFromId(context, R.attr.navigationViewMapStyle);
+//    return mapStyleAttr.string.toString();
   }
 
   /**
@@ -160,5 +162,9 @@ public class ThemeSwitcher {
   private static int retrieveThemeResIdFromPreferences(Context context, String key) {
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
     return preferences.getInt(key, 0);
+  }
+  private static String retrieveMapStyleUrlFromPreferences(Context context) {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+    return preferences.getString(NavigationConstants.MAP_STYLE_URL, null);
   }
 }
