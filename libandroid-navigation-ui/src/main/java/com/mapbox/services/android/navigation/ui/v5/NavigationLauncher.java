@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mapbox.api.directions.v5.DirectionsAdapterFactory;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.mapboxsdk.offline.OfflineManager;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationConstants;
 
 /**
@@ -31,9 +32,13 @@ public class NavigationLauncher {
    * @param activity must be launched from another {@link Activity}
    * @param options  with fields to customize the navigation view
    */
-  public static void startNavigation(Activity activity, NavigationLauncherOptions options, String mapStyleUrl) {
+  public static void startNavigation(Activity activity, NavigationLauncherOptions options, String mapStyleUrl, Boolean offlineMode) {
+
+    OfflineManager.getInstance(activity).setOfflineMode(offlineMode ? 1L : 0L);
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
     SharedPreferences.Editor editor = preferences.edit();
+
+    editor.putBoolean(NavigationConstants.OFFLINE_MODE, offlineMode);
 
     storeDirectionsRouteValue(options, editor);
     storeConfiguration(options, editor);

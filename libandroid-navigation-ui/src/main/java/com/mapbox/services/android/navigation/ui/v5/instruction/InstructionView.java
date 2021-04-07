@@ -203,6 +203,18 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
         }
       }
     });
+
+    navigationViewModel.isOffRouteOfflineMode.observe(owner, new Observer<Boolean>() {
+      @Override
+      public void onChanged(@Nullable Boolean isOfRouteOfflineMode) {
+        if(isOfRouteOfflineMode == null) return;
+        if(isOfRouteOfflineMode){
+          hideInstructionsBanner();
+          return;
+        }
+        showInstructionsBanner();
+      }
+    });
     subscribeAlertView();
     initializeButtons();
   }
@@ -239,6 +251,19 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     }
   }
 
+  public void hideInstructionsBanner(){
+    if (instructionLayout.getVisibility() == VISIBLE){
+      instructionLayout.startAnimation(rerouteSlideUpTop);
+      instructionLayout.setVisibility(INVISIBLE);
+    }
+  }
+
+  public void showInstructionsBanner(){
+    if (instructionLayout.getVisibility() == INVISIBLE){
+      instructionLayout.startAnimation(rerouteSlideDownTop);
+      instructionLayout.setVisibility(VISIBLE);
+    }
+  }
 
   /**
    * Will slide the reroute view down from the top of the screen

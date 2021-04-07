@@ -1,8 +1,16 @@
 package com.mapbox.services.android.navigation.v5.navigation;
 
+import android.content.Context;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.mapbox.services.android.navigation.v5.milestone.Milestone;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
@@ -19,12 +27,17 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
   private NavigationRouteProcessor routeProcessor;
   private RouteProcessorBackgroundThread.Listener listener;
   private Handler responseHandler;
+  private Context ctx;
+  private boolean offlineMode;
 
   RouteProcessorHandlerCallback(NavigationRouteProcessor routeProcessor, Handler responseHandler,
-                                RouteProcessorBackgroundThread.Listener listener) {
+                                RouteProcessorBackgroundThread.Listener listener, Context ctx) {
     this.routeProcessor = routeProcessor;
     this.responseHandler = responseHandler;
     this.listener = listener;
+    this.ctx = ctx;
+
+
   }
 
   @Override
@@ -44,6 +57,8 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
    * @param update hold location, navigation (with options), and distances away from maneuver
    */
   private void handleRequest(final NavigationLocationUpdate update) {
+    boolean offlineModeFromPreferences = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(NavigationConstants.OFFLINE_MODE, true);
+    offlineMode = offlineModeFromPreferences || !isNetworkAvailable();
     final MapboxNavigation mapboxNavigation = update.mapboxNavigation();
     final Location rawLocation = update.location();
     RouteProgress routeProgress = routeProcessor.buildNewRouteProgress(mapboxNavigation, rawLocation);
@@ -65,8 +80,10 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
   private Location findSnappedLocation(MapboxNavigation mapboxNavigation, Location rawLocation,
                                        RouteProgress routeProgress, boolean userOffRoute) {
     boolean snapToRouteEnabled = mapboxNavigation.options().snapToRoute();
+
+    if(offlineMode) snapToRouteEnabled = false;
     return buildSnappedLocation(mapboxNavigation, snapToRouteEnabled,
-      rawLocation, routeProgress, userOffRoute);
+            rawLocation, routeProgress, userOffRoute);
   }
 
   private boolean determineUserOffRoute(NavigationLocationUpdate navigationLocationUpdate,
@@ -80,7 +97,7 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
                                   RouteProgress routeProgress, boolean userOffRoute) {
     boolean fasterRouteEnabled = mapboxNavigation.options().enableFasterRouteDetection();
     return fasterRouteEnabled && !userOffRoute
-      && shouldCheckFasterRoute(navigationLocationUpdate, routeProgress);
+            && shouldCheckFasterRoute(navigationLocationUpdate, routeProgress);
   }
 
   private RouteProgress updateRouteProcessorWith(RouteProgress routeProgress) {
@@ -96,9 +113,29 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
       public void run() {
         listener.onNewRouteProgress(location, finalRouteProgress);
         listener.onMilestoneTrigger(milestones, finalRouteProgress);
-        listener.onUserOffRoute(location, userOffRoute);
+        listener.onUserOffRoute(location, userOffRoute, offlineMode);
         listener.onCheckFasterRoute(location, finalRouteProgress, checkFasterRoute);
       }
     });
   }
+  @SuppressWarnings({"MissingPermission"})
+  private boolean isNetworkAvailable() {
+    ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE);
+    if (connectivityManager == null) return false;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      Network nw = connectivityManager.getActiveNetwork();
+      if (nw == null) return false;
+      NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
+      if (actNw == null) return false;
+      return actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+              actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+              actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) ||
+              actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH);
+    } else {
+      NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
+      if (nwInfo == null) return false;
+      return nwInfo.isConnected();
+    }
+  }
+
 }

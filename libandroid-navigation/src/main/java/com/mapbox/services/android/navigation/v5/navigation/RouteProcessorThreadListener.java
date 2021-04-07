@@ -52,10 +52,9 @@ class RouteProcessorThreadListener implements RouteProcessorBackgroundThread.Lis
    * whether or not the user is off route, the event dispatcher gets called.
    */
   @Override
-  public void onUserOffRoute(Location location, boolean userOffRoute) {
-    if (userOffRoute) {
-      eventDispatcher.onUserOffRoute(location);
-    }
+  public void onUserOffRoute(Location location, boolean userOffRoute, boolean offlineMode) {
+    if(!userOffRoute) return;
+    eventDispatcher.onUserOffRoute(location, offlineMode);
   }
 
   /**

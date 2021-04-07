@@ -145,9 +145,9 @@ class NavigationEventDispatcher {
     }
   }
 
-  void onUserOffRoute(Location location) {
+  void onUserOffRoute(Location location, boolean offlineMode) {
     for (OffRouteListener offRouteListener : offRouteListeners) {
-      offRouteListener.userOffRoute(location);
+      offRouteListener.userOffRoute(location, offlineMode);
     }
     if (metricEventListener != null) {
       metricEventListener.onOffRouteEvent(location);

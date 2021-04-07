@@ -114,7 +114,7 @@ public class NavigationService extends Service {
     RouteProcessorThreadListener listener = new RouteProcessorThreadListener(
       dispatcher, routeFetcher, notificationProvider
     );
-    thread = new RouteProcessorBackgroundThread(new Handler(), listener);
+    thread = new RouteProcessorBackgroundThread(new Handler(), listener, getApplicationContext());
   }
 
   private void initializeLocationProvider(MapboxNavigation mapboxNavigation) {

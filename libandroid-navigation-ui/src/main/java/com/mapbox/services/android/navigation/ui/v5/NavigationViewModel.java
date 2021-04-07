@@ -1,14 +1,20 @@
 package com.mapbox.services.android.navigation.ui.v5;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.mapbox.android.core.location.LocationEngine;
@@ -37,6 +43,7 @@ import com.mapbox.services.android.navigation.v5.milestone.MilestoneEventListene
 import com.mapbox.services.android.navigation.v5.milestone.VoiceInstructionMilestone;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigationOptions;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationConstants;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationEventListener;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationTimeFormat;
 import com.mapbox.services.android.navigation.v5.navigation.camera.Camera;
@@ -59,6 +66,7 @@ public class NavigationViewModel extends AndroidViewModel {
     public final MutableLiveData<BannerInstructionModel> bannerInstructionModel = new MutableLiveData<>();
     public final MutableLiveData<SummaryModel> summaryModel = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isOffRoute = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isOffRouteOfflineMode = new MutableLiveData<>();
     final MutableLiveData<Location> navigationLocation = new MutableLiveData<>();
     final MutableLiveData<DirectionsRoute> route = new MutableLiveData<>();
     final MutableLiveData<Point> destination = new MutableLiveData<>();
@@ -82,9 +90,11 @@ public class NavigationViewModel extends AndroidViewModel {
     private int timeFormatType;
     private boolean isRunning;
     private boolean isChangingConfigurations;
+    private Context ctx;
 
     public NavigationViewModel(Application application) {
         super(application);
+        ctx = application.getApplicationContext();
         this.accessToken = Mapbox.getAccessToken();
         initializeConnectivityManager(application);
         initializeNavigationRouteEngine();
@@ -310,12 +320,14 @@ public class NavigationViewModel extends AndroidViewModel {
 
     private OffRouteListener offRouteListener = new OffRouteListener() {
         @Override
-        public void userOffRoute(Location location) {
-            if (hasNetworkConnection()) {
-                speechPlayer.onOffRoute();
-                Point newOrigin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-                sendEventOffRoute(newOrigin);
-            }
+        public void userOffRoute(Location location, boolean offlineMode) {
+            isOffRouteOfflineMode.setValue(offlineMode);
+            System.out.println("XXXXXXX -" + offlineMode);
+            if (!hasNetworkConnection() || offlineMode) return;
+            speechPlayer.onOffRoute();
+            Point newOrigin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+            sendEventOffRoute(newOrigin);
+
         }
     };
 
@@ -514,4 +526,6 @@ public class NavigationViewModel extends AndroidViewModel {
         }
         return instructions;
     }
+
+
 }

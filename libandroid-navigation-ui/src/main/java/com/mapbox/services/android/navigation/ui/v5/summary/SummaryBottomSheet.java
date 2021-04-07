@@ -35,190 +35,223 @@ import java.text.DecimalFormat;
  */
 public class SummaryBottomSheet extends FrameLayout {
 
-  private static final String EMPTY_STRING = "";
-  private TextView distanceRemainingText;
-  private TextView timeRemainingText;
-  private TextView arrivalTimeText;
+    private static final String EMPTY_STRING = "";
+    private TextView distanceRemainingText;
+    private TextView timeRemainingText;
+    private TextView arrivalTimeText;
 
-  private TextView txtArrivalTimeTitle;
-  private TextView txtTimeUnitsRemaining;
-  private TextView txtDistanceUnitsRemaining;
+    private TextView txtArrivalTimeTitle;
+    private TextView txtTimeUnitsRemaining;
+    private TextView txtDistanceUnitsRemaining;
 
-  private ProgressBar routeProgressProgressBar;
-  private ProgressBar rerouteProgressBar;
-  private boolean isRerouting;
-  @NavigationTimeFormat.Type
-  private int timeFormatType;
-  private DistanceFormatter distanceFormatter;
+    private ProgressBar routeProgressProgressBar;
+    private ProgressBar rerouteProgressBar;
+    private boolean isRerouting;
+    @NavigationTimeFormat.Type
+    private int timeFormatType;
+    private DistanceFormatter distanceFormatter;
 
-  public SummaryBottomSheet(Context context) {
-    this(context, null);
-  }
-
-  public SummaryBottomSheet(Context context, AttributeSet attrs) {
-    this(context, attrs, -1);
-  }
-
-  public SummaryBottomSheet(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    initialize();
-  }
-
-  /**
-   * After the layout inflates, binds all necessary views,
-   * create a {@link RecyclerView} for the list of directions,
-   * and a new {@link DecimalFormat} for formatting distance remaining.
-   */
-  @Override
-  protected void onFinishInflate() {
-    super.onFinishInflate();
-    bind();
-    clearViews();
-  }
-
-  public void subscribe(NavigationViewModel navigationViewModel) {
-    navigationViewModel.summaryModel.observe((LifecycleOwner) getContext(), new Observer<SummaryModel>() {
-      @Override
-      public void onChanged(@Nullable SummaryModel summaryModel) {
-        if (summaryModel != null && !isRerouting) {
-          arrivalTimeText.setText(summaryModel.getArrivalTime());
-          txtArrivalTimeTitle.setText(summaryModel.getArrivalTitle());
-          timeRemainingText.setText(summaryModel.getTimeRemainingV2());
-          txtTimeUnitsRemaining.setText(summaryModel.getTimeUnitsRemaining());
-          distanceRemainingText.setText(summaryModel.getDistanceRemainingV2());
-          txtDistanceUnitsRemaining.setText(summaryModel.getDistanceUnitsRemaining());
-          routeProgressProgressBar.setProgress(summaryModel.getProgress());
-
-        }
-      }
-    });
-    navigationViewModel.isOffRoute.observe((LifecycleOwner) getContext(), new Observer<Boolean>() {
-      @Override
-      public void onChanged(@Nullable Boolean isOffRoute) {
-        if (isOffRoute != null) {
-          isRerouting = isOffRoute;
-          if (isRerouting) {
-            showRerouteState();
-          } else {
-            hideRerouteState();
-          }
-        }
-      }
-    });
-  }
-
-  /**
-   * Called in {@link ProgressChangeListener}, creates a new model and then
-   * uses it to update the views.
-   *
-   * @param routeProgress used to provide navigation / routeProgress data
-   * @since 0.6.2
-   */
-  @SuppressWarnings("UnusedDeclaration")
-  public void update(RouteProgress routeProgress) {
-    if (routeProgress != null && !isRerouting) {
-      SummaryModel model = new SummaryModel(getContext(), distanceFormatter, routeProgress, timeFormatType);
-      arrivalTimeText.setText(model.getArrivalTime());
-      txtArrivalTimeTitle.setText(model.getArrivalTitle());
-      timeRemainingText.setText(model.getTimeRemainingV2());
-      txtTimeUnitsRemaining.setText(model.getTimeUnitsRemaining());
-      distanceRemainingText.setText(model.getDistanceRemainingV2());
-      txtDistanceUnitsRemaining.setText(model.getDistanceUnitsRemaining());
-      routeProgressProgressBar.setProgress(model.getProgress());
+    public SummaryBottomSheet(Context context) {
+        this(context, null);
     }
-  }
 
-  /**
-   * Shows the reroute progress bar and clears current text views.
-   * Also sets boolean to rerouting state so views do not
-   * continue to update while we are fetching a new route.
-   *
-   * @since 0.6.0
-   */
-  public void showRerouteState() {
-    rerouteProgressBar.setVisibility(VISIBLE);
-    clearViews();
-  }
-
-  /**
-   * Hides the reroute progress bar and sets
-   * rerouting state to false to text will begin updating again.
-   *
-   * @since 0.6.0
-   */
-  public void hideRerouteState() {
-    rerouteProgressBar.setVisibility(INVISIBLE);
-  }
-
-  /**
-   * Sets the time format type to use
-   *
-   * @param type to use
-   */
-  public void setTimeFormat(@NavigationTimeFormat.Type int type) {
-    this.timeFormatType = type;
-  }
-
-  /**
-   * Sets the distance formatter
-   *
-   * @param distanceFormatter to set
-   */
-  public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
-    if (distanceFormatter != null && !distanceFormatter.equals(this.distanceFormatter)) {
-      this.distanceFormatter = distanceFormatter;
+    public SummaryBottomSheet(Context context, AttributeSet attrs) {
+        this(context, attrs, -1);
     }
-  }
 
-  /**
-   * Inflates this layout needed for this view and initializes the locale as the device locale.
-   */
-  private void initialize() {
-    initializeDistanceFormatter();
-    inflate(getContext(), R.layout.bottomsheet_full, this);
-  }
+    public SummaryBottomSheet(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initialize();
+    }
 
-  private void initializeDistanceFormatter() {
-    LocaleUtils localeUtils = new LocaleUtils();
-    String language = localeUtils.inferDeviceLanguage(getContext());
-    String unitType = localeUtils.getUnitTypeForDeviceLocale(getContext());
-    int roundingIncrement = NavigationConstants.ROUNDING_INCREMENT_FIFTY;
-    distanceFormatter = new DistanceFormatter(getContext(), language, unitType, roundingIncrement);
-  }
+    /**
+     * After the layout inflates, binds all necessary views,
+     * create a {@link RecyclerView} for the list of directions,
+     * and a new {@link DecimalFormat} for formatting distance remaining.
+     */
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        bind();
+        clearViews();
+    }
 
-  /**
-   * Finds and binds all necessary views
-   */
-  private void bind() {
-    distanceRemainingText = findViewById(R.id.distanceRemainingText);
-    timeRemainingText = findViewById(R.id.timeRemainingText);
-    arrivalTimeText = findViewById(R.id.arrivalTimeText);
-    rerouteProgressBar = findViewById(R.id.rerouteProgressBar);
+    public void subscribe(NavigationViewModel navigationViewModel) {
+        navigationViewModel.summaryModel.observe((LifecycleOwner) getContext(), new Observer<SummaryModel>() {
+            @Override
+            public void onChanged(@Nullable SummaryModel summaryModel) {
+                if (summaryModel != null && !isRerouting) {
+                    arrivalTimeText.setText(summaryModel.getArrivalTime());
+                    txtArrivalTimeTitle.setText(summaryModel.getArrivalTitle());
+                    timeRemainingText.setText(summaryModel.getTimeRemainingV2());
+                    txtTimeUnitsRemaining.setText(summaryModel.getTimeUnitsRemaining());
+                    distanceRemainingText.setText(summaryModel.getDistanceRemainingV2());
+                    txtDistanceUnitsRemaining.setText(summaryModel.getDistanceUnitsRemaining());
+                    routeProgressProgressBar.setProgress(summaryModel.getProgress());
 
-    txtArrivalTimeTitle = findViewById(R.id.txt_arrivalTimeTitle);
-    txtDistanceUnitsRemaining = findViewById(R.id.txt_distanceUnitsRemaining);
-    txtTimeUnitsRemaining = findViewById(R.id.txt_timeUnitsRemaining);
+                }
+            }
+        });
+        navigationViewModel.isOffRoute.observe((LifecycleOwner) getContext(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isOffRoute) {
+                if (isOffRoute != null) {
+                    isRerouting = isOffRoute;
+                    if (isRerouting) {
+                        showRerouteState();
+                    } else {
+                        hideRerouteState();
+                    }
+                }
+            }
+        });
+        navigationViewModel.isOffRouteOfflineMode.observe((LifecycleOwner) getContext(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isOffRouteOfflineMode) {
+                if (isOffRouteOfflineMode == null) return;
+                if (isOffRouteOfflineMode) {
+                    //hide
+                    hideInfoViews();
+                    return;
+                }
+                showInfoViews();
+                //show
+            }
+        });
+    }
 
-    routeProgressProgressBar = findViewById(R.id.progressBar);
+    /**
+     * Called in {@link ProgressChangeListener}, creates a new model and then
+     * uses it to update the views.
+     *
+     * @param routeProgress used to provide navigation / routeProgress data
+     * @since 0.6.2
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    public void update(RouteProgress routeProgress) {
+        if (routeProgress != null && !isRerouting) {
+            SummaryModel model = new SummaryModel(getContext(), distanceFormatter, routeProgress, timeFormatType);
+            arrivalTimeText.setText(model.getArrivalTime());
+            txtArrivalTimeTitle.setText(model.getArrivalTitle());
+            timeRemainingText.setText(model.getTimeRemainingV2());
+            txtTimeUnitsRemaining.setText(model.getTimeUnitsRemaining());
+            distanceRemainingText.setText(model.getDistanceRemainingV2());
+            txtDistanceUnitsRemaining.setText(model.getDistanceUnitsRemaining());
+            routeProgressProgressBar.setProgress(model.getProgress());
+        }
+    }
 
-    updateRouteOverviewImage();
-  }
+    public void hideInfoViews() {
+        arrivalTimeText.setVisibility(INVISIBLE);
+        txtArrivalTimeTitle.setVisibility(INVISIBLE);
+        timeRemainingText.setVisibility(INVISIBLE);
+        txtTimeUnitsRemaining.setVisibility(INVISIBLE);
+        distanceRemainingText.setVisibility(INVISIBLE);
+        txtDistanceUnitsRemaining.setVisibility(INVISIBLE);
+        routeProgressProgressBar.setVisibility(INVISIBLE);
+    }
 
-  private void updateRouteOverviewImage() {
-    ImageButton routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
-    routeOverviewBtn.setImageDrawable(ThemeSwitcher.retrieveThemeOverviewDrawable(getContext()));
-  }
+    public void showInfoViews() {
+        arrivalTimeText.setVisibility(VISIBLE);
+        txtArrivalTimeTitle.setVisibility(VISIBLE);
+        timeRemainingText.setVisibility(VISIBLE);
+        txtTimeUnitsRemaining.setVisibility(VISIBLE);
+        distanceRemainingText.setVisibility(VISIBLE);
+        txtDistanceUnitsRemaining.setVisibility(VISIBLE);
+        routeProgressProgressBar.setVisibility(VISIBLE);
+    }
 
-  /**
-   * Clears all {@link View}s.
-   */
-  private void clearViews() {
-    arrivalTimeText.setText(EMPTY_STRING);
-    timeRemainingText.setText(EMPTY_STRING);
-    distanceRemainingText.setText(EMPTY_STRING);
-    txtTimeUnitsRemaining.setText(EMPTY_STRING);
-    txtDistanceUnitsRemaining.setText(EMPTY_STRING);
-    txtArrivalTimeTitle.setText(EMPTY_STRING);
-    routeProgressProgressBar.setProgress(0);
-  }
+    /**
+     * Shows the reroute progress bar and clears current text views.
+     * Also sets boolean to rerouting state so views do not
+     * continue to update while we are fetching a new route.
+     *
+     * @since 0.6.0
+     */
+    public void showRerouteState() {
+        rerouteProgressBar.setVisibility(VISIBLE);
+        clearViews();
+    }
+
+    /**
+     * Hides the reroute progress bar and sets
+     * rerouting state to false to text will begin updating again.
+     *
+     * @since 0.6.0
+     */
+    public void hideRerouteState() {
+        rerouteProgressBar.setVisibility(INVISIBLE);
+    }
+
+    /**
+     * Sets the time format type to use
+     *
+     * @param type to use
+     */
+    public void setTimeFormat(@NavigationTimeFormat.Type int type) {
+        this.timeFormatType = type;
+    }
+
+    /**
+     * Sets the distance formatter
+     *
+     * @param distanceFormatter to set
+     */
+    public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
+        if (distanceFormatter != null && !distanceFormatter.equals(this.distanceFormatter)) {
+            this.distanceFormatter = distanceFormatter;
+        }
+    }
+
+    /**
+     * Inflates this layout needed for this view and initializes the locale as the device locale.
+     */
+    private void initialize() {
+        initializeDistanceFormatter();
+        inflate(getContext(), R.layout.bottomsheet_full, this);
+    }
+
+    private void initializeDistanceFormatter() {
+        LocaleUtils localeUtils = new LocaleUtils();
+        String language = localeUtils.inferDeviceLanguage(getContext());
+        String unitType = localeUtils.getUnitTypeForDeviceLocale(getContext());
+        int roundingIncrement = NavigationConstants.ROUNDING_INCREMENT_FIFTY;
+        distanceFormatter = new DistanceFormatter(getContext(), language, unitType, roundingIncrement);
+    }
+
+    /**
+     * Finds and binds all necessary views
+     */
+    private void bind() {
+        distanceRemainingText = findViewById(R.id.distanceRemainingText);
+        timeRemainingText = findViewById(R.id.timeRemainingText);
+        arrivalTimeText = findViewById(R.id.arrivalTimeText);
+        rerouteProgressBar = findViewById(R.id.rerouteProgressBar);
+
+        txtArrivalTimeTitle = findViewById(R.id.txt_arrivalTimeTitle);
+        txtDistanceUnitsRemaining = findViewById(R.id.txt_distanceUnitsRemaining);
+        txtTimeUnitsRemaining = findViewById(R.id.txt_timeUnitsRemaining);
+
+        routeProgressProgressBar = findViewById(R.id.progressBar);
+
+        updateRouteOverviewImage();
+    }
+
+    private void updateRouteOverviewImage() {
+        ImageButton routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
+        routeOverviewBtn.setImageDrawable(ThemeSwitcher.retrieveThemeOverviewDrawable(getContext()));
+    }
+
+    /**
+     * Clears all {@link View}s.
+     */
+    private void clearViews() {
+        arrivalTimeText.setText(EMPTY_STRING);
+        timeRemainingText.setText(EMPTY_STRING);
+        distanceRemainingText.setText(EMPTY_STRING);
+        txtTimeUnitsRemaining.setText(EMPTY_STRING);
+        txtDistanceUnitsRemaining.setText(EMPTY_STRING);
+        txtArrivalTimeTitle.setText(EMPTY_STRING);
+        routeProgressProgressBar.setProgress(0);
+    }
 }

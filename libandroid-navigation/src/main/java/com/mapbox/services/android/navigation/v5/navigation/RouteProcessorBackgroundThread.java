@@ -1,5 +1,6 @@
 package com.mapbox.services.android.navigation.v5.navigation;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -20,20 +21,20 @@ class RouteProcessorBackgroundThread extends HandlerThread {
   private static final int MSG_LOCATION_UPDATED = 1001;
   private Handler workerHandler;
 
-  RouteProcessorBackgroundThread(Handler responseHandler, Listener listener) {
+  RouteProcessorBackgroundThread(Handler responseHandler, Listener listener, Context ctx) {
     super(MAPBOX_NAVIGATION_THREAD_NAME, Process.THREAD_PRIORITY_BACKGROUND);
     start();
-    initialize(responseHandler, listener);
+    initialize(responseHandler, listener, ctx);
   }
 
   void queueUpdate(NavigationLocationUpdate navigationLocationUpdate) {
     workerHandler.obtainMessage(MSG_LOCATION_UPDATED, navigationLocationUpdate).sendToTarget();
   }
 
-  private void initialize(Handler responseHandler, Listener listener) {
+  private void initialize(Handler responseHandler, Listener listener, Context ctx) {
     NavigationRouteProcessor routeProcessor = new NavigationRouteProcessor();
     workerHandler = new Handler(getLooper(), new RouteProcessorHandlerCallback(
-      routeProcessor, responseHandler, listener)
+      routeProcessor, responseHandler, listener, ctx)
     );
   }
 
@@ -50,7 +51,7 @@ class RouteProcessorBackgroundThread extends HandlerThread {
 
     void onMilestoneTrigger(List<Milestone> triggeredMilestones, RouteProgress routeProgress);
 
-    void onUserOffRoute(Location location, boolean userOffRoute);
+    void onUserOffRoute(Location location, boolean userOffRoute, boolean offlineMode);
 
     void onCheckFasterRoute(Location location, RouteProgress routeProgress, boolean checkFasterRoute);
   }
