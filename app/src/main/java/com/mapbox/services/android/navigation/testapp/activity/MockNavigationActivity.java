@@ -257,7 +257,7 @@ public class MockNavigationActivity extends AppCompatActivity implements OnMapRe
   }
 
   @Override
-  public void userOffRoute(Location location) {
+  public void userOffRoute(Location location, boolean neco) {
     Toast.makeText(this, "off-route called", Toast.LENGTH_LONG).show();
   }
 

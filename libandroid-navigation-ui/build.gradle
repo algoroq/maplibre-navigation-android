@@ -36,20 +36,8 @@ dependencies {
   api project(':libandroid-navigation')
 
   // Mapbox Map SDK
-  api project(':MapboxSDK')
-
-  api dependenciesList.mapboxJavaServices
-  api dependenciesList.mapboxJavaCore
-  api dependenciesList.mapboxJavaTurf
-  implementation dependenciesList.mapboxJavaGeoJSON
 
 
-//  implementation (dependenciesList.mapboxMapSdk) {
-//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
-//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
-//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
-//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
-//  }
 
   // Support libraries
   implementation dependenciesList.supportDesign
@@ -64,8 +52,19 @@ dependencies {
   // Mapbox plugins
   api (dependenciesList.locationLayerPlugin){
     exclude group:'com.mapbox.mapboxsdk', module: 'mapbox-android-sdk'
+      exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+      exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+      exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+      exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
   }
-  implementation 'com.mapbox.mapboxsdk:mapbox-android-gestures:0.5.1'
+
+  api ('com.mapbox.mapboxsdk:mapbox-android-gestures:0.2.0'){
+    exclude group:'com.mapbox.mapboxsdk', module: 'mapbox-android-sdk'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
 
   // AutoValuesM
   annotationProcessor dependenciesList.autoValue

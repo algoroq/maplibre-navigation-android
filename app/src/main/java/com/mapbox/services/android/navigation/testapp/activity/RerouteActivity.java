@@ -202,7 +202,7 @@ public class RerouteActivity extends AppCompatActivity implements OnMapReadyCall
   }
 
   @Override
-  public void userOffRoute(Location location) {
+  public void userOffRoute(Location location, boolean s) {
     Point newOrigin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
     getRoute(newOrigin, destination, location.getBearing());
     Snackbar.make(contentLayout, "User Off Route", Snackbar.LENGTH_SHORT).show();

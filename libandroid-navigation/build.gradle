@@ -41,13 +41,26 @@ android {
 
 dependencies {
   // MapBox-Java jar
-  implementation dependenciesList.mapboxJavaServices
-  implementation dependenciesList.mapboxJavaCore
-  implementation dependenciesList.mapboxJavaGeoJSON
-  implementation dependenciesList.mapboxJavaTurf
+  api (dependenciesList.mapboxJavaServices)
+  api (dependenciesList.mapboxJavaCore)
+  api (dependenciesList.mapboxJavaGeoJSON)
+  api (dependenciesList.mapboxJavaTurf)
+
+  api(project(':MapboxSDK')) {
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
 
 
-  api dependenciesList.mapboxEvents
+  api (dependenciesList.mapboxEvents){
+    exclude group:'com.mapbox.mapboxsdk', module: 'mapbox-android-sdk'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+  }
 
   // Support
   implementation dependenciesList.supportAppcompatV7

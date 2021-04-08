@@ -91,6 +91,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
     private LocaleUtils localeUtils;
 
     private boolean locationFound;
+    private String styleUrl = "https://api.maptiler.com/maps/topo/style.json?key=5fogXiJ0m6IEn9pBj7ZA";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +99,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
         setContentView(R.layout.activity_navigation_launcher);
         ButterKnife.bind(this);
         mapView.onCreate(savedInstanceState);;
-        mapView.setStyleUrl("https://api.maptiler.com/maps/topo/style.json?key=5fogXiJ0m6IEn9pBj7ZA");
+        mapView.setStyleUrl(styleUrl);
         mapView.getMapAsync(this);
         localeUtils = new LocaleUtils();
     }
@@ -353,7 +354,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
 
         optionsBuilder.directionsRoute(route);
 
-        NavigationLauncher.startNavigation(this, optionsBuilder.build());
+        NavigationLauncher.startNavigation(this, optionsBuilder.build(), styleUrl, false);
     }
 
     private boolean validRouteResponse(Response<DirectionsResponse> response) {

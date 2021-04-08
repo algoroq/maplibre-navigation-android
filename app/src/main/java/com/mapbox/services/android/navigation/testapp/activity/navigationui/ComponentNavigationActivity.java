@@ -235,7 +235,7 @@ public class ComponentNavigationActivity extends AppCompatActivity implements On
   }
 
   @Override
-  public void userOffRoute(Location location) {
+  public void userOffRoute(Location location, boolean s) {
     calculateRouteWith(destination, true);
   }
 
