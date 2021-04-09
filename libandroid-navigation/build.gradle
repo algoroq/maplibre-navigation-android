@@ -22,6 +22,10 @@ android {
     )
     consumerProguardFiles 'proguard-consumer.pro'
   }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
   configurations {
     javadocDeps
@@ -41,18 +45,25 @@ android {
 
 dependencies {
   // MapBox-Java jar
+
   api (dependenciesList.mapboxJavaServices)
   api (dependenciesList.mapboxJavaCore)
   api (dependenciesList.mapboxJavaGeoJSON)
   api (dependenciesList.mapboxJavaTurf)
 
-  api(project(':MapboxSDK')) {
+//  api (dependenciesList.mapboxMapSdk){
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
+//    exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
+//  }
+
+  api (project(':MapboxSDK')){
     exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-services'
     exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-turf'
     exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-geojson'
     exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-sdk-core'
   }
-
 
   api (dependenciesList.mapboxEvents){
     exclude group:'com.mapbox.mapboxsdk', module: 'mapbox-android-sdk'
@@ -64,8 +75,8 @@ dependencies {
 
   // Support
   implementation dependenciesList.supportAppcompatV7
-  implementation dependenciesList.retrofit
-  implementation dependenciesList.retrofitGson
+  api dependenciesList.retrofit
+  api dependenciesList.retrofitGson
 
   // Logging
   implementation dependenciesList.timber

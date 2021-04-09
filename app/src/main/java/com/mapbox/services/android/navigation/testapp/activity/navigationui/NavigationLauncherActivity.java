@@ -271,12 +271,12 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
     }
 
     private void fetchRoute() {
-       List<Point> waypoints = new ArrayList<>();
-       waypoints.add(Point.fromLngLat(14.452300,48.989900));
+      // List<Point> waypoints = new ArrayList<>();
+      // waypoints.add(Point.fromLngLat(14.452300,48.989900));
         NavigationRoute.Builder builder = NavigationRoute.builder()
-                .origin(Point.fromLngLat(14.452413,48.990248))
-                .destination(Point.fromLngLat(14.452330,48.989505))
-                .addWaypoints(waypoints)
+                .origin(currentLocation)
+                .destination(destination)
+                //.addWaypoints(waypoints)
                 .profile(DirectionsCriteria.PROFILE_WALKING)
                 .alternatives(true);
 

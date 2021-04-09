@@ -23,6 +23,10 @@ android {
   configurations {
     javadocDeps
   }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
   buildTypes {
     debug {
@@ -74,8 +78,8 @@ dependencies {
   implementation dependenciesList.picasso
 
   // Retrofit
-  implementation dependenciesList.retrofit
-  implementation dependenciesList.retrofitGson
+//  api dependenciesList.retrofit
+//  api dependenciesList.retrofitGson
 
   // Mapbox Map SDK Javadoc
   //javadocDeps dependenciesList.mapboxMapSdk
