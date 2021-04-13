@@ -101,7 +101,7 @@ public abstract class SpeechAnnouncement {
     private SpeechAnnouncement buildSpeechAnnouncement() {
       VoiceInstructionMilestone milestone = voiceInstructionMilestone();
       if (milestone != null) {
-        ssmlAnnouncement(milestone.getSsmlAnnouncement());
+//        ssmlAnnouncement(milestone.getSsmlAnnouncement());
         announcement(milestone.getAnnouncement());
         return autoBuild();
       } else {

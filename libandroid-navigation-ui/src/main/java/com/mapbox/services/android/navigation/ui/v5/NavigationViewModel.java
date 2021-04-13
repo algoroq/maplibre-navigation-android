@@ -304,7 +304,7 @@ public class NavigationViewModel extends AndroidViewModel {
         @Override
         public void onProgressChange(Location location, RouteProgress routeProgress) {
             //JV IF
-            if (routeProgress.durationRemaining() > 1) {
+            if (routeProgress.durationRemaining() >= 1) {
                 NavigationViewModel.this.routeProgress = routeProgress;
                 instructionModel.setValue(new InstructionModel(distanceFormatter, routeProgress));
                 summaryModel.setValue(new SummaryModel(getApplication(), distanceFormatter, routeProgress, timeFormatType));

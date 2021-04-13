@@ -18,8 +18,8 @@ import com.mapbox.services.android.navigation.v5.utils.RouteUtils;
 public class VoiceInstructionMilestone extends Milestone {
 
   private static final String EMPTY_STRING = "";
-
-  private VoiceInstructions instructions;
+private String instructions;
+  //private VoiceInstructions instructions;
   private DirectionsRoute currentRoute;
   private RouteUtils routeUtils;
 
@@ -35,7 +35,8 @@ public class VoiceInstructionMilestone extends Milestone {
     }
     LegStep currentStep = routeProgress.currentLegProgress().currentStep();
     double stepDistanceRemaining = routeProgress.currentLegProgress().currentStepProgress().distanceRemaining();
-    VoiceInstructions instructions = routeUtils.findCurrentVoiceInstructions(currentStep, stepDistanceRemaining);
+    String instructions = routeUtils.findCurrentInstruction(currentStep);
+//    VoiceInstructions instructions = routeUtils.findCurrentVoiceInstructions(currentStep, stepDistanceRemaining);
     if (shouldBeVoiced(instructions, stepDistanceRemaining)) {
       return updateInstructions(routeProgress, instructions);
     }
@@ -50,7 +51,8 @@ public class VoiceInstructionMilestone extends Milestone {
         if (instructions == null) {
           return routeProgress.currentLegProgress().currentStep().name();
         }
-        return instructions.announcement();
+        return instructions;
+//        return instructions.announcement();
       }
     };
   }
@@ -64,12 +66,12 @@ public class VoiceInstructionMilestone extends Milestone {
    * @return announcement with SSML markup
    * @since 0.8.0
    */
-  public String getSsmlAnnouncement() {
-    if (instructions == null) {
-      return EMPTY_STRING;
-    }
-    return instructions.ssmlAnnouncement();
-  }
+//  public String getSsmlAnnouncement() {
+//    if (instructions == null) {
+//      return EMPTY_STRING;
+//    }
+//    return instructions.ssmlAnnouncement();
+//  }
 
   /**
    * Provide the instruction that can be used with Android's TextToSpeech.
@@ -83,7 +85,8 @@ public class VoiceInstructionMilestone extends Milestone {
     if (instructions == null) {
       return EMPTY_STRING;
     }
-    return instructions.announcement();
+    return instructions;
+//    return instructions.announcement();
   }
 
   /**
@@ -106,13 +109,14 @@ public class VoiceInstructionMilestone extends Milestone {
    * @param stepDistanceRemaining the current step distance remaining
    * @return true if time to voice the announcement, false if not
    */
-  private boolean shouldBeVoiced(VoiceInstructions instructions, double stepDistanceRemaining) {
-    boolean isNewInstruction = this.instructions == null || !this.instructions.equals(instructions);
-    boolean isValidNewInstruction = instructions != null && isNewInstruction;
-    return isValidNewInstruction && instructions.distanceAlongGeometry() >= stepDistanceRemaining;
+  private boolean shouldBeVoiced(String instructions, double stepDistanceRemaining) {
+    return this.instructions == null || !this.instructions.equals(instructions);
+    //boolean isNewInstruction = this.instructions == null || !this.instructions.equals(instructions);
+    //boolean isValidNewInstruction = instructions != null && isNewInstruction;
+   // return isValidNewInstruction && instructions.distanceAlongGeometry() >= stepDistanceRemaining;
   }
 
-  private boolean updateInstructions(RouteProgress routeProgress, VoiceInstructions instructions) {
+  private boolean updateInstructions(RouteProgress routeProgress, String instructions) {
     cacheInstructions(routeProgress, false);
     this.instructions = instructions;
     return true;
