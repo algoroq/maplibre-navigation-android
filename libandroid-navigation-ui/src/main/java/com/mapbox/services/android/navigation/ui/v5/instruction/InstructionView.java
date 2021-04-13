@@ -759,6 +759,7 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     updateTurnLanes(model);
     updateThenStep(model);
     updateInstructionText(model);
+    updateManeuverView(model);
     if (newStep(model.getProgress())) {
       LegStep upComingStep = model.getProgress().currentLegProgress().upComingStep();
       ImageCoordinator.getInstance().prefetchImageCache(upComingStep);

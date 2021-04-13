@@ -62,21 +62,26 @@ public class InstructionListPresenter {
 
     private void updateListView(@NonNull InstructionListView listView, CustomInstructionsBanner bannerInstructions,
                                 SpannableString distanceText) {
+
+
+
+
         listView.updatePrimaryText(bannerInstructions.getInstruction());
-        //TODO updateManeuverView(listView, bannerInstructions);
+        updateManeuverView(listView, bannerInstructions);
         listView.updateDistanceText(distanceText);
     }
 
 
-    private void updateManeuverView(@NonNull InstructionListView listView, BannerInstructions bannerInstructions) {
-        String maneuverType = bannerInstructions.primary().type();
-        String maneuverModifier = bannerInstructions.primary().modifier();
+    private void updateManeuverView(@NonNull InstructionListView listView, CustomInstructionsBanner bannerInstruction) {
+
+        String maneuverType = bannerInstruction.getManeuverType();
+        String maneuverModifier = bannerInstruction.getManeuverModifier();
         listView.updateManeuverViewTypeAndModifier(maneuverType, maneuverModifier);
 
-        Double roundaboutDegrees = bannerInstructions.primary().degrees();
-        if (roundaboutDegrees != null) {
-            listView.updateManeuverViewRoundaboutDegrees(roundaboutDegrees.floatValue());
-        }
+//        Double roundaboutDegrees = currentStep.maneuver().bearingAfter()
+//        if (roundaboutDegrees != null) {
+//            listView.updateManeuverViewRoundaboutDegrees(roundaboutDegrees.floatValue());
+//        }
     }
 
     private void addBannerInstructions(RouteProgress routeProgress) {
@@ -86,13 +91,10 @@ public class InstructionListPresenter {
             List<LegStep> steps = currentLeg.steps();
             for (LegStep step : steps) {
                 List<CustomInstructionsBanner> customInstructionsBanners = new ArrayList<>();
-                double distanceFromStart = step.distance();
-                double distanceTraveled = routeProgress.distanceTraveled();
-                double distanceToManeuver = distanceFromStart - distanceTraveled;
                     customInstructionsBanners.add(
                             new CustomInstructionsBanner(
-                                    step.maneuver().instruction(),
-                                    distanceFromStart
+                                    step.maneuver(),
+                                    step.distance()
                             )
                     );
 
@@ -114,7 +116,7 @@ public class InstructionListPresenter {
         }
         RouteLegProgress legProgress = routeProgress.currentLegProgress();
         LegStep currentStep = legProgress.currentStep();
-        double stepDistanceRemaining = legProgress.currentStepProgress().distanceRemaining();
+//        double stepDistanceRemaining = legProgress.currentStepProgress().distanceRemaining();
         String currentBannerInstructions = routeUtils.findCurrentInstruction(currentStep);
 //    BannerInstructions currentBannerInstructions = routeUtils.findCurrentBannerInstructions(
 //      currentStep, stepDistanceRemaining

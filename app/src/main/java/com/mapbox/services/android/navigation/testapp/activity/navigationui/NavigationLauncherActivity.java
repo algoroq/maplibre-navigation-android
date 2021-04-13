@@ -277,7 +277,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
                 .origin(currentLocation)
                 .destination(destination)
                 //.addWaypoints(waypoints)
-                .profile(DirectionsCriteria.PROFILE_WALKING)
+                .profile(DirectionsCriteria.PROFILE_DRIVING)
                 .alternatives(true);
 
        // setFieldsFromSharedPreferences(builder);
