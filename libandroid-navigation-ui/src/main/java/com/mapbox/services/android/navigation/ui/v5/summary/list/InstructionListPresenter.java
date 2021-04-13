@@ -17,140 +17,132 @@ import java.util.List;
 
 public class InstructionListPresenter {
 
-  private static final int TWO_LINES = 2;
-  private static final int ONE_LINE = 1;
-  private static final float TWO_LINE_BIAS = 0.65f;
-  private static final float ONE_LINE_BIAS = 0.5f;
-  private static final int FIRST_INSTRUCTION_INDEX = 0;
-  private final RouteUtils routeUtils;
-  private DistanceFormatter distanceFormatter;
-  private List<BannerInstructions> instructions;
-  private RouteLeg currentLeg;
+    private static final int TWO_LINES = 2;
+    private static final int ONE_LINE = 1;
+    private static final float TWO_LINE_BIAS = 0.65f;
+    private static final float ONE_LINE_BIAS = 0.5f;
+    private static final int FIRST_INSTRUCTION_INDEX = 0;
+    private final RouteUtils routeUtils;
+    private DistanceFormatter distanceFormatter;
+    private List<CustomInstructionsBanner> instructions;
+    private RouteLeg currentLeg;
 
-  InstructionListPresenter(RouteUtils routeUtils, DistanceFormatter distanceFormatter) {
-    this.routeUtils = routeUtils;
-    this.distanceFormatter = distanceFormatter;
-    instructions = new ArrayList<>();
-  }
-
-  void onBindInstructionListViewAtPosition(int position, @NonNull InstructionListView listView) {
-    BannerInstructions bannerInstructions = instructions.get(position);
-    double distance = bannerInstructions.distanceAlongGeometry();
-    SpannableString distanceText = distanceFormatter.formatDistance(distance);
-    updateListView(listView, bannerInstructions, distanceText);
-  }
-
-  int retrieveBannerInstructionListSize() {
-    return instructions.size();
-  }
-
-  boolean updateBannerListWith(RouteProgress routeProgress) {
-    addBannerInstructions(routeProgress);
-    return updateInstructionList(routeProgress);
-  }
-
-  void updateDistanceFormatter(DistanceFormatter distanceFormatter) {
-    if (shouldUpdate(distanceFormatter)) {
-      this.distanceFormatter = distanceFormatter;
+    InstructionListPresenter(RouteUtils routeUtils, DistanceFormatter distanceFormatter) {
+        this.routeUtils = routeUtils;
+        this.distanceFormatter = distanceFormatter;
+        instructions = new ArrayList<>();
     }
-  }
 
-  private boolean shouldUpdate(DistanceFormatter distanceFormatter) {
-    return distanceFormatter != null
-      && (this.distanceFormatter == null || !this.distanceFormatter.equals(distanceFormatter));
-  }
-
-  private void updateListView(@NonNull InstructionListView listView, BannerInstructions bannerInstructions,
-                              SpannableString distanceText) {
-    listView.updatePrimaryText(bannerInstructions.primary().text());
-    updateSecondaryInstruction(listView, bannerInstructions);
-    updateManeuverView(listView, bannerInstructions);
-    listView.updateDistanceText(distanceText);
-  }
-
-  private void updateSecondaryInstruction(@NonNull InstructionListView listView,
-                                          BannerInstructions bannerInstructions) {
-    boolean hasSecondaryInstructions = bannerInstructions.secondary() != null;
-    adjustListViewForSecondaryInstructions(listView, hasSecondaryInstructions);
-    if (hasSecondaryInstructions) {
-      listView.updateSecondaryText(bannerInstructions.secondary().text());
+    void onBindInstructionListViewAtPosition(int position, @NonNull InstructionListView listView) {
+        CustomInstructionsBanner bannerInstructions = instructions.get(position);
+        double distance = bannerInstructions.getDistance();
+        SpannableString distanceText = distanceFormatter.formatDistance(distance);
+        updateListView(listView, bannerInstructions, distanceText);
     }
-  }
 
-  private void adjustListViewForSecondaryInstructions(InstructionListView listView, boolean hasSecondaryInstructions) {
-    if (hasSecondaryInstructions) {
-      hasSecondaryInstructions(listView);
-    } else {
-      hasNoSecondaryInstructions(listView);
+    int retrieveBannerInstructionListSize() {
+        return instructions.size();
     }
-  }
 
-  private void hasSecondaryInstructions(InstructionListView listView) {
-    listView.updatePrimaryMaxLines(ONE_LINE);
-    listView.updateSecondaryVisibility(View.VISIBLE);
-    listView.updateBannerVerticalBias(TWO_LINE_BIAS);
-  }
-
-  private void hasNoSecondaryInstructions(InstructionListView listView) {
-    listView.updatePrimaryMaxLines(TWO_LINES);
-    listView.updateSecondaryVisibility(View.GONE);
-    listView.updateBannerVerticalBias(ONE_LINE_BIAS);
-  }
-
-  private void updateManeuverView(@NonNull InstructionListView listView, BannerInstructions bannerInstructions) {
-    String maneuverType = bannerInstructions.primary().type();
-    String maneuverModifier = bannerInstructions.primary().modifier();
-    listView.updateManeuverViewTypeAndModifier(maneuverType, maneuverModifier);
-
-    Double roundaboutDegrees = bannerInstructions.primary().degrees();
-    if (roundaboutDegrees != null) {
-      listView.updateManeuverViewRoundaboutDegrees(roundaboutDegrees.floatValue());
+    boolean updateBannerListWith(RouteProgress routeProgress) {
+        addBannerInstructions(routeProgress);
+        return updateInstructionList(routeProgress);
     }
-  }
 
-  private void addBannerInstructions(RouteProgress routeProgress) {
-    if (isNewLeg(routeProgress)) {
-      instructions = new ArrayList<>();
-      currentLeg = routeProgress.currentLeg();
-      List<LegStep> steps = currentLeg.steps();
-      for (LegStep step : steps) {
-        List<BannerInstructions> bannerInstructions = step.bannerInstructions();
-        if (bannerInstructions != null && !bannerInstructions.isEmpty()) {
-          instructions.addAll(bannerInstructions);
+    void updateDistanceFormatter(DistanceFormatter distanceFormatter) {
+        if (shouldUpdate(distanceFormatter)) {
+            this.distanceFormatter = distanceFormatter;
         }
-      }
     }
-  }
 
-  private boolean isNewLeg(RouteProgress routeProgress) {
-    return currentLeg == null || !currentLeg.equals(routeProgress.currentLeg());
-  }
+    private boolean shouldUpdate(DistanceFormatter distanceFormatter) {
+        return distanceFormatter != null
+                && (this.distanceFormatter == null || !this.distanceFormatter.equals(distanceFormatter));
+    }
 
-  private boolean updateInstructionList(RouteProgress routeProgress) {
-    if (instructions.isEmpty()) {
-      return false;
+    private void updateListView(@NonNull InstructionListView listView, CustomInstructionsBanner bannerInstructions,
+                                SpannableString distanceText) {
+        listView.updatePrimaryText(bannerInstructions.getInstruction());
+        //TODO updateManeuverView(listView, bannerInstructions);
+        listView.updateDistanceText(distanceText);
     }
-    RouteLegProgress legProgress = routeProgress.currentLegProgress();
-    LegStep currentStep = legProgress.currentStep();
-    double stepDistanceRemaining = legProgress.currentStepProgress().distanceRemaining();
-    BannerInstructions currentBannerInstructions = routeUtils.findCurrentBannerInstructions(
-      currentStep, stepDistanceRemaining
-    );
-    if (!instructions.contains(currentBannerInstructions)) {
-      return false;
-    }
-    int currentInstructionIndex = instructions.indexOf(currentBannerInstructions);
-    return removeInstructionsFrom(currentInstructionIndex);
-  }
 
-  private boolean removeInstructionsFrom(int currentInstructionIndex) {
-    if (currentInstructionIndex == FIRST_INSTRUCTION_INDEX) {
-      instructions.remove(FIRST_INSTRUCTION_INDEX);
-      return true;
-    } else if (currentInstructionIndex <= instructions.size()) {
-      instructions.subList(FIRST_INSTRUCTION_INDEX, currentInstructionIndex).clear();
-      return true;
+
+    private void updateManeuverView(@NonNull InstructionListView listView, BannerInstructions bannerInstructions) {
+        String maneuverType = bannerInstructions.primary().type();
+        String maneuverModifier = bannerInstructions.primary().modifier();
+        listView.updateManeuverViewTypeAndModifier(maneuverType, maneuverModifier);
+
+        Double roundaboutDegrees = bannerInstructions.primary().degrees();
+        if (roundaboutDegrees != null) {
+            listView.updateManeuverViewRoundaboutDegrees(roundaboutDegrees.floatValue());
+        }
     }
-    return false;
-  }
+
+    private void addBannerInstructions(RouteProgress routeProgress) {
+        if (isNewLeg(routeProgress)) {
+            instructions = new ArrayList<>();
+            currentLeg = routeProgress.currentLeg();
+            List<LegStep> steps = currentLeg.steps();
+            for (LegStep step : steps) {
+                List<CustomInstructionsBanner> customInstructionsBanners = new ArrayList<>();
+                double distanceFromStart = step.distance();
+                double distanceTraveled = routeProgress.distanceTraveled();
+                double distanceToManeuver = distanceFromStart - distanceTraveled;
+                    customInstructionsBanners.add(
+                            new CustomInstructionsBanner(
+                                    step.maneuver().instruction(),
+                                    distanceFromStart
+                            )
+                    );
+
+
+                if (customInstructionsBanners != null && !customInstructionsBanners.isEmpty()) {
+                    instructions.addAll(customInstructionsBanners);
+                }
+            }
+        }
+    }
+
+    private boolean isNewLeg(RouteProgress routeProgress) {
+        return currentLeg == null || !currentLeg.equals(routeProgress.currentLeg());
+    }
+
+    private boolean updateInstructionList(RouteProgress routeProgress) {
+        if (instructions.isEmpty()) {
+            return false;
+        }
+        RouteLegProgress legProgress = routeProgress.currentLegProgress();
+        LegStep currentStep = legProgress.currentStep();
+        double stepDistanceRemaining = legProgress.currentStepProgress().distanceRemaining();
+        String currentBannerInstructions = routeUtils.findCurrentInstruction(currentStep);
+//    BannerInstructions currentBannerInstructions = routeUtils.findCurrentBannerInstructions(
+//      currentStep, stepDistanceRemaining
+//    );
+        int index = -1;
+        boolean found = false;
+        boolean searching = true;
+
+        while (searching && index < instructions.size()-1){
+            index++;
+            if(instructions.get(index).getInstruction().equals(currentBannerInstructions)){
+                searching = false;
+                found = true;
+            }
+        }
+        if(!found) return false;
+
+        return removeInstructionsFrom(index);
+    }
+
+    private boolean removeInstructionsFrom(int currentInstructionIndex) {
+        if (currentInstructionIndex == FIRST_INSTRUCTION_INDEX) {
+            instructions.remove(FIRST_INSTRUCTION_INDEX);
+            return true;
+        } else if (currentInstructionIndex <= instructions.size()) {
+            instructions.subList(FIRST_INSTRUCTION_INDEX, currentInstructionIndex).clear();
+            return true;
+        }
+        return false;
+    }
 }

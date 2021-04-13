@@ -14,9 +14,7 @@ interface InstructionListView {
 
   void updatePrimaryMaxLines(int maxLines);
 
-  void updateSecondaryText(String secondaryText);
 
-  void updateSecondaryVisibility(int visibility);
 
   void updateBannerVerticalBias(float bias);
 }

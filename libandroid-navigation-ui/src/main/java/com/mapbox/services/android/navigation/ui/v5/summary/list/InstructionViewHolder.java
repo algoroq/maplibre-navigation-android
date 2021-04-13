@@ -25,7 +25,6 @@ class InstructionViewHolder extends RecyclerView.ViewHolder implements Instructi
   private ManeuverView maneuverView;
   private TextView distanceText;
   private TextView primaryText;
-  private TextView secondaryText;
   private View instructionLayoutText;
 
   InstructionViewHolder(View itemView) {
@@ -33,9 +32,7 @@ class InstructionViewHolder extends RecyclerView.ViewHolder implements Instructi
     maneuverView = itemView.findViewById(R.id.maneuverView);
     distanceText = itemView.findViewById(R.id.stepDistanceText);
     primaryText = itemView.findViewById(R.id.stepPrimaryText);
-    secondaryText = itemView.findViewById(R.id.stepSecondaryText);
     instructionLayoutText = itemView.findViewById(R.id.instructionLayoutText);
-    initInstructionAutoSize();
   }
 
   @Override
@@ -63,29 +60,12 @@ class InstructionViewHolder extends RecyclerView.ViewHolder implements Instructi
     primaryText.setMaxLines(maxLines);
   }
 
-  @Override
-  public void updateSecondaryText(String secondaryText) {
-    this.secondaryText.setText(secondaryText);
-  }
-
-  @Override
-  public void updateSecondaryVisibility(int visibility) {
-    secondaryText.setVisibility(visibility);
-  }
 
   @Override
   public void updateBannerVerticalBias(float percentBias) {
     adjustBannerVerticalBias(percentBias);
   }
 
-  private void initInstructionAutoSize() {
-    TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(primaryText,
-      PRIMARY_MIN_TEXT_SIZE_SP, PRIMARY_MAX_TEXT_SIZE_SP, AUTO_SIZE_STEP_GRANULARITY, TypedValue.COMPLEX_UNIT_SP);
-    TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(secondaryText,
-      SECONDARY_MIN_TEXT_SIZE_SP, SECONDARY_MAX_TEXT_SIZE_SP, AUTO_SIZE_STEP_GRANULARITY, TypedValue.COMPLEX_UNIT_SP);
-    TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(distanceText,
-      DISTANCE_MIN_TEXT_SIZE_SP, DISTANCE_MAX_TEXT_SIZE_SP, AUTO_SIZE_STEP_GRANULARITY, TypedValue.COMPLEX_UNIT_SP);
-  }
 
   private void adjustBannerVerticalBias(float percentBias) {
     int orientation = itemView.getResources().getConfiguration().orientation;
