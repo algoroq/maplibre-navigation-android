@@ -150,7 +150,6 @@ public class NavigationMapboxMap {
 
   /**
    * Updates how the user location is shown on the map.
-   * <p>
    * <ul>
    * <li>{@link RenderMode#NORMAL}: Shows user location, bearing ignored</li>
    * <li>{@link RenderMode#COMPASS}: Shows user location with bearing considered from compass</li>

@@ -265,6 +265,11 @@ public class RouteUtils {
     return null;
   }
 
+
+  public String findCurrentInstruction(LegStep currentStep){
+    return currentStep.maneuver().instruction();
+  }
+
   /**
    * This method returns the current {@link VoiceInstructions} based on the step distance
    * remaining.

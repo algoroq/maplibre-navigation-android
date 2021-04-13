@@ -10,7 +10,7 @@ import com.mapbox.services.android.navigation.v5.utils.DistanceFormatter;
 import com.mapbox.services.android.navigation.v5.utils.RouteUtils;
 
 public class InstructionModel {
-
+  private String instructionText;
   BannerText primaryBannerText;
   BannerText secondaryBannerText;
   private BannerText thenBannerText;
@@ -58,6 +58,8 @@ public class InstructionModel {
     return progress;
   }
 
+  String getInstructionText(){return instructionText;}
+
   private void buildInstructionModel(DistanceFormatter distanceFormatter, RouteProgress progress) {
     stepResources = new InstructionStepResources(distanceFormatter, progress);
     extractStepInstructions(progress);
@@ -71,7 +73,7 @@ public class InstructionModel {
 
     primaryBannerText = routeUtils.findCurrentBannerText(currentStep, stepDistanceRemaining, true);
     secondaryBannerText = routeUtils.findCurrentBannerText(currentStep, stepDistanceRemaining, false);
-
+    instructionText = routeUtils.findCurrentInstruction(currentStep);
     if (upComingStep != null) {
       thenBannerText = routeUtils.findCurrentBannerText(upComingStep, upComingStep.distance(), true);
     }

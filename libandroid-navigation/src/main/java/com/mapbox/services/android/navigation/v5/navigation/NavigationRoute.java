@@ -68,10 +68,10 @@ public final class NavigationRoute {
     }
 
     static Builder builder(Context context, LocaleUtils localeUtils) {
-        return new Builder();
+        return new Builder()
         //TODO - neumí zpracovat server
         //.annotations(DirectionsCriteria.ANNOTATION_CONGESTION, DirectionsCriteria.ANNOTATION_DISTANCE)
-        //.language(context, localeUtils)
+        .language(context, localeUtils);
         //.voiceUnits(context, localeUtils)
     }
 
@@ -285,14 +285,12 @@ public final class NavigationRoute {
          * @since 0.5.0
          */
         public Builder language(Locale language) {
-//            //TODO - neumí zpracovat server
-//            directionsBuilder.language(language);
+            directionsBuilder.language(language);
             return this;
         }
 
         Builder language(Context context, LocaleUtils localeUtils) {
-            //TODO - neumí zpracovat server
-//            directionsBuilder.language(localeUtils.inferDeviceLocale(context));
+            directionsBuilder.language(localeUtils.inferDeviceLocale(context));
             return this;
         }
 
@@ -538,7 +536,7 @@ public final class NavigationRoute {
                     .geometries(DirectionsCriteria.GEOMETRY_GEOJSON)
                     .overview(DirectionsCriteria.OVERVIEW_FULL);
 //                    .voiceInstructions(false)
-//                    .bannerInstructions(false)
+//                    .bannerInstructions(false);
 //                    .roundaboutExits(true);
             return new NavigationRoute(directionsBuilder.build());
         }

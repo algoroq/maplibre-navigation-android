@@ -78,7 +78,6 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
   private ManeuverView upcomingManeuverView;
   private TextView upcomingDistanceText;
   private TextView upcomingPrimaryText;
-  private TextView upcomingSecondaryText;
   private ManeuverView thenManeuverView;
   private TextView thenStepText;
   private NavigationAlertView alertView;
@@ -394,8 +393,6 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     upcomingManeuverView = findViewById(R.id.maneuverView);
     upcomingDistanceText = findViewById(R.id.stepDistanceText);
     upcomingPrimaryText = findViewById(R.id.stepPrimaryText);
-    upcomingSecondaryText = findViewById(R.id.stepSecondaryText);
-
     thenManeuverView = findViewById(R.id.thenManeuverView);
     thenStepText = findViewById(R.id.thenStepText);
 
@@ -448,8 +445,6 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
   private void initializeInstructionAutoSize() {
     TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(upcomingPrimaryText,
       26, 30, 1, TypedValue.COMPLEX_UNIT_SP);
-    TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(upcomingSecondaryText,
-      20, 26, 1, TypedValue.COMPLEX_UNIT_SP);
   }
 
   /**
@@ -763,6 +758,7 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
     updateInstructionList(model);
     updateTurnLanes(model);
     updateThenStep(model);
+    updateInstructionText(model);
     if (newStep(model.getProgress())) {
       LegStep upComingStep = model.getProgress().currentLegProgress().upComingStep();
       ImageCoordinator.getInstance().prefetchImageCache(upComingStep);
@@ -777,21 +773,13 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
    */
   private void updateDataFromBannerInstruction(InstructionModel model) {
     updateManeuverView(model);
+
+
     if (model.getPrimaryBannerText() != null) {
+
       createInstructionLoader(upcomingPrimaryText, model.getPrimaryBannerText()).loadInstruction();
     }
-    if (model.getSecondaryBannerText() != null) {
-      if (upcomingSecondaryText.getVisibility() == GONE) {
-        upcomingSecondaryText.setVisibility(VISIBLE);
-        upcomingPrimaryText.setMaxLines(1);
-        //adjustBannerTextVerticalBias(0.65f);
-      }
-      createInstructionLoader(upcomingSecondaryText, model.getSecondaryBannerText()).loadInstruction();
-    } else {
-      upcomingPrimaryText.setMaxLines(2);
-      upcomingSecondaryText.setVisibility(GONE);
-      //adjustBannerTextVerticalBias(0.5f);
-    }
+
   }
 
   /**
@@ -822,6 +810,22 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
       distanceText(model);
     }
   }
+
+  private void updateInstructionText(InstructionModel model){
+    if (newInstructionText(model)) {
+      upcomingPrimaryText.setText(model.getInstructionText());
+    } else if (upcomingPrimaryText.getText().toString().isEmpty()) {
+      upcomingPrimaryText.setText(model.getInstructionText());
+    }
+
+  }
+  private boolean newInstructionText(InstructionModel model) {
+    return !upcomingPrimaryText.getText().toString().isEmpty()
+            && !TextUtils.isEmpty(model.getInstructionText())
+            && !upcomingPrimaryText.getText().toString()
+            .equals(model.getInstructionText());
+  }
+
 
   private void updateLandscapeConstraintsTo(int layoutRes) {
     ConstraintSet collapsed = new ConstraintSet();

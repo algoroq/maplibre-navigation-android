@@ -187,7 +187,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
      * Called to ensure the {@link MapView} is destroyed
      * properly.
      * <p>
-     * In an {@link Activity} this should be in {@link Activity()}.
+     * In an {@link Activity()} this should be in {@link Activity()}.
      * <p>
      * In a {@link android.app.Fragment}, this should be in {@link Fragment#onDestroyView()}.
      */

@@ -9,9 +9,9 @@ import com.mapbox.services.android.navigation.v5.milestone.VoiceInstructionMiles
  * Used with {@link NavigationSpeechPlayer#play(SpeechAnnouncement)}.
  * <p>
  * Given either an <tt>ssmlAnnouncement</tt> or <tt>announcement</tt>, the {@link NavigationSpeechPlayer}
- * will first attempt to speak the SSML if {@link MapboxSpeechPlayer} supports the given language.
+ * will first attempt to speak the SSML if {@link } supports the given language.
  * <p>
- * If no SSML announcement is provided and {@link MapboxSpeechPlayer} supports the given language,
+ * If no SSML announcement is provided and {@link } supports the given language,
  * the player will read the non-null {@link SpeechAnnouncement#announcement()}.
  *
  * @since 0.16.0

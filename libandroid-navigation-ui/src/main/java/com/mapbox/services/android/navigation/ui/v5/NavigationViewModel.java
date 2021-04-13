@@ -90,11 +90,9 @@ public class NavigationViewModel extends AndroidViewModel {
     private int timeFormatType;
     private boolean isRunning;
     private boolean isChangingConfigurations;
-    private Context ctx;
 
     public NavigationViewModel(Application application) {
         super(application);
-        ctx = application.getApplicationContext();
         this.accessToken = Mapbox.getAccessToken();
         initializeConnectivityManager(application);
         initializeNavigationRouteEngine();

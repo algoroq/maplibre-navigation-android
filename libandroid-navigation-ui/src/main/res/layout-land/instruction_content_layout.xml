@@ -57,14 +57,8 @@
             android:textSize="30sp"
             tools:text="70 m" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="start|top"
-            android:orientation="horizontal">
             <TextView
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:id="@+id/stepPrimaryText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -75,18 +69,6 @@
                 android:textColor="?attr/navigationViewBannerPrimaryText"
                 tools:text="I-580 South" />
 
-            <TextView
-                android:layout_weight="1"
-                android:id="@+id/stepSecondaryText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:textColor="?attr/navigationViewBannerSecondaryText"
-                tools:text="San Jose / Cupertino" />
-        </LinearLayout>
 
 
     </LinearLayout>

@@ -108,11 +108,17 @@ ext {
             retrofitGson           : "com.squareup.retrofit2:converter-gson:${version.retrofitGson}",
 
             //MapBox-Java jar
-            mapboxJavaServices     : files('../libs/services.jar'),
-            mapboxJavaCore         : files('../libs/services-core.jar'),
-            mapboxJavaGeoJSON      : files('../libs/services-geojson.jar'),
-            mapboxJavaTurf         : files('../libs/services-turf.jar'),
-            mapboxEventsCore       : files('../libs/libcore.jar')
+//            mapboxJavaServices     : files('../libs/services.jar'),
+//            mapboxJavaCore         : files('../libs/services-core.jar'),
+//            mapboxJavaGeoJSON      : files('../libs/services-geojson.jar'),
+//            mapboxJavaTurf         : files('../libs/services-turf.jar'),
+            mapboxJavaServices     : "com.mapbox.mapboxsdk:services:4.1.0-SNAPSHOT",
+            mapboxJavaCore         : "com.mapbox.mapboxsdk:services-core:4.1.0-SNAPSHOT",
+            mapboxJavaGeoJSON      : "com.mapbox.mapboxsdk:services-geojson:4.1.0-SNAPSHOT",
+            mapboxJavaTurf         : "com.mapbox.mapboxsdk:services-turf:4.1.0-SNAPSHOT"
+
+
+
 
     ]
 

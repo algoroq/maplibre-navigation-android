@@ -16,7 +16,7 @@ import java.util.Locale;
  * supported by the Mapbox Voice API, which can parse SSML.  The boolean <tt>voiceLanguageSupported</tt> should
  * be try in this case.
  * <p>
- * If false, an instance of {@link MapboxSpeechPlayer} will never be provided to the {@link NavigationSpeechPlayer}.
+ * If false, an instance of {@link } will never be provided to the {@link NavigationSpeechPlayer}.
  * The SDK will default to the {@link AndroidSpeechPlayer} powered by {@link android.speech.tts.TextToSpeech}.
  *
  * @since 0.16.0

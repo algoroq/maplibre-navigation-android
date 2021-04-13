@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
 
 android {
   compileSdkVersion androidVersions.compileSdkVersion
@@ -40,6 +42,19 @@ android {
   testOptions {
     unitTests.returnDefaultValues = true
     unitTests.includeAndroidResources = true
+  }
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository(url: "https://algodosmvn.appspot.com/") {
+        authentication(userName: "algodos", password: "Algo.001")
+      }
+      pom.version = "1.0.0"
+      pom.artifactId = "navigation"
+      pom.groupId = "com.mapbox"
+    }
   }
 }
 
@@ -93,8 +108,8 @@ dependencies {
   testImplementation dependenciesList.robolectric
 }
 
-apply from: 'javadoc.gradle'
-apply from: "${rootDir}/gradle/mvn-push-android.gradle"
+//apply from: 'javadoc.gradle'
+//apply from: "${rootDir}/gradle/mvn-push-android.gradle"
 apply from: "${rootDir}/gradle/checkstyle.gradle"
 apply from: "${rootDir}/gradle/jacoco.gradle"
 apply from: "${rootDir}/gradle/dependencies-graph.gradle"
