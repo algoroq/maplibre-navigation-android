@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tint="?attr/navigationViewAccent"
+            android:tint="#676767"
             app:srcCompat="@drawable/ic_navigation" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_marginLeft="8dp"
             android:text="@string/re_center"
             android:textAllCaps="true"
-            android:textColor="?attr/navigationViewAccent"
+            android:textColor="#676767"
             android:textStyle="bold" />
 
     </LinearLayout>

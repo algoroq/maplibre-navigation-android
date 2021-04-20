@@ -224,7 +224,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        addBottomSheetListener();
+        //addBottomSheetListener();
     }
 
     /**

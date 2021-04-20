@@ -23,35 +23,35 @@
   <color name="mapbox_navigation_view_color_accent_text">#424242</color>
   <color name="mapbox_navigation_view_color_divider">#D8D8D8</color>
 
-  <color name="mapbox_navigation_view_color_list_background">#458726</color>
+  <color name="mapbox_navigation_view_color_list_background">#ffffff</color>
 
-  <color name="mapbox_navigation_view_color_banner_background">#5db339</color>
-  <color name="mapbox_navigation_view_color_banner_primary_text">#FFFFFF</color>
-  <color name="mapbox_navigation_view_color_banner_secondary_text">#E6FFFFFF</color>
-  <color name="mapbox_navigation_view_color_banner_maneuver_primary">#FFFFFF</color>
-  <color name="mapbox_navigation_view_color_banner_maneuver_secondary">#4DFFFFFF</color>
+  <color name="mapbox_navigation_view_color_banner_background">#EEFFFFFF</color>
+  <color name="mapbox_navigation_view_color_banner_primary_text">#676767</color>
+  <color name="mapbox_navigation_view_color_banner_secondary_text">#676767</color>
+  <color name="mapbox_navigation_view_color_banner_maneuver_primary">#676767</color>
+  <color name="mapbox_navigation_view_color_banner_maneuver_secondary">#676767</color>
 
   <!-- Default Dark Theme -->
-  <color name="mapbox_navigation_view_color_primary_dark">#2D3F53</color>
-  <color name="mapbox_navigation_view_color_secondary_dark">#D8D8D8</color>
-  <color name="mapbox_navigation_view_color_accent_dark">#FFFFFF</color>
+  <color name="mapbox_navigation_view_color_primary_dark">#FFFFFF</color>
+  <color name="mapbox_navigation_view_color_secondary_dark">#28353D</color>
+  <color name="mapbox_navigation_view_color_accent_dark">#4882C6</color>
   <color name="mapbox_navigation_view_color_primary_text_dark">#424242</color>
-  <color name="mapbox_navigation_view_color_accent_text_dark">#FFFFFF</color>
+  <color name="mapbox_navigation_view_color_accent_text_dark">#424242</color>
   <color name="mapbox_navigation_view_color_divider_dark">#D8D8D8</color>
 
-  <color name="mapbox_navigation_view_color_list_background_dark">#2D3F53</color>
+  <color name="mapbox_navigation_view_color_list_background_dark">#ffffff</color>
 
-  <color name="mapbox_navigation_view_color_banner_background_dark">#37516F</color>
-  <color name="mapbox_navigation_view_color_banner_primary_text_dark">#FFFFFF</color>
-  <color name="mapbox_navigation_view_color_banner_secondary_text_dark">#E6FFFFFF</color>
-  <color name="mapbox_navigation_view_color_banner_maneuver_primary_dark">#FFFFFF</color>
-  <color name="mapbox_navigation_view_color_banner_maneuver_secondary_dark">#4DFFFFFF</color>
+  <color name="mapbox_navigation_view_color_banner_background_dark">#EEFFFFFF</color>
+  <color name="mapbox_navigation_view_color_banner_primary_text_dark">#676767</color>
+  <color name="mapbox_navigation_view_color_banner_secondary_text_dark">#676767</color>
+  <color name="mapbox_navigation_view_color_banner_maneuver_primary_dark">#676767</color>
+  <color name="mapbox_navigation_view_color_banner_maneuver_secondary_dark">#676767</color>
 
   <!-- Alert View -->
-  <color name="mapbox_navigation_view_color_progress">#5db339</color>
+  <color name="mapbox_navigation_view_color_progress">#676767</color>
   <color name="mapbox_navigation_view_color_progress_background">#39587B</color>
 
-  <color name="mapbox_navigation_view_color_progress_dark">#4B75A4</color>
+  <color name="mapbox_navigation_view_color_progress_dark">#676767</color>
   <color name="mapbox_navigation_view_color_progress_background_dark">#39587B</color>
 
   <!-- Grey -->

@@ -42,9 +42,9 @@ uploadArchives {
       repository(url: "https://algodosmvn.appspot.com/") {
         authentication(userName: "algodos", password: "Algo.001")
       }
-      pom.version = "1.0.0"
-      pom.artifactId = "navigation-ui"
-      pom.groupId = "com.mapbox"
+      pom.version = "0.1.3"
+      pom.artifactId = "navigation"
+      pom.groupId = "com.graphhopper"
     }
   }
 }
