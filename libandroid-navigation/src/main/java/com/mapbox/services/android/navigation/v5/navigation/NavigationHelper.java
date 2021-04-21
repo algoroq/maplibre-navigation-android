@@ -73,14 +73,27 @@ public class NavigationHelper {
     }
 
     static Location buildSnappedLocation(MapboxNavigation mapboxNavigation, boolean snapToRouteEnabled,
-                                         Location rawLocation, RouteProgress routeProgress, boolean userOffRoute) {
-        final Location location;
-        if (!userOffRoute && snapToRouteEnabled) {
-            location = getSnappedLocation(mapboxNavigation, rawLocation, routeProgress);
-        } else {
+                                         Location rawLocation, RouteProgress routeProgress, boolean userOffRoute, boolean offlineMode) {
+
+        Location location = getSnappedLocation(mapboxNavigation, rawLocation, routeProgress);
+
+        if(!snapToRouteEnabled){
             location = rawLocation;
         }
+        if(userOffRoute){
+            if(offlineMode){
+                location = rawLocation;
+            }
+        }
+        System.out.println("aaaaa offroute - " + userOffRoute);
         return location;
+
+//        if (!userOffRoute && snapToRouteEnabled) {
+//            location = getSnappedLocation(mapboxNavigation, rawLocation, routeProgress);
+//        } else {
+//            location = rawLocation;
+//        }
+//        return location;
     }
 
     /**

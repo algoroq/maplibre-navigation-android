@@ -12,38 +12,42 @@
     <!-- Indicates voice instructions are unmuted -->
     <string name="unmuted">Unmuted</string>
 
+    <string name="arrival">Arrival</string>
+
     <!-- Feedback type for Bad Route -->
-    <string name="feedback_bad_route">Bad\nRoute</string>
+    <string name="feedback_bad_route" translatable="false">Bad\nRoute</string>
 
     <!-- Feedback type for Confusing Instruction -->
-    <string name="feedback_confusing_instruction">Confusing\nInstruction</string>
+    <string name="feedback_confusing_instruction" translatable="false">Confusing\nInstruction</string>
 
     <!-- Feedback type for Other Map Issue Issue -->
-    <string name="feedback_general_issue">Other\nMap Issue</string>
+    <string name="feedback_general_issue" translatable="false">Other\nMap Issue</string>
 
     <!-- Feedback type for Missing Exit -->
-    <string name="feedback_missing_exit">Missing\nExit</string>
+    <string name="feedback_missing_exit" translatable="false">Missing\nExit</string>
 
     <!-- Feedback type for Missing Road -->
-    <string name="feedback_missing_road">Missing\nRoad</string>
+    <string name="feedback_missing_road" translatable="false">Missing\nRoad</string>
 
     <!-- Feedback type for a maneuver that is Not Allowed -->
-    <string name="feedback_not_allowed">Not\nAllowed</string>
+    <string name="feedback_not_allowed" translatable="false">Not\nAllowed</string>
 
     <!-- Feedback type for Report Traffic -->
-    <string name="feedback_report_traffic">Report\nTraffic</string>
+    <string name="feedback_report_traffic" translatable="false">Report\nTraffic</string>
 
     <!-- Feedback type for Road Closed -->
-    <string name="feedback_road_closure">Road\nClosed</string>
+    <string name="feedback_road_closure" translatable="false">Road\nClosed</string>
+
+
 
     <!-- Test app dialog text -->
-    <string name="dropoff_dialog_text">Do you want to navigate to next destination?</string>
+    <string name="dropoff_dialog_text" translatable="false">Do you want to navigate to next destination?</string>
 
     <!-- Test app dialog text start next route -->
-    <string name="dropoff_dialog_positive_text">Start next</string>
+    <string name="dropoff_dialog_positive_text" translatable="false">Start next</string>
 
     <!-- Test app dialog text cancel navigation -->
-    <string name="dropoff_dialog_negative_text">Cancel</string>
+    <string name="dropoff_dialog_negative_text" translatable="false">Cancel</string>
 
     <!-- Should not be translated -->
 <!--    <string name="navigation_guidance_day"-->
@@ -61,9 +65,8 @@
     <string name="navigation_running"
             translatable="false">navigation_running</string>
 
-    <string name="arrival" translatable="true">Arrival</string>
 
-    <string name="change_map" translatable="true">Change map</string>
+    <string name="change_map" translatable="false">Change map</string>
 
     <string name="selected_map_index_key" translatable="false">selected_map_index</string>
 </resources>

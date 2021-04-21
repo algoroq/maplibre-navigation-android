@@ -255,6 +255,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
         if (locationEngine.getLastLocation() != null) {
             Location lastLocation = locationEngine.getLastLocation();
             onLocationChanged(lastLocation);
+
             currentLocation = Point.fromLngLat(lastLocation.getLongitude(), lastLocation.getLatitude());
         }
     }
@@ -277,7 +278,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
                 .origin(currentLocation)
                 .destination(destination)
                 //.addWaypoints(waypoints)
-                .profile(DirectionsCriteria.PROFILE_DRIVING)
+                .profile(DirectionsCriteria.PROFILE_WALKING)
                 .alternatives(true);
 
        // setFieldsFromSharedPreferences(builder);
@@ -354,7 +355,7 @@ public class NavigationLauncherActivity extends AppCompatActivity implements OnM
 
         optionsBuilder.directionsRoute(route);
 
-        NavigationLauncher.startNavigation(this, optionsBuilder.build(), styleUrl, false);
+        NavigationLauncher.startNavigation(this, optionsBuilder.build(), styleUrl, true);
     }
 
     private boolean validRouteResponse(Response<DirectionsResponse> response) {

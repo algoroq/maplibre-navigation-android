@@ -81,9 +81,9 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
                                        RouteProgress routeProgress, boolean userOffRoute) {
     boolean snapToRouteEnabled = mapboxNavigation.options().snapToRoute();
 
-    if(offlineMode) snapToRouteEnabled = false;
+      if(offlineMode) snapToRouteEnabled = false;
     return buildSnappedLocation(mapboxNavigation, snapToRouteEnabled,
-            rawLocation, routeProgress, userOffRoute);
+            rawLocation, routeProgress, userOffRoute, offlineMode);
   }
 
   private boolean determineUserOffRoute(NavigationLocationUpdate navigationLocationUpdate,

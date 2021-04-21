@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Indicates that rerouting is in progress -->
+    <string name="rerouting">Prepočítanie…</string>
+
+    <!-- Button title for re-centering tracking -->
+    <string name="re_center">Vystrediť</string>
+
+    <!-- Indicates voice instructions are muted -->
+    <string name="muted">zvuk vypnutý</string>
+
+    <!-- Indicates voice instructions are unmuted -->
+    <string name="unmuted">zvuk zapnutá</string>
+
+    <string name="arrival">Príjazd</string>
+
+</resources>

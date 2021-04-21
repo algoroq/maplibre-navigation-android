@@ -1,27 +1,23 @@
 package com.mapbox.services.android.navigation.ui.v5;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.api.directions.v5.models.BannerInstructions;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
+import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
+import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.services.android.navigation.ui.v5.camera.DynamicCamera;
 import com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackItem;
@@ -43,7 +39,6 @@ import com.mapbox.services.android.navigation.v5.milestone.MilestoneEventListene
 import com.mapbox.services.android.navigation.v5.milestone.VoiceInstructionMilestone;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigationOptions;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationConstants;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationEventListener;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationTimeFormat;
 import com.mapbox.services.android.navigation.v5.navigation.camera.Camera;
@@ -55,7 +50,10 @@ import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.navigation.v5.utils.DistanceFormatter;
 import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
 import com.mapbox.services.android.navigation.v5.utils.RouteUtils;
+import com.mapbox.turf.TurfJoins;
+import com.mapbox.turf.TurfMeasurement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NavigationViewModel extends AndroidViewModel {
@@ -67,10 +65,12 @@ public class NavigationViewModel extends AndroidViewModel {
     public final MutableLiveData<SummaryModel> summaryModel = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isOffRoute = new MutableLiveData<>();
     public final MutableLiveData<Boolean> isOffRouteOfflineMode = new MutableLiveData<>();
+    public final MutableLiveData<Location> currentLocation = new MutableLiveData<>();
     final MutableLiveData<Location> navigationLocation = new MutableLiveData<>();
     final MutableLiveData<DirectionsRoute> route = new MutableLiveData<>();
     final MutableLiveData<Point> destination = new MutableLiveData<>();
     final MutableLiveData<Boolean> shouldRecordScreenshot = new MutableLiveData<>();
+    private final MutableLiveData<List<Polygon>> routePolygons = new MutableLiveData<>();
 
     private MapboxNavigation navigation;
     private ViewRouteFetcher navigationViewRouteEngine;
@@ -97,6 +97,7 @@ public class NavigationViewModel extends AndroidViewModel {
         initializeConnectivityManager(application);
         initializeNavigationRouteEngine();
         initializeNavigationLocationEngine();
+
         routeUtils = new RouteUtils();
         localeUtils = new LocaleUtils();
     }
@@ -224,6 +225,7 @@ public class NavigationViewModel extends AndroidViewModel {
 
     private void initializeNavigationLocationEngine() {
         locationEngineConductor = new LocationEngineConductor(locationEngineCallback);
+
     }
 
     private void initializeLanguage(NavigationUiOptions options) {
@@ -305,6 +307,16 @@ public class NavigationViewModel extends AndroidViewModel {
         public void onProgressChange(Location location, RouteProgress routeProgress) {
             //JV IF
             if (routeProgress.durationRemaining() >= 1) {
+
+
+
+                if(isOffRouteOfflineMode.getValue()) {
+                    Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                    if (isPointOnRoute(point)) {
+                        isOffRouteOfflineMode.setValue(false);
+                    }
+                }
+
                 NavigationViewModel.this.routeProgress = routeProgress;
                 instructionModel.setValue(new InstructionModel(distanceFormatter, routeProgress));
                 summaryModel.setValue(new SummaryModel(getApplication(), distanceFormatter, routeProgress, timeFormatType));
@@ -315,6 +327,24 @@ public class NavigationViewModel extends AndroidViewModel {
             }
         }
     };
+
+    private Boolean isPointOnRoute(Point point){
+        int i = 0;
+        boolean searching = true;
+        boolean found = false;
+        List<Polygon> polygons = routePolygons.getValue();
+        while (i < polygons.size()-1 && searching){
+
+            if(TurfJoins.inside(point, polygons.get(i))){
+                searching = false;
+                found = true;
+            }
+            i++;
+
+        }
+        return found;
+    }
+
 
     private OffRouteListener offRouteListener = new OffRouteListener() {
         @Override
@@ -377,17 +407,73 @@ public class NavigationViewModel extends AndroidViewModel {
     private LocationEngineConductorListener locationEngineCallback = new LocationEngineConductorListener() {
         @Override
         public void onLocationUpdate(Location location) {
+
+
             navigationViewRouteEngine.updateRawLocation(location);
+            currentLocation.setValue(location);
         }
     };
 
     private void updateRoute(DirectionsRoute route) {
         this.route.setValue(route);
+        createRoutesArea(route.geometry().coordinates());
         startNavigation(route);
         updateSimulatedRoute(route);
         resetConfigurationFlag();
         sendEventOnRerouteAlong(route);
         isOffRoute.setValue(false);
+        isOffRouteOfflineMode.setValue(false);
+    }
+
+    private void createRoutesArea(List<List<Double>> coordinates) {
+        List<Point> points = new ArrayList<>();
+        for (List<Double> coordinate : coordinates) {
+            Point point = Point.fromLngLat(coordinate.get(0), coordinate.get(1));
+            points.add(point);
+        }
+        LineString line = LineString.fromLngLats(points);
+        List<Point> p = line.coordinates();
+        List<Polygon> polygons = new ArrayList<>();
+        for (Point point : p) {
+            List<List<Point>> helper = new ArrayList<>();
+            helper.add(getCirclePoints(point));
+            polygons.add(Polygon.fromLngLats(helper));
+        }
+        routePolygons.setValue(polygons);
+    }
+
+    private ArrayList<Point> getCirclePoints(
+            Point position
+    ) {
+        float radius = 10;
+        int degreesBetweenPoints = 10; // change here for shape
+        int numberOfPoints = (int) (Math.floor(360 / (double) degreesBetweenPoints));
+
+        double distRadians = radius / 6371000.0; // earth radius in meters
+        double centerLatRadians = position.latitude() * Math.PI / 180;
+        double centerLonRadians = position.longitude() * Math.PI / 180;
+        ArrayList<Point> polygons = new ArrayList<>(); // array to hold all the points
+
+        for (int index = 0; index < numberOfPoints; index++) {
+            double degrees = (double) (index * degreesBetweenPoints);
+            double degreeRadians = degrees * Math.PI / 180;
+            double pointLatRadians = Math.asin(
+                    Math.sin(centerLatRadians) * Math.cos(distRadians)
+                            + Math.cos(centerLatRadians) * Math.sin(distRadians) * Math.cos(degreeRadians)
+            );
+            double pointLonRadians = centerLonRadians + Math.atan2(
+                    Math.sin(degreeRadians)
+                            * Math.sin(distRadians) * Math.cos(centerLatRadians),
+                    Math.cos(distRadians) - Math.sin(centerLatRadians) * Math.sin(pointLatRadians)
+            );
+            double pointLat = pointLatRadians * 180 / Math.PI;
+            double pointLon = pointLonRadians * 180 / Math.PI;
+            Point point = Point.fromLngLat(pointLon, pointLat);
+            polygons.add(point);
+        }
+        // add first point at end to close circle
+        polygons.add(polygons.get(0));
+        return polygons;
     }
 
     private boolean isOffRoute() {

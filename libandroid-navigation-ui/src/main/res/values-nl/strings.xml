@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Indicates that rerouting is in progress -->
+    <string name="rerouting">Rerouting…</string>
+
+    <!-- Indicates voice instructions are muted -->
+    <string name="muted">gedempt</string>
+
+    <!-- Indicates voice instructions are unmuted -->
+    <string name="unmuted">ongedempte</string>
+
+    <string name="arrival" translatable="true">Aankomst</string>
+
+    <string name="re_center">Gecentreerd</string>
+
+
+</resources>

@@ -40,6 +40,7 @@ import com.mapbox.services.android.navigation.ui.v5.instruction.ImageCoordinator
 import com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView;
 import com.mapbox.services.android.navigation.ui.v5.map.NavigationMapboxMap;
 import com.mapbox.services.android.navigation.ui.v5.map.NavigationMapboxMapInstanceState;
+import com.mapbox.services.android.navigation.ui.v5.speedmeter.SpeedMeter;
 import com.mapbox.services.android.navigation.ui.v5.summary.SummaryBottomSheet;
 import com.mapbox.services.android.navigation.v5.location.replay.ReplayRouteLocationEngine;
 import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
@@ -85,6 +86,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
     private BottomSheetBehavior summaryBehavior;
     private RecenterButton recenterBtn;
     private ImageButton routeOverviewBtn;
+    private SpeedMeter speedMeter;
 
     private LinearLayout btnCancel;
     private ImageButton btnBottomSheetStateChanger;
@@ -548,6 +550,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         recenterBtn = findViewById(R.id.recenterBtn);
         routeOverviewBtn = findViewById(R.id.routeOverviewBtn);
         btnBottomSheetStateChanger = findViewById(R.id.btn_bottomSheetStateChanger);
+        speedMeter = findViewById(R.id.speedMeter);
     }
 
     private void initializeNavigationViewModel() {
@@ -563,6 +566,10 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
         summaryBehavior.setHideable(false);
         summaryBehavior.setBottomSheetCallback(new SummaryBottomSheetCallback(navigationPresenter,
                 navigationViewEventDispatcher));
+    }
+
+    private void initializeSpeedMeter(){
+        //speedMeter = new SpeedMeter()
     }
 
     private void initializeNavigationEventDispatcher() {
@@ -734,7 +741,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
     private void subscribeViewModels() {
         instructionView.subscribe(navigationViewModel);
         summaryBottomSheet.subscribe(navigationViewModel);
-
+        speedMeter.subscribe(navigationViewModel);
         NavigationViewSubscriber subscriber = new NavigationViewSubscriber(navigationPresenter);
         subscriber.subscribe(((LifecycleOwner) getContext()), navigationViewModel);
         isSubscribed = true;

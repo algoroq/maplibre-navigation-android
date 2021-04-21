@@ -9,4 +9,7 @@
     <!-- Indicates voice instructions are unmuted -->
     <string name="unmuted">Attivato</string>
 
+    <string name="re_center">Ricentrare</string>
+
+    <string name="arrival">Arrivo</string>
 </resources>

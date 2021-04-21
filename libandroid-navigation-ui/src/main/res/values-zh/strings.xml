@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Indicates that rerouting is in progress -->
+    <string name="rerouting">叙事…</string>
+
+    <!-- Button title for re-centering tracking -->
+    <string name="re_center">中心</string>
+
+    <!-- Indicates voice instructions are muted -->
+    <string name="muted">声音关闭</string>
+
+    <!-- Indicates voice instructions are unmuted -->
+    <string name="unmuted">声音上</string>
+
+    <string name="arrival">到达</string>
+
+</resources>

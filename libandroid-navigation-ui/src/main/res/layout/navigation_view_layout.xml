@@ -33,6 +33,16 @@
         app:layout_anchor="@id/summaryBottomSheet"
         app:layout_anchorGravity="top|left"/>
 
+    <com.mapbox.services.android.navigation.ui.v5.speedmeter.SpeedMeter
+        android:id="@+id/speedMeter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_margin="16dp"
+        android:translationY="-16dp"
+        app:layout_anchor="@id/summaryBottomSheet"
+        app:layout_anchorGravity="top|right"/>
+
     <com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView
         android:id="@+id/instructionView"
         android:layout_width="match_parent"
