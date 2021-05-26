@@ -3,6 +3,7 @@ package com.mapbox.services.android.navigation.v5.utils;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 
 import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.BannerInstructions;
@@ -11,6 +12,7 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.LegStep;
 import com.mapbox.api.directions.v5.models.RouteLeg;
 import com.mapbox.api.directions.v5.models.RouteOptions;
+import com.mapbox.api.directions.v5.models.StepManeuver;
 import com.mapbox.api.directions.v5.models.VoiceInstructions;
 import com.mapbox.core.utils.TextUtils;
 import com.mapbox.geojson.Point;
@@ -266,8 +268,8 @@ public class RouteUtils {
   }
 
 
-  public String findCurrentInstruction(LegStep currentStep){
-    return currentStep.maneuver().instruction();
+  public Pair<StepManeuver, Double> findCurrentInstruction(LegStep currentStep){
+      return new Pair(currentStep.maneuver(), currentStep.distance());
   }
 
   /**

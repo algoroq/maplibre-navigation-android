@@ -13,7 +13,7 @@ public class InstructionModel {
   private String instructionText;
   BannerText primaryBannerText;
   BannerText secondaryBannerText;
-  private BannerText thenBannerText;
+  private String thenBannerText;
   private Float roundaboutAngle = null;
   private InstructionStepResources stepResources;
   private RouteProgress progress;
@@ -33,7 +33,7 @@ public class InstructionModel {
     return secondaryBannerText;
   }
 
-  BannerText getThenBannerText() {
+  String getThenBannerText() {
     return thenBannerText;
   }
 
@@ -67,19 +67,30 @@ public class InstructionModel {
 
   private void extractStepInstructions(RouteProgress progress) {
     RouteLegProgress legProgress = progress.currentLegProgress();
-    LegStep currentStep = progress.currentLegProgress().currentStep();
-    LegStep upComingStep = legProgress.upComingStep();
-    int stepDistanceRemaining = (int) legProgress.currentStepProgress().distanceRemaining();
+    LegStep step = legProgress.currentStep();
+    if(legProgress.upComingStep() != null){
+      step = legProgress.upComingStep();
+    }
 
-    primaryBannerText = routeUtils.findCurrentBannerText(currentStep, stepDistanceRemaining, true);
-    secondaryBannerText = routeUtils.findCurrentBannerText(currentStep, stepDistanceRemaining, false);
-    instructionText = routeUtils.findCurrentInstruction(currentStep);
-    if (upComingStep != null) {
-      thenBannerText = routeUtils.findCurrentBannerText(upComingStep, upComingStep.distance(), true);
+    LegStep followingStep = legProgress.followOnStep();
+
+//    int stepDistanceRemaining = (int) legProgress.currentStepProgress().distanceRemaining();
+
+    //primaryBannerText = routeUtils.findCurrentBannerText(upComingStep, stepDistanceRemaining, true);
+    //secondaryBannerText = routeUtils.findCurrentBannerText(upComingStep, stepDistanceRemaining, false);
+
+    // potřebuju zobrazit istrukci následujícho kroku. instrukce se vždy vstahuje k začátku kroku -> ke konci předchozího
+
+    instructionText = routeUtils.findCurrentInstruction(step).first.instruction();
+
+    if (followingStep != null) {
+      thenBannerText = routeUtils.findCurrentInstruction(followingStep).first.instruction();
+      //thenBannerText = routeUtils.findCurrentBannerText(upComingStep, upComingStep.distance(), true);
     }
 
     if (primaryBannerText != null && primaryBannerText.degrees() != null) {
       roundaboutAngle = primaryBannerText.degrees().floatValue();
+
     }
   }
 }

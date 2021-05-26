@@ -35,7 +35,7 @@ private String instructions;
     }
     LegStep currentStep = routeProgress.currentLegProgress().currentStep();
     double stepDistanceRemaining = routeProgress.currentLegProgress().currentStepProgress().distanceRemaining();
-    String instructions = routeUtils.findCurrentInstruction(currentStep);
+    String instructions = routeUtils.findCurrentInstruction(currentStep).first.instruction();
 //    VoiceInstructions instructions = routeUtils.findCurrentVoiceInstructions(currentStep, stepDistanceRemaining);
     if (shouldBeVoiced(instructions, stepDistanceRemaining)) {
       return updateInstructions(routeProgress, instructions);

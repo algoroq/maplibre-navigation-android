@@ -83,24 +83,24 @@ class InstructionStepResources {
     LegStep upcomingStep = progress.currentLegProgress().upComingStep();
     LegStep followOnStep = progress.currentLegProgress().followOnStep();
 
+    maneuverViewType = upcomingStep.maneuver().type();
+    maneuverViewModifier = upcomingStep.maneuver().modifier();
+
     // Type / Modifier / Text
     if (upcomingStep != null) {
-      maneuverViewType = upcomingStep.maneuver().type();
-      maneuverViewModifier = upcomingStep.maneuver().modifier();
-
+      //maneuverViewType = upcomingStep.maneuver().type();
+      //maneuverViewModifier = upcomingStep.maneuver().modifier();
       // Then step (step after upcoming)
       if (followOnStep != null) {
-        thenStep(upcomingStep, followOnStep, progress.currentLegProgress().currentStepProgress().durationRemaining());
+        thenStep(followOnStep);
       }
 
       // Turn lane data
       if (hasIntersections(upcomingStep)) {
         intersectionTurnLanes(upcomingStep);
       }
-    } else {
-      maneuverViewType = currentStep.maneuver().type();
-      maneuverViewModifier = currentStep.maneuver().modifier();
     }
+
   }
 
   private void intersectionTurnLanes(LegStep step) {
@@ -113,18 +113,24 @@ class InstructionStepResources {
     turnLanes = lanes;
   }
 
-  private void thenStep(LegStep upcomingStep, LegStep followOnStep, double currentDurationRemaining) {
-    List<BannerInstructions> bannerInstructions = followOnStep.bannerInstructions();
-    if (bannerInstructions == null || bannerInstructions.isEmpty()) {
-      return;
-    }
-    BannerText primaryText = bannerInstructions.get(FIRST_INSTRUCTION).primary();
-    thenStepManeuverType = primaryText.type();
-    thenStepManeuverModifier = primaryText.modifier();
-    if (primaryText.degrees() != null) {
-      thenStepRoundaboutDegrees = primaryText.degrees().floatValue();
-    }
-    shouldShowThenStep = isValidStepDuration(upcomingStep, currentDurationRemaining);
+  private void thenStep(LegStep followOnStep) {
+
+    thenStepManeuverModifier = followOnStep.maneuver().modifier();
+    thenStepManeuverType = followOnStep.maneuver().type();
+
+
+
+//    List<BannerInstructions> bannerInstructions = followOnStep.bannerInstructions();
+//    if (bannerInstructions == null || bannerInstructions.isEmpty()) {
+//      return;
+//    }
+//    BannerText primaryText = bannerInstructions.get(FIRST_INSTRUCTION).primary();
+//    thenStepManeuverType = primaryText.type();
+//    thenStepManeuverModifier = primaryText.modifier();
+//    if (primaryText.degrees() != null) {
+//      thenStepRoundaboutDegrees = primaryText.degrees().floatValue();
+//    }
+//    shouldShowThenStep = isValidStepDuration(upcomingStep, currentDurationRemaining);
   }
 
   private boolean isValidStepDuration(LegStep upcomingStep, double currentDurationRemaining) {

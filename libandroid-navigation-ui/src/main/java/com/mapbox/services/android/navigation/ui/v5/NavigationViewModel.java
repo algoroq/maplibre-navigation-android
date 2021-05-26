@@ -14,11 +14,14 @@ import android.text.TextUtils;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.api.directions.v5.models.BannerInstructions;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.directions.v5.models.LegStep;
 import com.mapbox.api.directions.v5.models.RouteOptions;
+import com.mapbox.api.directions.v5.models.StepManeuver;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Polyline;
 import com.mapbox.services.android.navigation.ui.v5.camera.DynamicCamera;
 import com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackItem;
 import com.mapbox.services.android.navigation.ui.v5.instruction.BannerInstructionModel;
@@ -50,6 +53,7 @@ import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.navigation.v5.utils.DistanceFormatter;
 import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
 import com.mapbox.services.android.navigation.v5.utils.RouteUtils;
+import com.mapbox.turf.TurfConstants;
 import com.mapbox.turf.TurfJoins;
 import com.mapbox.turf.TurfMeasurement;
 
@@ -302,25 +306,57 @@ public class NavigationViewModel extends AndroidViewModel {
         }
     }
 
+    @Nullable
+    private LegStep currentStepStamp = null;
     private ProgressChangeListener progressChangeListener = new ProgressChangeListener() {
         @Override
         public void onProgressChange(Location location, RouteProgress routeProgress) {
             //JV IF
             if (routeProgress.durationRemaining() >= 1) {
-
-
-
-                if(isOffRouteOfflineMode.getValue()) {
-                    Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
-                    if (isPointOnRoute(point)) {
-                        isOffRouteOfflineMode.setValue(false);
+                if (isOffRouteOfflineMode.getValue() != null) {
+                    if (isOffRouteOfflineMode.getValue()) {
+                        Point point = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                        if (isPointOnRoute(point)) {
+                            isOffRouteOfflineMode.setValue(false);
+                        }
                     }
+                }
+
+                LegStep currentStep = routeProgress.currentLegProgress().currentStep();
+                Point currentPoint = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                List<Double> coordinatesOfManeuver = currentStep.geometry().coordinates().get(currentStep.geometry().coordinates().size() - 1);
+                Point pointOfManeuver = Point.fromLngLat(coordinatesOfManeuver.get(0), coordinatesOfManeuver.get(1));
+// přečíst
+                String instruction = currentStep.maneuver().instruction();
+
+                //instrukce pro step je vždy na začátku stepu -> instrukce, která má být zobrazena na konci současného stepu je v následujícím stepu.
+                //step "zacína" instrukcí.. ale my potrebujeme, aby step koncil instrukcí.
+                @Nullable
+                LegStep nextStep = routeProgress.currentLegProgress().upComingStep();
+                if (nextStep != null) {
+                    instruction = nextStep.maneuver().instruction();
+                }
+
+
+//                String instructionWithDistance = "Za " + currentStep.distance() + "metrů " + nextStepInstruction;
+
+
+                double distanceToManeuver = TurfMeasurement.distance(currentPoint, pointOfManeuver, TurfConstants.UNIT_METERS);
+
+                if (distanceToManeuver <= 10) {
+                    if (currentStepStamp == null) {
+                        playVoiceAnnouncement(instruction);
+                        currentStepStamp = currentStep;
+                    }
+                }
+
+                if (currentStepStamp != currentStep) {
+                    currentStepStamp = null;
                 }
 
                 NavigationViewModel.this.routeProgress = routeProgress;
                 instructionModel.setValue(new InstructionModel(distanceFormatter, routeProgress));
                 summaryModel.setValue(new SummaryModel(getApplication(), distanceFormatter, routeProgress, timeFormatType));
-
                 navigationLocation.setValue(location);
             } else {
                 endNavigation();
@@ -328,14 +364,14 @@ public class NavigationViewModel extends AndroidViewModel {
         }
     };
 
-    private Boolean isPointOnRoute(Point point){
+    private Boolean isPointOnRoute(Point point) {
         int i = 0;
         boolean searching = true;
         boolean found = false;
         List<Polygon> polygons = routePolygons.getValue();
-        while (i < polygons.size()-1 && searching){
+        while (i < polygons.size() && searching) {
 
-            if(TurfJoins.inside(point, polygons.get(i))){
+            if (TurfJoins.inside(point, polygons.get(i))) {
                 searching = false;
                 found = true;
             }
@@ -362,8 +398,8 @@ public class NavigationViewModel extends AndroidViewModel {
     private MilestoneEventListener milestoneEventListener = new MilestoneEventListener() {
         @Override
         public void onMilestoneEvent(RouteProgress routeProgress, String instruction, Milestone milestone) {
-
-            playVoiceAnnouncement(milestone);
+            System.out.println("bbbbb - play voice - Milestone event");
+//             playVoiceAnnouncement(milestone);
             updateBannerInstruction(routeProgress, milestone);
             sendEventArrival(routeProgress, milestone);
         }
@@ -517,8 +553,15 @@ public class NavigationViewModel extends AndroidViewModel {
             SpeechAnnouncement announcement = SpeechAnnouncement.builder()
                     .voiceInstructionMilestone((VoiceInstructionMilestone) milestone).build();
             announcement = retrieveAnnouncementFromSpeechEvent(announcement);
+
             speechPlayer.play(announcement);
         }
+    }
+
+    private void playVoiceAnnouncement(String textToSpeak) {
+        SpeechAnnouncement announcement = SpeechAnnouncement.builder().announcement(textToSpeak).build();
+        announcement = retrieveAnnouncementFromSpeechEvent(announcement);
+        speechPlayer.play(announcement);
     }
 
     private void updateBannerInstruction(RouteProgress routeProgress, Milestone milestone) {

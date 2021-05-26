@@ -2,11 +2,13 @@ package com.mapbox.services.android.navigation.ui.v5.summary.list;
 
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
+import android.util.Pair;
 import android.view.View;
 
 import com.mapbox.api.directions.v5.models.BannerInstructions;
 import com.mapbox.api.directions.v5.models.LegStep;
 import com.mapbox.api.directions.v5.models.RouteLeg;
+import com.mapbox.api.directions.v5.models.StepManeuver;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteLegProgress;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.navigation.v5.utils.DistanceFormatter;
@@ -64,8 +66,6 @@ public class InstructionListPresenter {
                                 SpannableString distanceText) {
 
 
-
-
         listView.updatePrimaryText(bannerInstructions.getInstruction());
         updateManeuverView(listView, bannerInstructions);
         listView.updateDistanceText(distanceText);
@@ -90,18 +90,7 @@ public class InstructionListPresenter {
             currentLeg = routeProgress.currentLeg();
             List<LegStep> steps = currentLeg.steps();
             for (LegStep step : steps) {
-                List<CustomInstructionsBanner> customInstructionsBanners = new ArrayList<>();
-                    customInstructionsBanners.add(
-                            new CustomInstructionsBanner(
-                                    step.maneuver(),
-                                    step.distance()
-                            )
-                    );
-
-
-                if (customInstructionsBanners != null && !customInstructionsBanners.isEmpty()) {
-                    instructions.addAll(customInstructionsBanners);
-                }
+                instructions.add(new CustomInstructionsBanner(step.maneuver(), step.distance()));
             }
         }
     }
@@ -115,24 +104,23 @@ public class InstructionListPresenter {
             return false;
         }
         RouteLegProgress legProgress = routeProgress.currentLegProgress();
-        LegStep currentStep = legProgress.currentStep();
-//        double stepDistanceRemaining = legProgress.currentStepProgress().distanceRemaining();
-        String currentBannerInstructions = routeUtils.findCurrentInstruction(currentStep);
-//    BannerInstructions currentBannerInstructions = routeUtils.findCurrentBannerInstructions(
-//      currentStep, stepDistanceRemaining
-//    );
-        int index = -1;
-        boolean found = false;
+        LegStep step = legProgress.currentStep();
+            if(legProgress.upComingStep() != null){
+                step = legProgress.upComingStep();
+            }
+        Pair<StepManeuver, Double> instructionPair = routeUtils.findCurrentInstruction(step);
+        CustomInstructionsBanner currentBannerInstruction = new CustomInstructionsBanner(instructionPair.first, instructionPair.second);
+
+        int index = 0;
         boolean searching = true;
 
-        while (searching && index < instructions.size()-1){
-            index++;
-            if(instructions.get(index).getInstruction().equals(currentBannerInstructions)){
+        while (searching && index < instructions.size()) {
+            if(instructions.get(index).equals(currentBannerInstruction)){
                 searching = false;
-                found = true;
             }
+            index++;
         }
-        if(!found) return false;
+        if (searching) return false;
 
         return removeInstructionsFrom(index);
     }
