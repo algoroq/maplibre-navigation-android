@@ -80,10 +80,11 @@ public class NavigationHelper {
         if(!snapToRouteEnabled){
             location = rawLocation;
         }
+
         if(userOffRoute){
-            if(offlineMode){
+//            if(offlineMode){
                 location = rawLocation;
-            }
+//            }
         }
         System.out.println("aaaaa offroute - " + userOffRoute);
         return location;

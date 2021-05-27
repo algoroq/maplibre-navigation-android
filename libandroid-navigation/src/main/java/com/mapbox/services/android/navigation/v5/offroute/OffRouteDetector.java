@@ -61,9 +61,10 @@ public class OffRouteDetector extends OffRoute {
       return true;
     }
 
-    if (!validOffRoute(location, options)) {
-      return false;
-    }
+//    if (!validOffRoute(location, options)) {
+//      return false;
+//    }
+
     Point currentPoint = Point.fromLngLat(location.getLongitude(), location.getLatitude());
     boolean isOffRoute = checkOffRouteRadius(location, routeProgress, options, currentPoint);
 
@@ -129,7 +130,7 @@ public class OffRouteDetector extends OffRoute {
       // If null, this is our first update - set the last reroute point to the given location
       updateLastReroutePoint(location);
     }
-    return distanceFromLastReroute > options.minimumDistanceBeforeRerouting();
+    return distanceFromLastReroute >= options.minimumDistanceBeforeRerouting();
   }
 
   private boolean checkOffRouteRadius(Location location, RouteProgress routeProgress,

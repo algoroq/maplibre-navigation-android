@@ -33,7 +33,8 @@ public class SnapToRoute extends Snap {
     @Override
     public Location getSnappedLocation(Location location, RouteProgress routeProgress) {
         Location snappedLocation = snapLocationLatLng(location, routeProgress.currentStepPoints());
-        snappedLocation.setBearing(snapLocationBearing(routeProgress));
+        //TODO JV
+//        snappedLocation.setBearing(snapLocationBearing(routeProgress));
         return snappedLocation;
     }
 

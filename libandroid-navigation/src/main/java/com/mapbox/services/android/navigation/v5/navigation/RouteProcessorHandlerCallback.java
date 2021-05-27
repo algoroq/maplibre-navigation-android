@@ -57,10 +57,15 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
    * @param update hold location, navigation (with options), and distances away from maneuver
    */
   private void handleRequest(final NavigationLocationUpdate update) {
-    boolean offlineModeFromPreferences = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(NavigationConstants.OFFLINE_MODE, true);
-    offlineMode = offlineModeFromPreferences || !isNetworkAvailable();
+    boolean offlineModeFromPreferences = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(NavigationConstants.OFFLINE_MODE, false); // nastavení ve PM
+    offlineMode = offlineModeFromPreferences || !isNetworkAvailable(); // kontrola dostupnosti internetu
+
+
+
     final MapboxNavigation mapboxNavigation = update.mapboxNavigation();
+
     final Location rawLocation = update.location();
+
     RouteProgress routeProgress = routeProcessor.buildNewRouteProgress(mapboxNavigation, rawLocation);
 
     final boolean userOffRoute = determineUserOffRoute(update, mapboxNavigation, routeProgress);
@@ -79,15 +84,22 @@ class RouteProcessorHandlerCallback implements Handler.Callback {
 
   private Location findSnappedLocation(MapboxNavigation mapboxNavigation, Location rawLocation,
                                        RouteProgress routeProgress, boolean userOffRoute) {
-    boolean snapToRouteEnabled = mapboxNavigation.options().snapToRoute();
 
-      if(offlineMode) snapToRouteEnabled = false;
+    boolean snapToRouteEnabled = mapboxNavigation.options().snapToRoute();
+      if(userOffRoute){
+
+        snapToRouteEnabled = false;
+      }
+
+
+//      if(offlineMode) snapToRouteEnabled = false;
     return buildSnappedLocation(mapboxNavigation, snapToRouteEnabled,
             rawLocation, routeProgress, userOffRoute, offlineMode);
   }
 
   private boolean determineUserOffRoute(NavigationLocationUpdate navigationLocationUpdate,
                                         MapboxNavigation mapboxNavigation, RouteProgress routeProgress) {
+
     final boolean userOffRoute = isUserOffRoute(navigationLocationUpdate, routeProgress, routeProcessor);
     routeProcessor.checkIncreaseIndex(mapboxNavigation);
     return userOffRoute;

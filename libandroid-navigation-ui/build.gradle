@@ -6,6 +6,7 @@ android {
   buildToolsVersion androidVersions.buildToolsVersion
 
   defaultConfig {
+
     minSdkVersion androidVersions.minSdkVersion
     targetSdkVersion androidVersions.targetSdkVersion
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -42,7 +43,7 @@ uploadArchives {
       repository(url: "https://algodosmvn.appspot.com/") {
         authentication(userName: "algodos", password: "Algo.001")
       }
-      pom.version = "0.1.6"
+      pom.version = "0.1.7"
       pom.artifactId = "navigation"
       pom.groupId = "com.graphhopper"
     }
@@ -94,7 +95,7 @@ dependencies {
   // Retrofit
 //  api dependenciesList.retrofit
 //  api dependenciesList.retrofitGson
-
+//  implementation 'com.google.code.gson:gson:2.8.6'
   // Mapbox Map SDK Javadoc
   //javadocDeps dependenciesList.mapboxMapSdk
 
@@ -102,6 +103,7 @@ dependencies {
   testImplementation dependenciesList.junit
   testImplementation dependenciesList.mockito
   testImplementation dependenciesList.robolectric
+
 }
 
 

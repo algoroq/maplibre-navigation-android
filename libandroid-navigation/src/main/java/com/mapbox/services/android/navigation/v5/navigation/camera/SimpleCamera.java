@@ -26,10 +26,11 @@ public class SimpleCamera extends Camera {
 
   @Override
   public double bearing(RouteInformation routeInformation) {
-    if (routeInformation.route() != null) {
-      setupLineStringAndBearing(routeInformation.route());
-      return initialBearing;
-    } else if (routeInformation.location() != null) {
+//    if (routeInformation.route() != null) {
+//      setupLineStringAndBearing(routeInformation.route());
+//      return initialBearing;
+//    } else
+      if (routeInformation.location() != null) {
       return routeInformation.location().getBearing();
     }
     return 0;
