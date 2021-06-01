@@ -1,5 +1,8 @@
 package com.mapbox.services.android.navigation.ui.v5.voice;
 
+import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.Nullable;
+
 /**
  * Defines a contract for speech players
  * used in {@link com.mapbox.services.android.navigation.ui.v5.NavigationView}.
@@ -48,4 +51,6 @@ public interface SpeechPlayer {
    * @since 0.6.0
    */
   void onDestroy();
+
+  MutableLiveData<Boolean> voiceAvailable();
 }

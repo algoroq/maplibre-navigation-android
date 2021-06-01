@@ -1,5 +1,6 @@
 package com.mapbox.services.android.navigation.ui.v5.voice;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
@@ -74,7 +75,7 @@ public class NavigationSpeechPlayer implements SpeechPlayer {
   }
 
   /**
-   * Required method to implement in {@link FragmentActivity#onDestroy()} or
+   * Required method to implement in {@link FragmentActivity#()} or
    * {@link Fragment#onDestroy()}.
    * <p>
    * Ensures the player is properly shutdown and finishes any running announcements.
@@ -84,5 +85,10 @@ public class NavigationSpeechPlayer implements SpeechPlayer {
   @Override
   public void onDestroy() {
     speechPlayerProvider.onDestroy();
+  }
+
+  @Override
+  public MutableLiveData<Boolean> voiceAvailable() {
+    return speechPlayerProvider.retrieveSpeechPlayer().voiceAvailable();
   }
 }

@@ -1,10 +1,12 @@
 package com.mapbox.services.android.navigation.ui.v5.voice;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +31,7 @@ class AndroidSpeechPlayer implements SpeechPlayer {
 
     private boolean isMuted;
     private boolean languageSupported = false;
+    private MutableLiveData<Boolean> voiceAvailable = new MutableLiveData<>();
 
     /**
      * Creates an instance of {@link AndroidSpeechPlayer}.
@@ -51,6 +54,8 @@ class AndroidSpeechPlayer implements SpeechPlayer {
         });
     }
 
+
+
     AndroidSpeechPlayer(final Context context, final SpeechListener speechListener) {
         textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
@@ -61,7 +66,7 @@ class AndroidSpeechPlayer implements SpeechPlayer {
                     return;
                 }
                 setSpeechListener(speechListener);
-                initializeWithLanguage(context.getResources().getConfiguration().locale);
+                initializeWithLanguage(inferDeviceLocale(context));
             }
         });
     }
@@ -87,6 +92,8 @@ class AndroidSpeechPlayer implements SpeechPlayer {
         params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, DEFAULT_UTTERANCE_ID);
         textToSpeech.speak(speechAnnouncement.announcement(), TextToSpeech.QUEUE_FLUSH, params);
     }
+
+
 
 
     /**
@@ -132,6 +139,11 @@ class AndroidSpeechPlayer implements SpeechPlayer {
         }
     }
 
+    @Override
+    public MutableLiveData<Boolean> voiceAvailable() {
+        return voiceAvailable;
+    }
+
     private void muteTts() {
         if (textToSpeech.isSpeaking()) {
             textToSpeech.stop();
@@ -140,20 +152,26 @@ class AndroidSpeechPlayer implements SpeechPlayer {
 
 
     private void initializeWithLanguage(Locale language) {
-        boolean isLanguageAvailable = false;
+        boolean isLanguageAvailableHelp;
+        isLanguageAvailableHelp = textToSpeech.isLanguageAvailable(language) == TextToSpeech.LANG_AVAILABLE;
+
+        boolean isAvailable = isLanguageAvailableHelp;
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Set<Locale> locales = textToSpeech.getAvailableLanguages();
-            isLanguageAvailable = locales.contains(language);
-        }else{
-            isLanguageAvailable = textToSpeech.isLanguageAvailable(language) == TextToSpeech.LANG_AVAILABLE;
+            isAvailable = locales.contains(language) || isLanguageAvailableHelp;
         }
+//        else{
+//            isLanguageAvailable = textToSpeech.isLanguageAvailable(language) == TextToSpeech.LANG_AVAILABLE;
+//        }
 
-
-        if (!isLanguageAvailable) {
+        if (!isAvailable) {
             Timber.w("The specified language is not supported by TTS");
+            voiceAvailable.postValue(false);
             return;
         }
         languageSupported = true;
+        voiceAvailable.postValue(true);
         textToSpeech.setLanguage(language);
     }
 
@@ -170,6 +188,14 @@ class AndroidSpeechPlayer implements SpeechPlayer {
             textToSpeech.setOnUtteranceCompletedListener(new Api14UtteranceListener(speechListener));
         } else {
             textToSpeech.setOnUtteranceProgressListener(new UtteranceListener(speechListener));
+        }
+    }
+
+    private Locale inferDeviceLocale(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return context.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            return context.getResources().getConfiguration().locale;
         }
     }
 }

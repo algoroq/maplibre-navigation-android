@@ -103,7 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/instructionLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/extraInstructionContentLayout" />
 
     <com.mapbox.services.android.navigation.ui.v5.FeedbackButton
         android:id="@+id/feedbackLayout"

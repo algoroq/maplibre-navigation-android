@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapbox.api.directions.v5.models.BannerText;
 import com.mapbox.api.directions.v5.models.IntersectionLanes;
@@ -55,6 +56,7 @@ import com.mapbox.services.android.navigation.v5.utils.LocaleUtils;
 import com.mapbox.services.android.navigation.v5.utils.RouteUtils;
 
 import java.util.List;
+import java.util.Observable;
 
 import timber.log.Timber;
 
@@ -233,6 +235,28 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
             }
         });
 
+        navigationViewModel.isVoiceAvailable.observe(owner, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isVoiceAvailable) {
+                if(isVoiceAvailable == null) return;
+
+                if(!isVoiceAvailable){
+                    isMutedButtonVisible(false);
+
+                    if(!navigationViewModel.wasVoiceAlertNotAvailableShown){
+                        Toast.makeText(getContext(),
+                                "Jazyk hlasové navigace neni Vaším zařízením podporovaný. " +
+                                        "Hlasové instrukce nelze zapnout. HC",
+                                Toast.LENGTH_LONG).show();
+                        navigationViewModel.wasVoiceAlertNotAvailableShown = true;
+                    }
+
+                    return;
+                }
+                isMutedButtonVisible(true);
+            }
+        });
+
         subscribeAlertView();
 
         initializeButtons();
@@ -277,6 +301,7 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
             instructionLayout.startAnimation(rerouteSlideUpTop);
             instructionLayout.setVisibility(INVISIBLE);
             thenStepLayout.setVisibility(GONE);
+            turnLaneLayout.setVisibility(GONE);
 
 
         }
@@ -880,5 +905,10 @@ public class InstructionView extends RelativeLayout implements FeedbackBottomShe
         RouteProgress routeProgress = model.getProgress();
         boolean isListShowing = instructionListLayout.getVisibility() == VISIBLE;
         instructionListAdapter.updateBannerListWith(routeProgress, isListShowing);
+    }
+
+    private void isMutedButtonVisible(Boolean isVisible){
+        soundButton.setVisibility(View.GONE);
+        if(isVisible) soundButton.setVisibility(View.VISIBLE);
     }
 }

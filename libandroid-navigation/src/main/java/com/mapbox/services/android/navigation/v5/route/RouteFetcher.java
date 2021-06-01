@@ -46,15 +46,15 @@ public class RouteFetcher {
     private static final int SECOND_POSITION = 1;
 
     private final List<RouteListener> routeListeners = new CopyOnWriteArrayList<>();
-    private final String accessToken;
+    //private final String accessToken;
     private final WeakReference<Context> contextWeakReference;
 
     private RouteProgress routeProgress;
     private final RouteUtils routeUtils;
     private final Context context;
 
-    public RouteFetcher(Context context, String accessToken) {
-        this.accessToken = accessToken;
+    public RouteFetcher(Context context) {
+        //this.accessToken = accessToken;
         contextWeakReference = new WeakReference<>(context);
         routeUtils = new RouteUtils();
         this.context = context;

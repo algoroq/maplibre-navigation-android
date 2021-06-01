@@ -2,6 +2,7 @@ package com.mapbox.services.android.navigation.v5.navigation;
 
 import android.app.Notification;
 import android.app.Service;
+import android.arch.lifecycle.LifecycleService;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
@@ -28,7 +29,7 @@ import timber.log.Timber;
  * gets destroyed.
  * </p>
  */
-public class NavigationService extends Service {
+public class NavigationService extends LifecycleService {
 
   private final IBinder localBinder = new LocalBinder();
   private RouteProcessorBackgroundThread thread;
@@ -39,6 +40,7 @@ public class NavigationService extends Service {
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
+    super.onBind(intent);
     return localBinder;
   }
 
@@ -48,6 +50,7 @@ public class NavigationService extends Service {
    */
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
+    super.onStartCommand(intent, flags, startId);
     NavigationTelemetry.getInstance().initializeLifecycleMonitor(getApplication());
     return START_STICKY;
   }
@@ -90,18 +93,17 @@ public class NavigationService extends Service {
 
   private void initialize(MapboxNavigation mapboxNavigation) {
     NavigationEventDispatcher dispatcher = mapboxNavigation.getEventDispatcher();
-    String accessToken = mapboxNavigation.obtainAccessToken();
-    initializeRouteFetcher(dispatcher, accessToken, mapboxNavigation.retrieveEngineProvider());
+    initializeRouteFetcher(dispatcher, mapboxNavigation.retrieveEngineProvider());
     initializeNotificationProvider(mapboxNavigation);
     initializeRouteProcessorThread(dispatcher, routeFetcher, notificationProvider);
     initializeLocationProvider(mapboxNavigation);
   }
 
-  private void initializeRouteFetcher(NavigationEventDispatcher dispatcher, String accessToken,
+  private void initializeRouteFetcher(NavigationEventDispatcher dispatcher,
                                       NavigationEngineFactory engineProvider) {
     FasterRoute fasterRouteEngine = engineProvider.retrieveFasterRouteEngine();
     NavigationFasterRouteListener listener = new NavigationFasterRouteListener(dispatcher, fasterRouteEngine);
-    routeFetcher = new RouteFetcher(getApplication(), accessToken);
+    routeFetcher = new RouteFetcher(getApplication());
     routeFetcher.addRouteListener(listener);
   }
 
@@ -131,6 +133,7 @@ public class NavigationService extends Service {
     Notification notification = navigationNotification.getNotification();
     int notificationId = navigationNotification.getNotificationId();
     notification.flags = Notification.FLAG_FOREGROUND_SERVICE;
+
     startForeground(notificationId, notification);
   }
 

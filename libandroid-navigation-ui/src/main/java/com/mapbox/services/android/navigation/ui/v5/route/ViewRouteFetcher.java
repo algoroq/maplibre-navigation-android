@@ -28,7 +28,7 @@ public class ViewRouteFetcher extends RouteFetcher implements RouteListener {
   private Location rawLocation;
 
   public ViewRouteFetcher(Context context, String accessToken, ViewRouteListener listener) {
-    super(context, accessToken);
+    super(context);
     this.listener = listener;
     addRouteListener(this);
   }

@@ -3,7 +3,7 @@
     style="@android:style/TextAppearance.StatusBar.EventContent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#EEFFFFFF"
+    android:background="@color/mapbox_blue"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:orientation="vertical">
@@ -26,7 +26,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:src="@drawable/ic_close"
-            android:tint="#676767"/>
+            android:tint="#FFFFFF"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -34,6 +34,6 @@
             android:background="@android:color/transparent"
             android:text="@string/end_navigation"
             android:textAllCaps="true"
-            android:textColor="#676767"/>
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 </LinearLayout>

@@ -4,7 +4,7 @@
     style="@android:style/TextAppearance.StatusBar.EventContent"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="#EEFFFFFF"
+    android:background="@color/mapbox_blue"
     android:id="@+id/relativeLayout">
 
     <ImageView
@@ -18,7 +18,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_maneuver_arrive"
-        android:tint="#676767"/>
+        android:tint="#FFFFFF"/>
 
     <TextView
         android:id="@+id/notificationDistanceText"
@@ -29,7 +29,7 @@
         android:layout_toEndOf="@id/maneuverImage"
         android:layout_alignTop="@id/maneuverImage"
         android:lines="1"
-        android:textColor="#676767"
+        android:textColor="#FFFFFF"
         tools:text="250 ft"/>
 
     <ImageView
@@ -43,7 +43,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:src="@drawable/ic_circle"
-        android:tint="#676767"/>
+        android:tint="#FFFFFF"/>
 
     <TextView
         android:id="@+id/notificationArrivalText"
@@ -56,7 +56,7 @@
         android:layout_alignTop="@id/notificationDistanceText"
         android:layout_alignBottom="@id/notificationDistanceText"
         android:lines="1"
-        android:textColor="#676767"
+        android:textColor="#FFFFFF"
         tools:text="11:13 AM ETA"/>
 
     <TextView
@@ -69,6 +69,6 @@
         android:layout_alignBottom="@id/maneuverImage"
         android:ellipsize="end"
         android:lines="1"
-        android:textColor="#676767"
+        android:textColor="#FFFFFF"
         tools:text="Sherman Ave NW"/>
 </RelativeLayout>

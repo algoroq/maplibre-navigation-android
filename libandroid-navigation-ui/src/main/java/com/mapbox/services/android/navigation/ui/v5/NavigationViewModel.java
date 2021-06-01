@@ -3,6 +3,7 @@ package com.mapbox.services.android.navigation.ui.v5;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -74,7 +75,12 @@ public class NavigationViewModel extends AndroidViewModel {
     final MutableLiveData<DirectionsRoute> route = new MutableLiveData<>();
     final MutableLiveData<Point> destination = new MutableLiveData<>();
     final MutableLiveData<Boolean> shouldRecordScreenshot = new MutableLiveData<>();
+    public MutableLiveData<Boolean> isVoiceAvailable;
+    public boolean wasVoiceAlertNotAvailableShown = false;
+
     private final MutableLiveData<List<Polygon>> routePolygons = new MutableLiveData<>();
+
+    private final int distanceFromManeuverToReadInstruction = 10;
 
     private MapboxNavigation navigation;
     private ViewRouteFetcher navigationViewRouteEngine;
@@ -272,6 +278,8 @@ public class NavigationViewModel extends AndroidViewModel {
         }
         SpeechPlayerProvider speechPlayerProvider = initializeSpeechPlayerProvider();
         this.speechPlayer = new NavigationSpeechPlayer(speechPlayerProvider);
+
+       isVoiceAvailable = this.speechPlayer.voiceAvailable();
     }
 
     @NonNull
@@ -343,7 +351,7 @@ public class NavigationViewModel extends AndroidViewModel {
 
                 double distanceToManeuver = TurfMeasurement.distance(currentPoint, pointOfManeuver, TurfConstants.UNIT_METERS);
 
-                if (distanceToManeuver <= 10) {
+                if (distanceToManeuver <= distanceFromManeuverToReadInstruction) {
                     if (currentStepStamp == null) {
                         playVoiceAnnouncement(instruction);
                         currentStepStamp = currentStep;
@@ -458,7 +466,7 @@ public class NavigationViewModel extends AndroidViewModel {
         resetConfigurationFlag();
         sendEventOnRerouteAlong(route);
         isOffRoute.setValue(false);
-        isOffRouteOfflineMode.setValue(false);
+        //isOffRouteOfflineMode.setValue(false);
     }
 
     private void createRoutesArea(List<List<Double>> coordinates) {

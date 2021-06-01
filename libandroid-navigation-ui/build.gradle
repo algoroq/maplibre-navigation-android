@@ -43,7 +43,7 @@ uploadArchives {
       repository(url: "https://algodosmvn.appspot.com/") {
         authentication(userName: "algodos", password: "Algo.001")
       }
-      pom.version = "0.1.7"
+      pom.version = "1.0.1"
       pom.artifactId = "navigation"
       pom.groupId = "com.graphhopper"
     }
