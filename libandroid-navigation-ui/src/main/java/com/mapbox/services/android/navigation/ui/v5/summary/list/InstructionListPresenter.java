@@ -90,7 +90,7 @@ public class InstructionListPresenter {
             currentLeg = routeProgress.currentLeg();
             List<LegStep> steps = currentLeg.steps();
             for (LegStep step : steps) {
-                instructions.add(new CustomInstructionsBanner(step.maneuver(), step.distance()));
+                        instructions.add(new CustomInstructionsBanner(step.maneuver(), step.distance()));
             }
         }
     }
@@ -117,8 +117,10 @@ public class InstructionListPresenter {
         while (searching && index < instructions.size()) {
             if(instructions.get(index).equals(currentBannerInstruction)){
                 searching = false;
+            }else{
+                index++;
             }
-            index++;
+
         }
         if (searching) return false;
 

@@ -51,7 +51,7 @@ uploadArchives {
       repository(url: "https://algodosmvn.appspot.com/") {
         authentication(userName: "algodos", password: "Algo.001")
       }
-      pom.version = "1.0.1"
+      pom.version = "1.0.3"
       pom.artifactId = "MapboxSDK"
       pom.groupId = "com.graphhopper"
     }

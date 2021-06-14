@@ -81,6 +81,7 @@ public class NavigationViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Polygon>> routePolygons = new MutableLiveData<>();
 
     private final int distanceFromManeuverToReadInstruction = 10;
+    private final int timeToManeuverToReadInstruction = 3;
 
     private MapboxNavigation navigation;
     private ViewRouteFetcher navigationViewRouteEngine;
@@ -279,7 +280,7 @@ public class NavigationViewModel extends AndroidViewModel {
         SpeechPlayerProvider speechPlayerProvider = initializeSpeechPlayerProvider();
         this.speechPlayer = new NavigationSpeechPlayer(speechPlayerProvider);
 
-       isVoiceAvailable = this.speechPlayer.voiceAvailable();
+        isVoiceAvailable = this.speechPlayer.voiceAvailable();
     }
 
     @NonNull
@@ -349,16 +350,19 @@ public class NavigationViewModel extends AndroidViewModel {
 //                String instructionWithDistance = "Za " + currentStep.distance() + "metrů " + nextStepInstruction;
 
 
-                double distanceToManeuver = TurfMeasurement.distance(currentPoint, pointOfManeuver, TurfConstants.UNIT_METERS);
+               // double distanceToManeuver = TurfMeasurement.distance(currentPoint, pointOfManeuver, TurfConstants.UNIT_METERS);
+                double timeToManeuver = routeProgress.currentLegProgress().currentStepProgress().durationRemaining();
+                System.out.println("cas do konce kroku: " + timeToManeuver + " sekund");
 
-                if (distanceToManeuver <= distanceFromManeuverToReadInstruction) {
+//                if (distanceToManeuver <= distanceFromManeuverToReadInstruction) {
+                if (timeToManeuver <= timeToManeuverToReadInstruction) {
                     if (currentStepStamp == null) {
                         playVoiceAnnouncement(instruction);
                         currentStepStamp = currentStep;
                     }
                 }
 
-                if (currentStepStamp != currentStep) {
+                if (currentStepStamp !=currentStep) {
                     currentStepStamp = null;
                 }
 
@@ -406,7 +410,6 @@ public class NavigationViewModel extends AndroidViewModel {
     private MilestoneEventListener milestoneEventListener = new MilestoneEventListener() {
         @Override
         public void onMilestoneEvent(RouteProgress routeProgress, String instruction, Milestone milestone) {
-            System.out.println("bbbbb - play voice - Milestone event");
 //             playVoiceAnnouncement(milestone);
             updateBannerInstruction(routeProgress, milestone);
             sendEventArrival(routeProgress, milestone);

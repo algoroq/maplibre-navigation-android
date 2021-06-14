@@ -25,6 +25,7 @@ import timber.log.Timber;
 class AndroidSpeechPlayer implements SpeechPlayer {
 
     private static final String DEFAULT_UTTERANCE_ID = "default_id";
+    private static final String GOOGLE_TTS_ENGINE = "com.google.android.tts";
 
     private TextToSpeech textToSpeech;
     private SpeechListener speechListener;
@@ -57,18 +58,20 @@ class AndroidSpeechPlayer implements SpeechPlayer {
 
 
     AndroidSpeechPlayer(final Context context, final SpeechListener speechListener) {
-        textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                boolean ableToInitialize = status == TextToSpeech.SUCCESS;
-                if (!ableToInitialize) {
-                    Timber.e("There was an error initializing native TTS");
-                    return;
-                }
-                setSpeechListener(speechListener);
-                initializeWithLanguage(inferDeviceLocale(context));
+        TextToSpeech.OnInitListener initListener = status -> {
+            boolean ableToInitialize = status == TextToSpeech.SUCCESS;
+            if (!ableToInitialize) {
+                Timber.e("There was an error initializing native TTS");
+                return;
             }
-        });
+            setSpeechListener(speechListener);
+            initializeWithLanguage(inferDeviceLocale(context));
+        };
+        try {
+            textToSpeech = new TextToSpeech(context, initListener, GOOGLE_TTS_ENGINE);
+        }catch (Exception e){
+            textToSpeech = new TextToSpeech(context, initListener);
+        }
     }
 
     /**
